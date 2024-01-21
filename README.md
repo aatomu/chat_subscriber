@@ -25,11 +25,11 @@ body {
 ```
 
 ## File Information
-* index.html:
+* pages/*:
   * Auto push for server
   * Run for `live.aatomu.work`
   * Front service file (HTML & CSS & Javascript)
-* workers.ts:
+* workers/*:
   * No auto push
   * Run for `live-chat.aatomu.workers.dev`
   * Backend service file (TypeScript)
