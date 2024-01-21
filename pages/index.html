@@ -352,7 +352,22 @@
 
       // Parse Chat Data
       if (CHAT_CONTENTS.actions) {
-        youtubeParseChat(CHAT_CONTENTS.actions, channelID)
+        const CHAT_LIST = youtubeParseChat(CHAT_CONTENTS.actions, channelID)
+        CHAT_LIST.forEach((chat) => {
+          const CHAT_OFFSET_TIME = (chat.timestampMilliSecond + 5000) - (new Date().getTime())
+          setTimeout(function () {
+            console.log(chat)
+            let message = ""
+            for (let index = 0; index < chat.message.length; index++) {
+              message += chat.message[index].text
+            }
+
+            if (chat.superchat != null) {
+              message = `<span class="coins" style="color: ${chat.superchat.color};">${chat.superchat.amount}</span>`
+            }
+            addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, channelID, "youtube")
+          }, CHAT_OFFSET_TIME)
+        })
       }
 
       // Move Chat Position
@@ -587,20 +602,9 @@
         }
       }
 
-      const CHAT_OFFSET_TIME = (CHAT.timestampMilliSecond + 5000) - (new Date().getTime())
-      setTimeout(function () {
-        console.log(CHAT)
-        let message = ""
-        for (let index = 0; index < CHAT.message.length; index++) {
-          message += CHAT.message[index].text
-        }
-
-        if (CHAT.superchat != null) {
-          message = `<span class="coins" style="color: ${CHAT.superchat.color};">${CHAT.superchat.amount}</span>`
-        }
-        addMessage(CHAT.timestampMilliSecond, CHAT.author.image[0].url, CHAT.authorName, message, channelID, "youtube")
-      }, CHAT_OFFSET_TIME)
+      chatList.push(CHAT)
     })
+    return chatList
   }
 
   function actionToRenderer(action) {
