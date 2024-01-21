@@ -369,15 +369,15 @@
       // Tags
       if (message.startsWith("@")) {
         const NEXT_SPACE = message.indexOf(" ")
-        const TAGS = message.substr(1, NEXT_SPACE)
-        message = message.substr(NEXT_SPACE + 1)
+        const TAGS = message.substring(1, NEXT_SPACE)
+        message = message.substring(NEXT_SPACE + 1)
         chat["tags"] = twitchParseTags(TAGS)
       }
       // Prefix
       if (message.startsWith(":")) {
         const NEXT_SPACE = message.indexOf(" ")
-        const PREFIX = message.substr(1, NEXT_SPACE)
-        message = message.substr(NEXT_SPACE + 1)
+        const PREFIX = message.substring(1, NEXT_SPACE)
+        message = message.substring(NEXT_SPACE + 1)
         chat.prefix = twitchParsePrefix(PREFIX)
       }
 
