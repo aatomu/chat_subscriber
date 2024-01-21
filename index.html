@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Live Chat Leader</title>
+  <style>
+    :root {
+      --youtube-default: #C4302B;
+      --youtube: #FF3F38;
+      --twitch-default: #6441A5;
+      --twitch: #9A63FF;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    body {
+      height: 100%;
+      background-color: lightgreen;
+      margin: 0px auto;
+      overflow: hidden;
+    }
+
+    .contents {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+
+      height: 100%;
+
+      line-height: 32px;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+
+      background-color: rgba(255, 255, 255, 0.75);
+      border-radius: 10px;
+
+      padding: 4px;
+      margin: 4px 0;
+
+      animation: invisible 1s linear 300s 1 normal both;
+    }
+
+    .content.youtube {
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--youtube);
+    }
+
+    .content.twitch {
+      border-width: 3px;
+      border-style: solid;
+      border-color: var(--twitch);
+    }
+
+    @keyframes invisible {
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .content>* {
+      margin-left: 4px;
+      margin-right: 4px;
+    }
+
+    .time {
+      margin: 0px 8px;
+
+      font-size: 70%;
+      color: gray;
+      white-space: pre;
+    }
+
+    .icon {
+      display: flex;
+      align-items: center;
+
+      height: 32px;
+    }
+
+    .icon>* {
+      height: 90%;
+      aspect-ratio: 1/1;
+      box-sizing: border-box;
+      border-radius: 50%;
+    }
+
+    .twitch-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      border-color: black;
+      border-style: solid;
+      border-width: 2px;
+
+
+      font-weight: bold;
+      color: white;
+      background-color: var(--twitch);
+    }
+
+    .name {
+      font-size: 120%;
+      color: gray;
+      white-space: pre;
+    }
+
+    .message {
+      font-size: 120%;
+      font-weight: bold;
+      word-break: break-all;
+    }
+
+    .message>img {
+      height: 24px;
+      aspect-ratio: 1/1;
+      vertical-align: middle;
+    }
+
+    .message-root {
+      width: 100%;
+    }
+
+    .channel {
+      float: right;
+      opacity: 0.75;
+
+      border-radius: 16px;
+
+      padding: 0 8px;
+      margin-top: 1px;
+
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: bold;
+      white-space: pre;
+    }
+
+    .youtube .channel {
+      background-color: var(--youtube);
+    }
+
+    .twitch .channel {
+      background-color: var(--twitch);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="contents" class="contents">
+  </div>
+</body>
+
+<script id="message-functions">
+  const CONTENTS = document.getElementById("contents")
+
+  function addMessage(timestamp = 0, iconURL = "", name = "", message = "", channelID = "", site = "") {
+    // Root
+    const CONTENT = document.createElement("div")
+    CONTENT.classList.add("content")
+    switch (site) {
+      case "youtube":
+        CONTENT.classList.add("youtube")
+        break
+      case "twitch":
+        CONTENT.classList.add("twitch")
+        break
+    }
+    // Timestamp
+    const TIME = new Date(timestamp)
+    const TIMESTAMP = document.createElement("span")
+    TIMESTAMP.classList.add("time")
+    TIMESTAMP.innerText = `${String(TIME.getHours()).padStart(2, "0")}:${String(TIME.getMinutes()).padStart(2, "0")}:${String(TIME.getSeconds()).padStart(2, "0")}`
+    CONTENT.append(TIMESTAMP)
+    // Icon
+    const ICON_ROOT = document.createElement("div")
+    ICON_ROOT.classList.add("icon")
+    switch (site) {
+      case "youtube":
+        const ICON_YOUTUBE = document.createElement("img")
+        ICON_YOUTUBE.src = iconURL
+        ICON_ROOT.append(ICON_YOUTUBE)
+        break
+      case "twitch":
+        // const ICON_TWITCH = document.createElement("div")
+        // ICON_TWITCH.classList.add("twitch-icon")
+        // ICON_TWITCH.innerText = "T"
+        const ICON_TWITCH = document.createElement("img")
+        ICON_TWITCH.src = "https://www.freepnglogos.com/uploads/twitch-logo-symbol-25.png"
+
+        ICON_ROOT.append(ICON_TWITCH)
+        break
+    }
+    CONTENT.append(ICON_ROOT)
+    // Name
+    const NAME = document.createElement("span")
+    NAME.classList.add("name")
+    NAME.innerText = name
+    CONTENT.append(NAME)
+    // Badges
+    // Message
+    const MESSAGE_ROOT = document.createElement("div")
+    MESSAGE_ROOT.classList.add("message-root")
+    const MESSAGE = document.createElement("span")
+    MESSAGE.classList.add("message")
+    MESSAGE.innerHTML = message
+    MESSAGE_ROOT.append(MESSAGE)
+    const CHANNEL = document.createElement("span")
+    CHANNEL.classList.add("channel")
+    CHANNEL.innerText = channelID
+    MESSAGE_ROOT.append(CHANNEL)
+    CONTENT.append(MESSAGE_ROOT)
+
+    if (CONTENTS.children.length >= CHAT_COUNT_LIMIT) {
+      CONTENTS.firstElementChild.remove()
+    }
+    CONTENTS.append(CONTENT)
+
+    bottomScroll()
+  }
+  function bottomScroll() {
+    let elm = document.documentElement;
+
+    // scrollHeight ページの高さ clientHeight ブラウザの高さ
+    let bottom = elm.scrollHeight - elm.clientHeight;
+
+    // 垂直方向へ移動
+    window.scroll(0, bottom);
+  }
+</script>
+
+<script id="live-subscriber">
+  const SEARCH_PARAMS = new URLSearchParams(window.location.search)
+  const CHAT_COUNT_LIMIT = SEARCH_PARAMS.get("limit") ? parseInt(SEARCH_PARAMS.get("limit")) : 20
+
+  if (SEARCH_PARAMS.size == 0) {
+    document.getElementById("contents").innerHTML += `
+    <div class="content youtube">
+      <span class="time">99:99:99</span>
+      <div class="icon">
+        <img src="https://pbs.twimg.com/profile_images/1480130282099740684/uNSmGF1F_400x400.jpg">
+      </div>
+      <span class="name">aatomu</span>
+      <div class="message-root">
+        <span class="message">How To Use:
+          /?youtube=@ChannelID&youtube=ChannelID&twitch=ChannelID&twitch=ChannelID&limit=ChatLimit</span>
+        <span class="channel">#develop-message</span>
+      </div>
+    </div>
+  </div>
+  `
+  }
+  // Twitch
+  const TWITCH_IRC_URI = "wss://irc-ws.chat.twitch.tv:443"
+  SEARCH_PARAMS.getAll("twitch").forEach((channel) => {
+    console.log("Twtich: ", channel)
+    const WEBSOCKET = new WebSocket(TWITCH_IRC_URI)
+
+    WEBSOCKET.addEventListener("open", function (event) {
+      console.log(`WebSocket Open(#${channel}):\n`, event)
+      WEBSOCKET.send("CAP REQ :twitch.tv/tags twitch.tv/commands")
+      WEBSOCKET.send("PASS SCHMOOPIIE")
+      const RANDOM_NUMBER = Math.floor(Math.random() * 100000)
+      const USER_NAME = `justinfan${String(RANDOM_NUMBER).padStart(5, "0")}`
+      WEBSOCKET.send(`NICK ${USER_NAME}`)
+      WEBSOCKET.send(`USER ${USER_NAME} 8 * :${USER_NAME}`)
+      WEBSOCKET.send(`JOIN #${channel}`)
+    })
+    WEBSOCKET.addEventListener("message", function (event) {
+      const CHAT_LIST = twitchParseMessage(event.data)
+      CHAT_LIST.forEach(chat => {
+        switch (chat.command) {
+          case "PRIVMSG":
+            let message = chat.params[1]
+            let emoteReplaceList = []
+            for (emoteID in chat.tags.emotes) {
+              const EMOTE_POSITIONS = chat.tags.emotes[emoteID]
+              EMOTE_POSITIONS.forEach(emotePosition => {
+                emoteReplaceList.push({
+                  id: emoteID,
+                  start: emotePosition.start,
+                  end: emotePosition.end,
+                })
+              })
+            }
+            emoteReplaceList.sort((a, b) => {
+              if (a.start > b.start) {
+                return -1
+              } else {
+                return 1
+              }
+            })
+            for (let index = 0; index < emoteReplaceList.length; index++) {
+              const EMOTE = emoteReplaceList[index]
+              message = message.substr(0, EMOTE.start) + `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">` + message.substr(EMOTE.end + 1)
+            }
+            addMessage(new Date().getTime(), "", chat.prefix.nick, message, chat.params[0], "twitch")
+            break;
+          case "PING":
+            WEBSOCKET.send("PONG")
+            break
+        }
+      })
+    })
+    WEBSOCKET.addEventListener("close", function (event) {
+      console.log(`WebSocket Close(#${channel}):\n`, event)
+    })
+    WEBSOCKET.addEventListener("error", function (event) {
+      console.log(`WebSocket Error(#${channel}):\n`, event)
+    })
+  })
+
+
+  // Youtube
+  SEARCH_PARAMS.getAll("youtube").forEach(async (value, index) => {
+    console.log("Youtube: ", value)
+    const TOKEN = await fetch(`https://youtube.aatomu.workers.dev?id=${value}`).then(res => {
+      return res.json()
+    }).then(json => {
+      return json
+    })
+    console.log(TOKEN)
+
+    youtubeLoadChat(TOKEN, value)
+  })
+</script>
+
+<script id="twitch-script">
+  function twitchParseMessage(messages) {
+    let chatList = []
+    messages.split("\r\n").forEach((message) => {
+      if (message == "") {
+        return
+      }
+      let chat = {}
+
+      // Tags
+      if (message.startsWith("@")) {
+        const NEXT_SPACE = message.indexOf(" ")
+        const TAGS = message.substr(1, NEXT_SPACE)
+        message = message.substr(NEXT_SPACE + 1)
+        chat["tags"] = twitchParseTags(TAGS)
+      }
+      // Prefix
+      if (message.startsWith(":")) {
+        const NEXT_SPACE = message.indexOf(" ")
+        const PREFIX = message.substr(1, NEXT_SPACE)
+        message = message.substr(NEXT_SPACE + 1)
+        chat.prefix = twitchParsePrefix(PREFIX)
+      }
+
+      // IRC-Trailing To IRC-Params
+      const SPLIT = message.split(" :")
+      chat.params = SPLIT[0].split(" ")
+      if (SPLIT.length == 2) {
+        chat.params.push(SPLIT[1])
+      }
+
+      // IRC-Params To IRC-Command + IRC-Params
+      chat.command = chat.params[0].toUpperCase()
+      chat.params.shift()
+
+      console.log(`WebSocket Message(${chat.params[0]}):\n`, chat)
+      chatList.push(chat)
+    })
+    return chatList
+  }
+
+
+  function twitchParseTags(tags) {
+    let parsedTags = {}
+    const SPLIT_TAGS = tags.split(";")
+
+    SPLIT_TAGS.forEach((tag) => {
+      const SPLIT_TAG = tag.split("=")
+      let tagValue = null
+      if (SPLIT_TAG[1] != "") {
+        tagValue = SPLIT_TAG[1]
+      }
+
+      switch (SPLIT_TAG[0]) {
+        case "badge-info":
+        case "badge":
+          if (tagValue == null) {
+            parsedTags[SPLIT_TAG[0]] = null
+            break
+          }
+
+          let badgeDict = {}
+          const BADGES = tagValue.split(",")
+          BADGES.forEach((pair) => {
+            const BADGE_PARTS = pair.split("/")
+            badgeDict[BADGE_PARTS[0]] = BADGE_PARTS[1]
+          })
+
+          parsedTags[SPLIT_TAG[0]] = badgeDict
+          break
+        case "emotes":
+          if (tagValue == null) {
+            parsedTags[SPLIT_TAG[0]] = null
+            break
+          }
+
+          let emoteDict = {}
+          const EMOTES = tagValue.split("/")
+          EMOTES.forEach((emote) => {
+            const EMOTE_PARTS = emote.split(":")
+            let textPositions = []
+
+            const POSITIONS = EMOTE_PARTS[1].split(",")
+            POSITIONS.forEach((position) => {
+              const POSITION_PARTS = position.split("-")
+              textPositions.push({
+                start: parseInt(POSITION_PARTS[0]),
+                end: parseInt(POSITION_PARTS[1])
+              })
+            })
+            emoteDict[EMOTE_PARTS[0]] = textPositions
+          })
+          parsedTags[SPLIT_TAG[0]] = emoteDict
+          break
+        case "emote-sets":
+          const EMOTE_SET_IDS = tagValue.split(",")
+          parsedTags[SPLIT_TAG[0]] = EMOTE_SET_IDS
+          break
+        default:
+          parsedTags[SPLIT_TAG[0]] = tagValue
+      }
+    })
+
+    return parsedTags
+  }
+
+  function twitchParsePrefix(prefix) {
+    let parsedPrefix = {}
+    const SPLIT_PREFIX = prefix.split(/!|@/)
+
+    switch (SPLIT_PREFIX.length) {
+      case 1:
+        parsedPrefix["host"] = SPLIT_PREFIX[0]
+        break
+      case 2:
+        parsedPrefix["nick"] = SPLIT_PREFIX[0]
+        parsedPrefix["host"] = SPLIT_PREFIX[1]
+      case 3:
+        parsedPrefix["nick"] = SPLIT_PREFIX[0]
+        parsedPrefix["user"] = SPLIT_PREFIX[1]
+        parsedPrefix["host"] = SPLIT_PREFIX[2]
+      default:
+        parsedPrefix["raw"] = prefix
+    }
+    return parsedPrefix
+  }
+</script>
+
+<script id="youtube-script">
+  function youtubeLoadChat(token, channelID) {
+    setInterval(async function () {
+      const CHAT_RESPONSE = await fetch(`https://youtube.aatomu.workers.dev?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
+        return res.json()
+      }).then(json => {
+        return json
+      })
+
+      youtubeParseChat(CHAT_RESPONSE, channelID)
+      // Move Chat Position
+      if (!CHAT_RESPONSE.continuationContents) {
+        return
+      }
+      if (!CHAT_RESPONSE.continuationContents.liveChatContinuation) {
+        return
+      }
+      if (!CHAT_RESPONSE.continuationContents.liveChatContinuation.continuations) {
+        return
+      }
+      for (let i = 0; i < CHAT_RESPONSE.continuationContents.liveChatContinuation.continuations.length; i++) {
+        const RESULT_CONTINUATION_OBJECT = CHAT_RESPONSE.continuationContents.liveChatContinuation.continuations[i]
+        for (let key in RESULT_CONTINUATION_OBJECT) {
+          const RESULT_CONTINUATION = RESULT_CONTINUATION_OBJECT[key].continuation
+          if (RESULT_CONTINUATION != "") {
+            token.continuation = RESULT_CONTINUATION
+          }
+        }
+      }
+    }, 5000)
+  }
+
+  function youtubeParseChat(chatResponse, channelID) {
+    if (chatResponse.continuationContents == undefined) {
+      return
+    }
+    if (chatResponse.continuationContents.liveChatContinuation == undefined) {
+      return
+    }
+    if (chatResponse.continuationContents.liveChatContinuation.actions == undefined) {
+      return
+    }
+
+    chatResponse.continuationContents.liveChatContinuation.actions.forEach(actions => {
+      if (!actions.addChatItemAction) {
+        return
+      }
+      const CHAT_ITEM = actions.addChatItemAction.item.liveChatTextMessageRenderer
+      if (!CHAT_ITEM) {
+        return
+      }
+
+      if (CHAT_ITEM.authorName.simpleText == "") {
+        return
+      }
+
+      const CHAT = {
+        authorName: CHAT_ITEM.authorName.simpleText,
+        authorChannelId: CHAT_ITEM.authorExternalChannelId,
+        authorChannelIcon: CHAT_ITEM.authorPhoto.thumbnails,
+        message: "",
+        superChatAmount: CHAT_ITEM.purchaseAmountText ? CHAT_ITEM.purchaseAmountText.simpleText : 0,
+        superChatColor: CHAT_ITEM.bodyBackgroundColor,
+        sticker: CHAT_ITEM.sticker ? CHAT_ITEM.sticker.accessibility.accessibilityData.label : "",
+        isMembership: false,
+        memberShip: "",
+        memberShipIcons: [],
+        isOwner: false,
+        isModerator: false,
+        isVerified: false,
+        timestampMilliSecond: 0,
+      }
+
+      // Message
+      CHAT_ITEM.message.runs.forEach(value => {
+        if (value.text) {
+          CHAT.message += value.text
+        }
+        if (value.emoji) {
+          CHAT.message += `:${value.emoji.image.accessibility.accessibilityData.label}:`
+        }
+      })
+      // Timestamp
+      CHAT.timestampMilliSecond = Math.floor(CHAT_ITEM.timestampUsec / 1000)
+      // Badge
+      if (CHAT_ITEM.authorBadges) {
+        CHAT_ITEM.authorBadges.forEach(badgeData => {
+          const BADGE = badgeData.liveChatAuthorBadgeRenderer
+          switch (true) {
+            case BADGE.tooltip.includes("Owner") || BADGE.tooltip.includes("所有者"):
+              CHAT.isOwner = true
+              break
+            case BADGE.tooltip.includes("Moderator") || BADGE.tooltip.includes("モデレーター"):
+              CHAT.isModerator = true
+              break
+            case BADGE.tooltip.includes("Verified") || BADGE.tooltip.includes("確認済み"):
+              CHAT.isVerified = true
+              break
+            case BADGE.tooltip != "":
+              CHAT.isMembership = true
+              CHAT.memberShip = BADGE.tooltip
+              CHAT.memberShipIcons.push(BADGE.customThumbnail.thumbnails)
+          }
+        })
+      }
+
+      const CHAT_OFFSET_TIME = (CHAT.timestampMilliSecond + 5000) - (new Date().getTime())
+      setTimeout(function () {
+        console.log(CHAT)
+        addMessage(CHAT.timestampMilliSecond, CHAT.authorChannelIcon[0].url, CHAT.authorName, CHAT.message, channelID, "youtube")
+      }, CHAT_OFFSET_TIME)
+
+    })
+  }
+</script>
+
+</html>
+
+
+<!--
+  # --- Cloudflare workers.js ---
+
+export default {
+  async fetch(request, env, ctx) {
+    const SEARCH_PARAMS = new URLSearchParams(new URL(request.url).search)
+
+    // ID
+    if (SEARCH_PARAMS.has("id")) {
+      const ACCOUNT_URL = `https://www.youtube.com/${SEARCH_PARAMS.get("id")}/live`
+      const LIVE_INFOMATION = await fetch(ACCOUNT_URL).
+        then(res => {
+          return res.text()
+        }).
+        then(body => {
+          return body
+        })
+
+      const VIDEO_ID_START = LIVE_INFOMATION.indexOf(`rel="canonical" href="https://www\.youtube\.com/watch\?v=`)
+      const VIDEO_ID = LIVE_INFOMATION.substring(VIDEO_ID_START).match(/watch\?v=([A-Za-z0-9_-].+?)"/)[1]
+      const API_KEY_START = LIVE_INFOMATION.indexOf(`"innertubeApiKey":"`)
+      const API_KEY = LIVE_INFOMATION.substring(API_KEY_START).match(/"innertubeApiKey":"(.+?)"/)[1]
+      const CLIENT_VERSION_START = LIVE_INFOMATION.indexOf(`"clientVersion":"`)
+      const CLIENT_VERSION = LIVE_INFOMATION.substring(CLIENT_VERSION_START).match(/"clientVersion":"(.+?)"/)[1]
+      const CONTINUATION_START = LIVE_INFOMATION.indexOf(`"continuation":"`)
+      const CONTINUATION = LIVE_INFOMATION.substring(CONTINUATION_START).match(/"continuation":"(.+?)"/)[1]
+      console.log("Video id:", VIDEO_ID)
+      console.log("API Key:", API_KEY)
+      console.log("client:", CLIENT_VERSION)
+      console.log("continuation:", CONTINUATION)
+
+      return new Response(JSON.stringify({
+        video_id: VIDEO_ID,
+        api_key: API_KEY,
+        client_version: CLIENT_VERSION,
+        continuation: CONTINUATION
+      }), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET'
+        }
+      })
+    }
+
+    if (SEARCH_PARAMS.has("api_key") && SEARCH_PARAMS.has("client_version") && SEARCH_PARAMS.has("continuation")) {
+      const CHAT_RESPONSE = await fetch(`https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?key=${SEARCH_PARAMS.get("api_key")}`, {
+        method: "POST",
+        headers: {
+          'Content-Type': "application/json",
+        },
+        body: JSON.stringify({
+          "context": {
+            "client": {
+              "clientName": "WEB",
+              "clientVersion": SEARCH_PARAMS.get("client_version")
+            }
+          },
+          "continuation": SEARCH_PARAMS.get("continuation")
+        })
+      }).then(res => {
+        return res.text()
+      }).then(text => {
+        return text
+      })
+
+      return new Response(CHAT_RESPONSE, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET'
+        }
+      })
+    }
+    return new Response('Required /?id=<ChannelID> or ?video_id=<Video ID>&apikey=<API Key>&client_version=<Client Version>&continuation=');
+  },
+};
+-->
