@@ -258,6 +258,7 @@
   </div>
   `
   }
+
   // Twitch
   const TWITCH_IRC_URI = "wss://irc-ws.chat.twitch.tv:443"
   SEARCH_PARAMS.getAll("twitch").forEach((channel) => {
@@ -279,7 +280,8 @@
       CHAT_LIST.forEach(chat => {
         switch (chat.command) {
           case "PRIVMSG":
-            let message = chat.params[1]
+            let message = chat.params[1].replace("\u0001","").replace(/^ACTION/,"")
+            
             let emoteReplaceList = []
             for (emoteID in chat.tags.emotes) {
               const EMOTE_POSITIONS = chat.tags.emotes[emoteID]
@@ -300,7 +302,10 @@
             })
             for (let index = 0; index < emoteReplaceList.length; index++) {
               const EMOTE = emoteReplaceList[index]
+              console.log(`message: ${message}`)
+              console.log(`emote: ${EMOTE.start}-${EMOTE.end}`)
               message = message.substr(0, EMOTE.start) + `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">` + message.substr(EMOTE.end + 1)
+              console.log(`replaced: ${message}`)
             }
             addMessage(new Date().getTime(), "", chat.prefix.nick, message, chat.params[0], "twitch")
             break;
@@ -358,7 +363,7 @@
       }
 
       // IRC-Trailing To IRC-Params
-      const SPLIT = message.split(" :")
+      const SPLIT = message.split(" :",2)
       chat.params = SPLIT[0].split(" ")
       if (SPLIT.length == 2) {
         chat.params.push(SPLIT[1])
@@ -380,7 +385,7 @@
     const SPLIT_TAGS = tags.split(";")
 
     SPLIT_TAGS.forEach((tag) => {
-      const SPLIT_TAG = tag.split("=")
+      const SPLIT_TAG = tag.split("=",2)
       let tagValue = null
       if (SPLIT_TAG[1] != "") {
         tagValue = SPLIT_TAG[1]
@@ -397,7 +402,7 @@
           let badgeDict = {}
           const BADGES = tagValue.split(",")
           BADGES.forEach((pair) => {
-            const BADGE_PARTS = pair.split("/")
+            const BADGE_PARTS = pair.split("/",2)
             badgeDict[BADGE_PARTS[0]] = BADGE_PARTS[1]
           })
 
@@ -417,7 +422,7 @@
 
             const POSITIONS = EMOTE_PARTS[1].split(",")
             POSITIONS.forEach((position) => {
-              const POSITION_PARTS = position.split("-")
+              const POSITION_PARTS = position.split("-",2)
               textPositions.push({
                 start: parseInt(POSITION_PARTS[0]),
                 end: parseInt(POSITION_PARTS[1])
