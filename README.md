@@ -14,13 +14,21 @@ Example URL:
 | twitch | TwitchのChannelID(projectcbw) | 読み込むTwitch配信のチャンネル |
 | limit | number | 同時に表示するメッセージの最大数 |
 
-OBS Custom CSS:
+OBS Custom CSS:  
 ```css
 body {
     background-color: rgba(0,0,0,0);
     overflow: hidden;
 }
 ```
+
+## File Information
+* index.html:
+  * Auto push for `live.aatomu.work`
+  * Front service file (HTML & CSS & Javascript)
+* workers.ts:
+  * No auto push for `www.aatomu.work/worker`
+  * Backend service file (TypeScript)
 
 ## Credit
 License: `Apache License`
