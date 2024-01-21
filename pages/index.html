@@ -323,7 +323,7 @@
               const EMOTE = emoteReplaceList[index]
               console.log(`message: ${message}`)
               console.log(`emote: ${EMOTE.start}-${EMOTE.end}`)
-              message = message.substr(0, EMOTE.start) + `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">` + message.substr(EMOTE.end + 1)
+              message = message.substring(0, EMOTE.start) + `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">` + message.substring(EMOTE.end + 1)
               console.log(`replaced: ${message}`)
             }
             addMessage(new Date().getTime(), "", chat.prefix.nick, message, chat.params[0], "twitch")
