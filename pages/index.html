@@ -42,8 +42,6 @@
 
       padding: 4px;
       margin: 4px 0;
-
-      animation: invisible 1s linear 300s 1 normal both;
     }
 
     .content.youtube {
@@ -178,6 +176,9 @@
         CONTENT.classList.add("twitch")
         break
     }
+    if (CHAT_CLEANUP_TIME) {
+      CONTENT.style = `animation: invisible 1s linear ${CHAT_CLEANUP_TIME}s 1 normal both;`
+    }
     // Timestamp
     const TIME = new Date(timestamp)
     const TIMESTAMP = document.createElement("span")
@@ -244,6 +245,7 @@
 <script id="live-subscriber">
   const SEARCH_PARAMS = new URLSearchParams(window.location.search)
   const CHAT_COUNT_LIMIT = SEARCH_PARAMS.get("limit") ? parseInt(SEARCH_PARAMS.get("limit")) : 20
+  const CHAT_CLEANUP_TIME = SEARCH_PARAMS.get("cleanup")
 
   if (SEARCH_PARAMS.size == 0) {
     document.getElementById("contents").innerHTML += `

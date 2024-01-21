@@ -8,13 +8,14 @@ Example URL:
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>`
 * `https://live.aatomu.work/?twitch=<Twitch Channel ID>`
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>&twitch=<Twitch Channel ID>&limit=10`
-* `https://live.aatomu.work/?youtube=<Youtube Channel ID>&youtube=<Twitch Channel ID>&limit=10`
+* `https://live.aatomu.work/?youtube=<Youtube Channel ID>&youtube=<Twitch Channel ID>&limit=10?cleanup=120`
 
 | Key | Value | Description |
 | :- | :- | :- |
 | youtube | YoutubeのChannelID(@ProjectCBW) | 読み込むYoutube配信のチャンネル |
 | twitch | TwitchのChannelID(projectcbw) | 読み込むTwitch配信のチャンネル |
 | limit | number | 同時に表示するメッセージの最大数 |
+| clenup | number | n秒後に徐々に消え始める |
 
 OBS Custom CSS:  
 ```css
