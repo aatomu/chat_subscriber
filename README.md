@@ -24,10 +24,12 @@ body {
 
 ## File Information
 * index.html:
-  * Auto push for `live.aatomu.work`
+  * Auto push for server
+  * Run for `live.aatomu.work`
   * Front service file (HTML & CSS & Javascript)
 * workers.ts:
-  * No auto push for `www.aatomu.work/worker`
+  * No auto push
+  * Run for `live-chat.aatomu.workers.dev`
   * Backend service file (TypeScript)
 
 ## Credit

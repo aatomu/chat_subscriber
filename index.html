@@ -321,7 +321,7 @@
   // Youtube
   SEARCH_PARAMS.getAll("youtube").forEach(async (value, index) => {
     console.log("Youtube: ", value)
-    const TOKEN = await fetch(`https://youtube.aatomu.workers.dev?id=${value}`).then(res => {
+    const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev?id=${value}`).then(res => {
       return res.json()
     }).then(json => {
       return json
@@ -463,7 +463,7 @@
 <script id="youtube-script">
   function youtubeLoadChat(token, channelID) {
     setInterval(async function () {
-      const CHAT_RESPONSE = await fetch(`https://youtube.aatomu.workers.dev?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
+      const CHAT_RESPONSE = await fetch(`https://live-chat.aatomu.workers.dev?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
         return res.json()
       }).then(json => {
         return json
