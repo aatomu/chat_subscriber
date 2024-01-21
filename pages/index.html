@@ -382,7 +382,6 @@
     return chatList
   }
 
-
   function twitchParseTags(tags) {
     let parsedTags = {}
     const SPLIT_TAGS = tags.split(";")
@@ -478,25 +477,14 @@
         return json
       })
 
+
       youtubeParseChat(CHAT_RESPONSE, channelID)
       // Move Chat Position
-      if (!CHAT_RESPONSE.continuationContents) {
-        return
-      }
-      if (!CHAT_RESPONSE.continuationContents.liveChatContinuation) {
-        return
-      }
-      if (!CHAT_RESPONSE.continuationContents.liveChatContinuation.continuations) {
-        return
-      }
-      for (let i = 0; i < CHAT_RESPONSE.continuationContents.liveChatContinuation.continuations.length; i++) {
-        const RESULT_CONTINUATION_OBJECT = CHAT_RESPONSE.continuationContents.liveChatContinuation.continuations[i]
-        for (let key in RESULT_CONTINUATION_OBJECT) {
-          const RESULT_CONTINUATION = RESULT_CONTINUATION_OBJECT[key].continuation
-          if (RESULT_CONTINUATION != "") {
-            token.continuation = RESULT_CONTINUATION
-          }
-        }
+      const CONTINUATION_DATA = CHAT_RESPONSE.continuationContents.liveChatContinuation.continuations[0]
+      if (CONTINUATION_DATA.invalidationContinuationData) {
+        token.continuation = CONTINUATION_DATA.invalidationContinuationData.continuation
+      } else if (CONTINUATION_DATA.timedContinuationData) {
+        token.continuation = CONTINUATION_DATA.timedContinuationData.continuation
       }
     }, 5000)
   }
@@ -521,7 +509,7 @@
         return
       }
 
-      if (CHAT_ITEM.authorName.simpleText == "") {
+      if (!CHAT_ITEM.authorName) {
         return
       }
 
@@ -530,7 +518,7 @@
         authorChannelId: CHAT_ITEM.authorExternalChannelId,
         authorChannelIcon: CHAT_ITEM.authorPhoto.thumbnails,
         message: "",
-        superChatAmount: CHAT_ITEM.purchaseAmountText ? CHAT_ITEM.purchaseAmountText.simpleText : 0,
+        superChatAmount: CHAT_ITEM.purchaseAmountText ? CHAT_ITEM.purchaseAmountText.simpleText : "",
         superChatColor: CHAT_ITEM.bodyBackgroundColor,
         sticker: CHAT_ITEM.sticker ? CHAT_ITEM.sticker.accessibility.accessibilityData.label : "",
         isMembership: false,
@@ -541,7 +529,6 @@
         isVerified: false,
         timestampMilliSecond: 0,
       }
-
       // Message
       CHAT_ITEM.message.runs.forEach(value => {
         if (value.text) {
@@ -577,10 +564,15 @@
 
       const CHAT_OFFSET_TIME = (CHAT.timestampMilliSecond + 5000) - (new Date().getTime())
       setTimeout(function () {
-        console.log(CHAT)
+        // console.log(CHAT)
+        let message = CHAT.message
+        console.log(CHAT_ITEM.purchaseAmountText)
+        if (CHAT.superChatAmount != "") {
+          message = `<span class="coins" style="color:">${CHAT.superChatAmount}</span>`
+          console.log(CHAT)
+        }
         addMessage(CHAT.timestampMilliSecond, CHAT.authorChannelIcon[0].url, CHAT.authorName, CHAT.message, channelID, "youtube")
       }, CHAT_OFFSET_TIME)
-
     })
   }
 </script>
