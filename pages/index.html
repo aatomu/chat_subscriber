@@ -280,8 +280,27 @@
       CHAT_LIST.forEach(chat => {
         switch (chat.command) {
           case "PRIVMSG":
-            let message = chat.params[1].replace("\u0001","").replace(/^ACTION/,"")
-            
+            let message = chat.params[1]
+            message = message.replaceAll(/^\x01|\x01$/g, "") // 特殊文字削除
+            message = message.replace(/^ACTION /, "")// Action削除
+
+            let splitMessage = message.split("")
+            message = ""
+            for (let index = 0; index < splitMessage.length; index++) {// バイトサイズにpadding
+              const CHAR_CODE = splitMessage[index].charCodeAt(0)
+              let padding = 0
+              if (CHAR_CODE <= 0x7f) {
+                padding += 1;
+              } else if (CHAR_CODE <= 0x7ff) {
+                padding += 2;
+              } else if (CHAR_CODE <= 0xffff) {
+                padding += 3;
+              } else {
+                padding += 4;
+              }
+              message += splitMessage[index].padStart(padding)
+            }
+
             let emoteReplaceList = []
             for (emoteID in chat.tags.emotes) {
               const EMOTE_POSITIONS = chat.tags.emotes[emoteID]
@@ -363,7 +382,7 @@
       }
 
       // IRC-Trailing To IRC-Params
-      const SPLIT = message.split(" :",2)
+      const SPLIT = message.split(" :", 2)
       chat.params = SPLIT[0].split(" ")
       if (SPLIT.length == 2) {
         chat.params.push(SPLIT[1])
@@ -385,7 +404,7 @@
     const SPLIT_TAGS = tags.split(";")
 
     SPLIT_TAGS.forEach((tag) => {
-      const SPLIT_TAG = tag.split("=",2)
+      const SPLIT_TAG = tag.split("=", 2)
       let tagValue = null
       if (SPLIT_TAG[1] != "") {
         tagValue = SPLIT_TAG[1]
@@ -402,7 +421,7 @@
           let badgeDict = {}
           const BADGES = tagValue.split(",")
           BADGES.forEach((pair) => {
-            const BADGE_PARTS = pair.split("/",2)
+            const BADGE_PARTS = pair.split("/", 2)
             badgeDict[BADGE_PARTS[0]] = BADGE_PARTS[1]
           })
 
@@ -422,7 +441,7 @@
 
             const POSITIONS = EMOTE_PARTS[1].split(",")
             POSITIONS.forEach((position) => {
-              const POSITION_PARTS = position.split("-",2)
+              const POSITION_PARTS = position.split("-", 2)
               textPositions.push({
                 start: parseInt(POSITION_PARTS[0]),
                 end: parseInt(POSITION_PARTS[1])
