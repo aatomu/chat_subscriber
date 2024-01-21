@@ -128,6 +128,11 @@
       width: 100%;
     }
 
+    .money {
+      border-radius: 8px;
+      padding: 0 10px;
+    }
+
     .channel {
       float: right;
       opacity: 0.75;
@@ -358,13 +363,13 @@
           setTimeout(function () {
             console.log(chat)
             let message = ""
+            if (chat.superchat != null) {
+              message = `<span class="money" style="color:${chat.superchat.textColor} ; background-color: ${chat.superchat.backgroundColor};">${chat.superchat.amount}</span> `
+            }
             for (let index = 0; index < chat.message.length; index++) {
               message += chat.message[index].text
             }
 
-            if (chat.superchat != null) {
-              message = `<span class="coins" style="color: ${chat.superchat.color};">${chat.superchat.amount}</span>`
-            }
             addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, channelID, "youtube")
           }, CHAT_OFFSET_TIME)
         })
@@ -531,7 +536,7 @@
           if (RUN.emoji) {
             const IS_CUSTOM_EMOJI = RUN.emoji.isCustomEmoji
             messageList.push({
-              text: IS_CUSTOM_EMOJI ? RUN.emoji.shortcuts[0] : "",
+              text: IS_CUSTOM_EMOJI ? RUN.emoji.shortcuts[0] : RUN.emoji.emojiId,
               isCustomEmoji: IS_CUSTOM_EMOJI,
               image: RUN.emoji.image.thumbnails
             })
@@ -587,18 +592,46 @@
       }
       // Super Chat
       if (RENDERER.sticker) {
+        console.log(RENDERER)
+        let textColor = "#000000"
+        if (RENDERER.bodyTextColor) {
+          textColor = numToHexColor(RENDERER.bodyTextColor)
+        }
+        let backgroundColor = "#FFFFFF"
+        if (RENDERER.backgroundColor) {
+          backgroundColor = numToHexColor(RENDERER.backgroundColor)
+        }
+        if (RENDERER.bodyBackgroundColor) {
+          backgroundColor = numToHexColor(RENDERER.bodyBackgroundColor)
+        }
+
         CHAT.superchat = {
           amount: RENDERER.purchaseAmountText.simpleText,
-          color: numToHexColor(RENDERER.bodyBackgroundColor),
+          textColor: textColor,
+          backgroundColor: backgroundColor,
           sticker: {
             image: RENDERER.sticker.thumbnails,
             label: RENDERER.sticker.accessibility.accessibilityData.label
           }
         }
       } else if (RENDERER.purchaseAmountText) {
+        console.log(RENDERER)
+        let textColor = "#000000"
+        if (RENDERER.bodyTextColor) {
+          textColor = numToHexColor(RENDERER.bodyTextColor)
+        }
+        let backgroundColor = "#FFFFFF"
+        if (RENDERER.backgroundColor) {
+          backgroundColor = numToHexColor(RENDERER.backgroundColor)
+        }
+        if (RENDERER.bodyBackgroundColor) {
+          backgroundColor = numToHexColor(RENDERER.bodyBackgroundColor)
+        }
+
         CHAT.superchat = {
           amount: RENDERER.purchaseAmountText.simpleText,
-          color: numToHexColor(RENDERER.bodyBackgroundColor),
+          textColor: textColor,
+          backgroundColor: backgroundColor,
         }
       }
 
