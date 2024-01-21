@@ -312,9 +312,10 @@
 
             for (let index = 0; index < emoteReplaceList.length; index++) {
               const EMOTE = emoteReplaceList[index]
-              console.log(`message: \"${message}\"\nemote: ${EMOTE.start}-${EMOTE.end}`)
               sliceMessage.splice(EMOTE.start, EMOTE.end - EMOTE.start + 1, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">`)
             }
+
+            console.log(`WebSocket Message(${chat.params[0]}):\n`, chat)
             addMessage(new Date().getTime(), "", chat.prefix.nick, sliceMessage.join(""), chat.params[0], "twitch")
             break;
           case "PING":
@@ -361,7 +362,6 @@
         CHAT_LIST.forEach((chat) => {
           const CHAT_OFFSET_TIME = (chat.timestampMilliSecond + 5000) - (new Date().getTime())
           setTimeout(function () {
-            console.log(chat)
             let message = ""
             if (chat.superchat != null) {
               message = `<span class="money" style="color:${chat.superchat.textColor} ; background-color: ${chat.superchat.backgroundColor};">${chat.superchat.amount}</span> `
@@ -370,6 +370,7 @@
               message += chat.message[index].text
             }
 
+            console.log(`Youtube Message(${channelID}):\n`, chat)
             addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, channelID, "youtube")
           }, CHAT_OFFSET_TIME)
         })
@@ -421,7 +422,6 @@
       chat.command = chat.params[0].toUpperCase()
       chat.params.shift()
 
-      console.log(`WebSocket Message(${chat.params[0]}):\n`, chat)
       chatList.push(chat)
     })
     return chatList
