@@ -589,16 +589,16 @@
       if (RENDERER.sticker) {
         CHAT.superchat = {
           amount: RENDERER.purchaseAmountText.simpleText,
-          color: numToHexColor(RENDERER.backgroundColor),
+          color: numToHexColor(RENDERER.bodyBackgroundColor),
           sticker: {
             image: RENDERER.sticker.thumbnails,
-            label: RENDERER.accessibility.accessibilityData.label
+            label: RENDERER.sticker.accessibility.accessibilityData.label
           }
         }
       } else if (RENDERER.purchaseAmountText) {
         CHAT.superchat = {
           amount: RENDERER.purchaseAmountText.simpleText,
-          color: numToHexColor(RENDERER.backgroundColor),
+          color: numToHexColor(RENDERER.bodyBackgroundColor),
         }
       }
 
