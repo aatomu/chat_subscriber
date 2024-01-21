@@ -2,6 +2,8 @@
 複数のLive配信のチャットを接続する
 
 ## How To Use
+Open URL in Browser or Open Browser in OBS
+
 Example URL:  
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>`
 * `https://live.aatomu.work/?twitch=<Twitch Channel ID>`
