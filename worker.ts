@@ -1,3 +1,4 @@
+// @ts-check
 // --- Run in Cloudflare workers.js ---
 
 export default {
@@ -7,45 +8,7 @@ export default {
     // ID
     if (SEARCH_PARAMS.has("id")) {
       const ACCOUNT_URL = `https://www.youtube.com/${SEARCH_PARAMS.get("id")}/live`
-      const LIVE_INFOMATION = await fetch(ACCOUNT_URL).
-        then(res => {
-          return res.text()
-        }).
-        then(body => {
-          return body
-        })
-
-      const VIDEO_ID_START = LIVE_INFOMATION.indexOf(`rel="canonical" href="https://www\.youtube\.com/watch\?v=`)
-      const VIDEO_ID_MATCH = LIVE_INFOMATION.substring(VIDEO_ID_START).match(/watch\?v=([A-Za-z0-9_-].+?)"/)
-      let video_id = ""
-      if (VIDEO_ID_MATCH) {
-        video_id = VIDEO_ID_MATCH[1]
-      }
-      const API_KEY_START = LIVE_INFOMATION.indexOf(`"innertubeApiKey":"`)
-      const API_KEY_MATCH = LIVE_INFOMATION.substring(API_KEY_START).match(/"innertubeApiKey":"(.+?)"/)
-      let api_key = ""
-      if (API_KEY_MATCH) {
-        api_key = API_KEY_MATCH[1]
-      }
-      const CLIENT_VERSION_START = LIVE_INFOMATION.indexOf(`"clientVersion":"`)
-      const CLIENT_VERSION_MATCH = LIVE_INFOMATION.substring(CLIENT_VERSION_START).match(/"clientVersion":"(.+?)"/)
-      let client_version = ""
-      if (CLIENT_VERSION_MATCH) {
-        client_version = CLIENT_VERSION_MATCH[1]
-      }
-      const CONTINUATION_START = LIVE_INFOMATION.indexOf(`"continuation":"`)
-      const CONTINUATION_MATCH = LIVE_INFOMATION.substring(CONTINUATION_START).match(/"continuation":"(.+?)"/)
-      let continuation = ""
-      if (CONTINUATION_MATCH) {
-        continuation = CONTINUATION_MATCH[1]
-      }
-
-      return new Response(JSON.stringify({
-        video_id: video_id,
-        api_key: api_key,
-        client_version: client_version,
-        continuation: continuation
-      }), {
+      return new Response(JSON.stringify(await getYoutubeLiveChatObject(ACCOUNT_URL)), {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*',
@@ -86,3 +49,45 @@ export default {
     return new Response('Required /?id=<ChannelID> or ?video_id=<Video ID>&apikey=<API Key>&client_version=<Client Version>&continuation=');
   },
 };
+
+async function getYoutubeLiveChatObject(url) {
+  const LIVE_INFOMATION = await fetch(url).
+    then(res => {
+      return res.text()
+    }).
+    then(body => {
+      return body
+    })
+
+  const VIDEO_ID_START = LIVE_INFOMATION.indexOf(`rel="canonical" href="https://www\.youtube\.com/watch\?v=`)
+  const VIDEO_ID_MATCH = LIVE_INFOMATION.substring(VIDEO_ID_START).match(/watch\?v=([A-Za-z0-9_-].+?)"/)
+  let video_id = ""
+  if (VIDEO_ID_MATCH) {
+    video_id = VIDEO_ID_MATCH[1]
+  }
+  const API_KEY_START = LIVE_INFOMATION.indexOf(`"innertubeApiKey":"`)
+  const API_KEY_MATCH = LIVE_INFOMATION.substring(API_KEY_START).match(/"innertubeApiKey":"(.+?)"/)
+  let api_key = ""
+  if (API_KEY_MATCH) {
+    api_key = API_KEY_MATCH[1]
+  }
+  const CLIENT_VERSION_START = LIVE_INFOMATION.indexOf(`"clientVersion":"`)
+  const CLIENT_VERSION_MATCH = LIVE_INFOMATION.substring(CLIENT_VERSION_START).match(/"clientVersion":"(.+?)"/)
+  let client_version = ""
+  if (CLIENT_VERSION_MATCH) {
+    client_version = CLIENT_VERSION_MATCH[1]
+  }
+  const CONTINUATION_START = LIVE_INFOMATION.indexOf(`"continuation":"`)
+  const CONTINUATION_MATCH = LIVE_INFOMATION.substring(CONTINUATION_START).match(/"continuation":"(.+?)"/)
+  let continuation = ""
+  if (CONTINUATION_MATCH) {
+    continuation = CONTINUATION_MATCH[1]
+  }
+
+  return {
+    video_id: video_id,
+    api_key: api_key,
+    client_version: client_version,
+    continuation: continuation
+  }
+}
