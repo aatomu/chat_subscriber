@@ -82,6 +82,9 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
           if (chat.prefix.nick) {
             authorName = chat.prefix.nick
           }
+          if (chat.tags.bits) {
+            message = `<span class="money" style="background-color: var(--twitch);">${chat.tags.bits}</span> `
+          }
           addMessage(new Date().getTime(), "", authorName, message, chat.params[0], "twitch")
           break;
         case "PING":
@@ -123,7 +126,7 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
         const CHAT_OFFSET_TIME = (chat.timestampMilliSecond + 5000) - (new Date().getTime())
         setTimeout(function () {
           let message = ""
-          if (chat.superchat != null) {
+          if (chat.superchat) {
             message = `<span class="money" style="color:${chat.superchat.textColor} ; background-color: ${chat.superchat.backgroundColor};">${chat.superchat.amount}</span> `
           }
           if (chat.message) {
