@@ -1,4 +1,59 @@
-function youtubeParseChat(actions, channelID) {
+// @ts-check
+
+/**
+ * @typedef YoutubeAuthor
+ * @type {object}
+ * @property {string} name Author screen name
+ * @property {string} id Author id
+ * @property {object[]} image Author image list
+ * @property {YoutubeMembership?} membership Author membership information
+ */
+/**
+ * @typedef YoutubeMembership
+ * @type {object}
+ * @property {string} label Membership label
+ * @property {object[]} image Membership icon image list
+ */
+/**
+ * @typedef YoutubeMessageData
+ * @type {object}
+ * @property {string} text Text or emojiID or emojiText
+ * @property {boolean?} isCustomEmoji
+ * @property {object[]?} image Emoji image list
+ */
+/**
+ * @typedef YoutubeSuperchat
+ * @type {object}
+ * @property {string} amount Superchat amount
+ * @property {string} textColor Superchat text color
+ * @property {string} backgroundColor Superchat background color
+ * @property {YoutubeSticker?} sticker Superchat sticker information
+ */
+/**
+ * @typedef YoutubeSticker
+ * @type {object}
+ * @property {object[]} image Sticker image list
+ * @property {string} label Sticker label/text
+ */
+
+/**
+ * @typedef YoutubeMessage
+ * @type {object}
+ * @property {YoutubeAuthor} author Author information
+ * @property {YoutubeMessageData[]?} message Message informations
+ * @property {YoutubeSuperchat?} superchat Superchat information
+ * @property {boolean} isMembership Author joined membership?
+ * @property {boolean} isOwner Author is owner(is liver)?
+ * @property {boolean} isModerator Author is moderator(have wrench)?
+ * @property {boolean} isVerified Author is verified?
+ * @property {number} timestampMilliSecond Message send timestamp milli seconds(UTC)
+*/
+
+/**
+ * @param {object} actions Youtube live chat actions/messages
+ * @returns {YoutubeMessage[]} Youtube parsed messages
+ */
+function youtubeParseChat(actions) {
   let chatList = []
   actions.forEach(action => {
     const RENDERER = actionToRenderer(action)
@@ -6,6 +61,9 @@ function youtubeParseChat(actions, channelID) {
       return
     }
 
+    /**
+     * @type {YoutubeMessageData[]}
+     */
     let messageList = []
     if ("message" in RENDERER) {
       const MESSAGE_RUNS = RENDERER.message.runs
@@ -13,7 +71,9 @@ function youtubeParseChat(actions, channelID) {
         const RUN = MESSAGE_RUNS[index]
         if (RUN.text) {
           messageList.push({
-            text: RUN.text
+            text: RUN.text,
+            isCustomEmoji: null,
+            image: null,
           })
           continue
         }
@@ -22,7 +82,7 @@ function youtubeParseChat(actions, channelID) {
           messageList.push({
             text: IS_CUSTOM_EMOJI ? RUN.emoji.shortcuts[0] : RUN.emoji.emojiId,
             isCustomEmoji: IS_CUSTOM_EMOJI,
-            image: RUN.emoji.image.thumbnails
+            image: RUN.emoji.image.thumbnails,
           })
         }
       }
@@ -33,6 +93,9 @@ function youtubeParseChat(actions, channelID) {
       authorName = RENDERER.authorName.simpleText
     }
 
+    /**
+     * @type {YoutubeMessage}
+     */
     const CHAT = {
       author: {
         name: authorName,
@@ -67,7 +130,7 @@ function youtubeParseChat(actions, channelID) {
           case BADGE.tooltip.includes("Member"):
             CHAT.author.membership = {
               label: BADGE.tooltip,
-              icon: BADGE.customThumbnail.thumbnails
+              image: BADGE.customThumbnail.thumbnails,
             }
             CHAT.isMembership = true
             break
@@ -95,7 +158,7 @@ function youtubeParseChat(actions, channelID) {
         backgroundColor: backgroundColor,
         sticker: {
           image: RENDERER.sticker.thumbnails,
-          label: RENDERER.sticker.accessibility.accessibilityData.label
+          label: RENDERER.sticker.accessibility.accessibilityData.label,
         }
       }
     } else if (RENDERER.purchaseAmountText) {
@@ -116,6 +179,7 @@ function youtubeParseChat(actions, channelID) {
         amount: RENDERER.purchaseAmountText.simpleText,
         textColor: textColor,
         backgroundColor: backgroundColor,
+        sticker: null,
       }
     }
 

@@ -1,3 +1,31 @@
+// @ts-check
+
+/**
+ * @typedef TwitchTag
+ * @type {Object.<string,any>}
+*/
+/**
+ * @typedef IRCPrefix
+ * @type {object}
+ * @property {string?} nick
+ * @property {string?} user
+ * @property {string?} host
+ * @property {string} raw
+*/
+/**
+ * @typedef TwitchMessage
+ * @type {object}
+ * @property {TwitchTag} tags
+ * @property {IRCPrefix} prefix
+ * @property {string} command
+ * @property {string[]} params
+*/
+
+/**
+ * @see https://dev.twitch.tv/docs/irc/example-parser/
+ * @param {string} messages Twitch IRC messages(split string: \r\n)
+ * @returns {TwitchMessage[]} Twitch parsed messages
+ */
 function twitchParseMessage(messages) {
   let chatList = []
   messages.split("\r\n").forEach((message) => {
@@ -13,6 +41,7 @@ function twitchParseMessage(messages) {
       message = message.substring(NEXT_SPACE + 1)
       chat["tags"] = twitchParseTags(TAGS)
     }
+
     // Prefix
     if (message.startsWith(":")) {
       const NEXT_SPACE = message.indexOf(" ")
@@ -36,6 +65,12 @@ function twitchParseMessage(messages) {
   })
   return chatList
 }
+
+/**
+ * @see https://dev.twitch.tv/docs/irc/tags/#privmsg-tags
+ * @param {string} tags Twitch tags string
+ * @returns {Object.<string,object>} Twitch tags object
+ */
 
 function twitchParseTags(tags) {
   let parsedTags = {}
@@ -90,6 +125,10 @@ function twitchParseTags(tags) {
         parsedTags[SPLIT_TAG[0]] = emoteDict
         break
       case "emote-sets":
+        if (tagValue == null) {
+          parsedTags[SPLIT_TAG[0]] = null
+          break
+        }
         const EMOTE_SET_IDS = tagValue.split(",")
         parsedTags[SPLIT_TAG[0]] = EMOTE_SET_IDS
         break
@@ -101,6 +140,11 @@ function twitchParseTags(tags) {
   return parsedTags
 }
 
+/**
+ * @see https://datatracker.ietf.org/doc/html/rfc1459#section-2.3.1
+ * @param {string} prefix IRC prefix string
+ * @returns {IRCPrefix} IRC prefix object
+ */
 function twitchParsePrefix(prefix) {
   let parsedPrefix = {}
   const SPLIT_PREFIX = prefix.split(/!|@/)
@@ -112,12 +156,14 @@ function twitchParsePrefix(prefix) {
     case 2:
       parsedPrefix["nick"] = SPLIT_PREFIX[0]
       parsedPrefix["host"] = SPLIT_PREFIX[1]
+      break
     case 3:
       parsedPrefix["nick"] = SPLIT_PREFIX[0]
       parsedPrefix["user"] = SPLIT_PREFIX[1]
       parsedPrefix["host"] = SPLIT_PREFIX[2]
-    default:
-      parsedPrefix["raw"] = prefix
+      break
   }
+  parsedPrefix["raw"] = prefix
+
   return parsedPrefix
 }

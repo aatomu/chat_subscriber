@@ -1,32 +1,29 @@
+// @ts-check
+
+// constant values
 const SEARCH_PARAMS = new URLSearchParams(window.location.search)
-const CHAT_COUNT_LIMIT = SEARCH_PARAMS.get("limit") ? parseInt(SEARCH_PARAMS.get("limit")) : 20
+let charCountLimitString = SEARCH_PARAMS.get("limit")
+if (charCountLimitString == null) {
+  charCountLimitString = "20"
+}
+const CHAT_COUNT_LIMIT = parseInt(charCountLimitString)
 const CHAT_CLEANUP_TIME = SEARCH_PARAMS.get("cleanup")
 
+// develop message
 if (SEARCH_PARAMS.size == 0) {
-  document.getElementById("contents").innerHTML += `
-  <div class="content youtube">
-    <span class="time">99:99:99</span>
-    <div class="icon">
-      <img src="https://pbs.twimg.com/profile_images/1480130282099740684/uNSmGF1F_400x400.jpg">
-    </div>
-    <span class="name">aatomu</span>
-    <div class="message-root">
-      <span class="message">How To Use:
-        /?youtube=@ChannelID&youtube=ChannelID&twitch=ChannelID&twitch=ChannelID&limit=ChatLimit
-        More Information: <a href="https://github.com/aatomu/chat_subscriber">https://github.com/aatomu/chat_subscriber</a></span>
-      <span class="channel">#develop-message</span>
-    </div>
-  </div>
-</div>
-`
+  addMessage(0, "https://pbs.twimg.com/profile_images/1480130282099740684/uNSmGF1F_400x400.jpg", "aatomu", `How To Use:
+  /?youtube=@ChannelID&twitch=ChannelID&limit=ChatLimit&clenup=CleanupDelay
+  More Information: <a href="https://github.com/aatomu/chat_subscriber">Github</a>`, "#develop-message", "youtube")
 }
 
 // Twitch
 const TWITCH_IRC_URI = "wss://irc-ws.chat.twitch.tv:443"
 SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
+  // Information
   console.log("Twtich: ", channelID)
   const WEBSOCKET = new WebSocket(TWITCH_IRC_URI)
 
+  // Open twitch IRC(Websocket) connection
   WEBSOCKET.addEventListener("open", function (event) {
     console.log(`WebSocket Open(#${channelID}):\n`, event)
     WEBSOCKET.send("CAP REQ :twitch.tv/tags twitch.tv/commands")
@@ -37,55 +34,61 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
     WEBSOCKET.send(`USER ${USER_NAME} 8 * :${USER_NAME}`)
     WEBSOCKET.send(`JOIN #${channelID}`)
   })
+
+  // Recive message
   WEBSOCKET.addEventListener("message", function (event) {
     const CHAT_LIST = twitchParseMessage(event.data)
     CHAT_LIST.forEach(chat => {
       switch (chat.command) {
         case "PRIVMSG":
-          // Parse Emotes
-          let emoteReplaceList = []
-          for (emoteID in chat.tags.emotes) {
-            const EMOTE_POSITIONS = chat.tags.emotes[emoteID]
-            EMOTE_POSITIONS.forEach(emotePosition => {
-              emoteReplaceList.push({
-                id: emoteID,
-                start: emotePosition.start,
-                end: emotePosition.end,
+          let message = chat.command[1]
+          if (chat.tags.emotes) {
+            // Parse emotes
+            let emoteReplaceList = []
+            const EMOTE_ID_LIST = Object.keys(chat.tags.emotes)
+            for (let index = 0; index < EMOTE_ID_LIST.length; index++) {
+              const EMOTE_ID = EMOTE_ID_LIST[index]
+              const EMOTE_POSITIONS = chat.tags.emotes[EMOTE_ID]
+              EMOTE_POSITIONS.forEach(emotePosition => {
+                emoteReplaceList.push({
+                  id: EMOTE_ID,
+                  start: emotePosition.start,
+                  end: emotePosition.end,
+                })
               })
-            })
-          }
-          emoteReplaceList.sort((a, b) => {
-            if (a.start > b.start) {
-              return -1
-            } else {
-              return 1
             }
-          })
-          // Replace Emote string => Emote image
-          let message = chat.params[1]
-          message = message.replaceAll(/^\x01|\x01$/g, "") // 特殊文字削除
-          message = message.replace(/^ACTION /, "")// Action削除
-          let sliceMessage = [...message]
+            // Sort by end
+            emoteReplaceList.sort((a, b) => {
+              if (a.start > b.start) {
+                return -1
+              } else {
+                return 1
+              }
+            })
+            // Replace emote string => Emote image
+            message = message.replace(/^\x01|\x01$/g, "") // Delete special character set
+            message = message.replace(/^ACTION /, "")// Delete action
+            let sliceMessage = [...message]
 
-          for (let index = 0; index < emoteReplaceList.length; index++) {
-            const EMOTE = emoteReplaceList[index]
-            sliceMessage.splice(EMOTE.start, EMOTE.end - EMOTE.start + 1, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">`)
+            for (let index = 0; index < emoteReplaceList.length; index++) {
+              const EMOTE = emoteReplaceList[index]
+              sliceMessage.splice(EMOTE.start, EMOTE.end - EMOTE.start + 1, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">`)
+            }
+            message = sliceMessage.join("")
           }
 
           console.log(`WebSocket Message(${chat.params[0]}):\n`, chat)
-          addMessage(new Date().getTime(), "", chat.prefix.nick, sliceMessage.join(""), chat.params[0], "twitch")
+          let authorName = "Unknown"
+          if (chat.prefix.nick) {
+            authorName = chat.prefix.nick
+          }
+          addMessage(new Date().getTime(), "", authorName, message, chat.params[0], "twitch")
           break;
         case "PING":
           WEBSOCKET.send("PONG")
           break
       }
     })
-  })
-  WEBSOCKET.addEventListener("close", function (event) {
-    console.log(`WebSocket Close(#${channelID}):\n`, event)
-  })
-  WEBSOCKET.addEventListener("error", function (event) {
-    console.log(`WebSocket Error(#${channelID}):\n`, event)
   })
 })
 
@@ -115,7 +118,7 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
 
     // Parse Chat Data
     if (CHAT_CONTENTS.actions) {
-      const CHAT_LIST = youtubeParseChat(CHAT_CONTENTS.actions, channelID)
+      const CHAT_LIST = youtubeParseChat(CHAT_CONTENTS.actions)
       CHAT_LIST.forEach((chat) => {
         const CHAT_OFFSET_TIME = (chat.timestampMilliSecond + 5000) - (new Date().getTime())
         setTimeout(function () {
@@ -123,10 +126,11 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
           if (chat.superchat != null) {
             message = `<span class="money" style="color:${chat.superchat.textColor} ; background-color: ${chat.superchat.backgroundColor};">${chat.superchat.amount}</span> `
           }
-          for (let index = 0; index < chat.message.length; index++) {
-            message += chat.message[index].text
+          if (chat.message) {
+            for (let index = 0; index < chat.message.length; index++) {
+              message += chat.message[index].text
+            }
           }
-
           console.log(`Youtube Message(${channelID}):\n`, chat)
           addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, channelID, "youtube")
         }, CHAT_OFFSET_TIME)
