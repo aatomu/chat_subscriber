@@ -25,15 +25,57 @@ body {
 }
 ```
 
-## File Information
-* pages/*:
-  * Auto push for server
-  * Run for `live.aatomu.work`
-  * Front service file (HTML & CSS & Javascript)
-* workers/*:
-  * No auto push
-  * Run for `live-chat.aatomu.workers.dev`
-  * Backend service file (TypeScript)
+## Contents HTML Tree
+* Youtube Normal Chat
+```html
+<div class="contents">
+  <div class="content youtube">
+    <span class="time">00:00:00</span>
+    <div class="icon">
+      <img src="...">
+    </div>
+    <span class="name">...</span>
+    <div class="message-root">
+      <span class="message">...</span>
+      <span class="channel">...</span>
+    </div>
+  </div>
+</div>
+```
+
+* Youtube Super Chat
+```html
+<div class="contents">
+  <div class="content youtube">
+    <span class="time">00:00:00</span>
+    <div class="icon">
+      <img src="...">
+    </div>
+    <span class="name">...</span>
+    <div class="message-root">
+      <span class="message"><span class="money" style="color: #000000;background-color: #000000;">$0.00</span>...</span>
+      <span class="channel">...</span>
+    </div>
+  </div>
+</div>
+```
+
+* Twitch Normal Chat
+```html
+<div class="contents">
+  <div class="content twitch">
+    <span class="time">00:00:00</span>
+    <div class="icon">
+      <img src="...">
+    </div>
+    <span class="name">...</span>
+    <div class="message-root">
+      <span class="message">...</span>
+      <span class="channel">...</span>
+    </div>
+  </div>
+</div>
+```
 
 ## Credit
 License: `Apache License`
