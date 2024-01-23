@@ -59,35 +59,49 @@ async function getYoutubeLiveChatObject(url) {
       return body
     })
 
+  let video_id = ""
   const VIDEO_ID_START = LIVE_INFOMATION.indexOf(`rel="canonical" href="https://www\.youtube\.com/watch\?v=`)
   const VIDEO_ID_MATCH = LIVE_INFOMATION.substring(VIDEO_ID_START).match(/watch\?v=([A-Za-z0-9_-].+?)"/)
-  let video_id = ""
   if (VIDEO_ID_MATCH) {
     video_id = VIDEO_ID_MATCH[1]
   }
+
+  let api_key = ""
   const API_KEY_START = LIVE_INFOMATION.indexOf(`"innertubeApiKey":"`)
   const API_KEY_MATCH = LIVE_INFOMATION.substring(API_KEY_START).match(/"innertubeApiKey":"(.+?)"/)
-  let api_key = ""
   if (API_KEY_MATCH) {
     api_key = API_KEY_MATCH[1]
   }
+
+  let client_version = ""
   const CLIENT_VERSION_START = LIVE_INFOMATION.indexOf(`"clientVersion":"`)
   const CLIENT_VERSION_MATCH = LIVE_INFOMATION.substring(CLIENT_VERSION_START).match(/"clientVersion":"(.+?)"/)
-  let client_version = ""
   if (CLIENT_VERSION_MATCH) {
     client_version = CLIENT_VERSION_MATCH[1]
   }
+
+  let continuation = ""
   const CONTINUATION_START = LIVE_INFOMATION.indexOf(`"continuation":"`)
   const CONTINUATION_MATCH = LIVE_INFOMATION.substring(CONTINUATION_START).match(/"continuation":"(.+?)"/)
-  let continuation = ""
   if (CONTINUATION_MATCH) {
     continuation = CONTINUATION_MATCH[1]
+  }
+
+  let channelName = ""
+  if (continuation != "") {
+    const PLAYER_OBJECT_START = LIVE_INFOMATION.indexOf(`var ytInitialPlayerResponse =`)
+    const PLAYER_OBJECT_MATCH = LIVE_INFOMATION.substring(PLAYER_OBJECT_START).match(/({.+?});/)
+    if (PLAYER_OBJECT_MATCH) {
+      const PLAYER_OBJECT = JSON.parse(PLAYER_OBJECT_MATCH[1])
+      channelName = PLAYER_OBJECT.videoDetails.author
+    }
   }
 
   return {
     video_id: video_id,
     api_key: api_key,
     client_version: client_version,
-    continuation: continuation
+    continuation: continuation,
+    channel_name: channelName,
   }
 }

@@ -105,6 +105,9 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
     return json
   })
   console.log(TOKEN)
+  if (TOKEN.continuation == "") {
+    addMessage(0,"","ERROR","This channelID live not found",channelID,"youtube")
+  }
 
   let token = TOKEN
   setInterval(async function () {
@@ -139,8 +142,8 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
               message += chat.message[index].text
             }
           }
-          console.log(`Youtube Message(${channelID}):\n`, chat)
-          addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, channelID, "youtube")
+          console.log(`Youtube Message(${token.user_name}#${channelID}):\n`, chat)
+          addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, token.channel_name, "youtube")
         }, CHAT_OFFSET_TIME)
       })
     }
