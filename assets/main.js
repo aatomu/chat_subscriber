@@ -168,13 +168,19 @@ function youtubeSubscribe(token,) {
             for (let index = 0; index < chat.message.length; index++) {
               const MESSAGE = chat.message[index]
               if (MESSAGE.image) {
-                message += ` <img src="${MESSAGE.image.pop().url}"> `
+                const IMAGE = MESSAGE.image.pop()
+                if (IMAGE) {
+                message += ` <img src="${IMAGE.url}"> `
+                } else {
+                  message += ` ${MESSAGE.text} `
+                }
                 continue
               }
-              message += chat.message[index].text
+              message += MESSAGE.text
             }
           }
-          console.log(`Youtube Message(${token.user_name}):\n`, chat)
+
+          console.log(`Youtube Message(${token.channel_name}):\n`, chat)
           addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, token.channel_name, "youtube")
         }, CHAT_OFFSET_TIME)
       })

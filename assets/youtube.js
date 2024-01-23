@@ -12,14 +12,14 @@
  * @typedef YoutubeMembership
  * @type {object}
  * @property {string} label Membership label
- * @property {object[]} image Membership icon image list
+ * @property {YoutubeImage[]} image Membership icon image list
  */
 /**
  * @typedef YoutubeMessageData
  * @type {object}
  * @property {string} text Text or emojiID or emojiText
  * @property {boolean?} isCustomEmoji
- * @property {object[]?} image Emoji image list
+ * @property {YoutubeImage[]?} image Emoji image list
  */
 /**
  * @typedef YoutubeSuperchat
@@ -32,10 +32,16 @@
 /**
  * @typedef YoutubeSticker
  * @type {object}
- * @property {object[]} image Sticker image list
+ * @property {YoutubeImage[]} image Sticker image list
  * @property {string} label Sticker label/text
  */
-
+/**
+ * @typedef YoutubeImage
+ * @type {object}
+ * @property {string} url Image url
+ * @property {number} height Image height
+ * @property {number} width Image width
+ */
 /**
  * @typedef YoutubeMessage
  * @type {object}
