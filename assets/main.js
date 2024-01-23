@@ -131,6 +131,11 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
           }
           if (chat.message) {
             for (let index = 0; index < chat.message.length; index++) {
+              const MESSAGE = chat.message[index]
+              if (MESSAGE.image) {
+                message += `<img src="${MESSAGE.image.pop().url}">`
+                continue
+              }
               message += chat.message[index].text
             }
           }
