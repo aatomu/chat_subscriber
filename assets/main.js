@@ -75,7 +75,7 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
     CHAT_LIST.forEach(chat => {
       switch (chat.command) {
         case "PRIVMSG":
-          let message = chat.command[1]
+          let message = chat.params[1]
           if (chat.tags.emotes) {
             // Parse emotes
             let emoteReplaceList = []
@@ -117,10 +117,11 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
             authorName = chat.prefix.nick
           }
           if (chat.tags.bits) {
-            message = `<span class="money" style="background-color: var(--twitch);">${chat.tags.bits}</span> `
+            message += `<span class="money" style="background-color: var(--twitch);">${chat.tags.bits}Bits</span>`
           }
+
           addMessage(new Date().getTime(), "", authorName, message, chat.params[0], "twitch")
-          break;
+          break
         case "PING":
           WEBSOCKET.send("PONG")
           break
