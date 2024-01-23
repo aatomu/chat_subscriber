@@ -5,9 +5,20 @@ export default {
   async fetch(request, env, ctx) {
     const SEARCH_PARAMS = new URLSearchParams(new URL(request.url).search)
 
-    // ID
-    if (SEARCH_PARAMS.has("id")) {
-      const ACCOUNT_URL = `https://www.youtube.com/${SEARCH_PARAMS.get("id")}/live`
+    // Youtube Channel URL
+    if (SEARCH_PARAMS.has("youtube")) {
+      const ACCOUNT_URL = `https://www.youtube.com/${SEARCH_PARAMS.get("youtube")}/live`
+      return new Response(JSON.stringify(await getYoutubeLiveChatObject(ACCOUNT_URL)), {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET'
+        }
+      })
+    }
+    // Youtube Limited Member Live
+    if (SEARCH_PARAMS.has("watch")) {
+      const ACCOUNT_URL = `https://www.youtube.com/watch?v=${SEARCH_PARAMS.get("watch")}`
       return new Response(JSON.stringify(await getYoutubeLiveChatObject(ACCOUNT_URL)), {
         headers: {
           'Content-Type': 'application/json',

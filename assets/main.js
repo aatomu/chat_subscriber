@@ -16,7 +16,41 @@ if (SEARCH_PARAMS.size == 0) {
   More Information: <a href="https://github.com/aatomu/chat_subscriber">Github</a>`, "#develop-message", "youtube")
 }
 
-// Twitch
+// Youtube Channel
+SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
+  console.log("Youtube: ", channelID)
+  const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev?youtube=${channelID}`).then(res => {
+    return res.json()
+  }).then(json => {
+    return json
+  })
+  console.log(TOKEN)
+  if (TOKEN.continuation == "") {
+    addMessage(0,"","ERROR","This channelID live not found",channelID,"youtube")
+    return
+  }
+
+  youtubeSubscribe(TOKEN)
+})
+
+// Youtube Limited Live
+SEARCH_PARAMS.getAll("watch").forEach(async (channelID,) => {
+  console.log("Youtube Limited: ", channelID)
+  const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev?watch=${channelID}`).then(res => {
+    return res.json()
+  }).then(json => {
+    return json
+  })
+  console.log(TOKEN)
+  if (TOKEN.continuation == "") {
+    addMessage(0,"","ERROR","This channelID live not found",channelID,"youtube")
+    return
+  }
+
+  youtubeSubscribe(TOKEN)
+})
+
+// Twitch Channel
 const TWITCH_IRC_URI = "wss://irc-ws.chat.twitch.tv:443"
 SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
   // Information
@@ -96,20 +130,9 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
 })
 
 
-// Youtube
-SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
-  console.log("Youtube: ", channelID)
-  const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev?id=${channelID}`).then(res => {
-    return res.json()
-  }).then(json => {
-    return json
-  })
-  console.log(TOKEN)
-  if (TOKEN.continuation == "") {
-    addMessage(0,"","ERROR","This channelID live not found",channelID,"youtube")
-  }
 
-  let token = TOKEN
+
+function youtubeSubscribe(token,) {
   setInterval(async function () {
     const CHAT_RESPONSE = await fetch(`https://live-chat.aatomu.workers.dev?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
       return res.json()
@@ -142,7 +165,7 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
               message += chat.message[index].text
             }
           }
-          console.log(`Youtube Message(${token.user_name}#${channelID}):\n`, chat)
+          console.log(`Youtube Message(${token.user_name}):\n`, chat)
           addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, token.channel_name, "youtube")
         }, CHAT_OFFSET_TIME)
       })
@@ -156,4 +179,4 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
       token.continuation = CONTINUATION_DATA.timedContinuationData.continuation
     }
   }, 5000)
-})
+}

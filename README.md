@@ -6,6 +6,7 @@ Open URL in Browser or Open Browser in OBS
 
 Example URL:  
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>`
+* `https://live.aatomu.work/?watch=<Youtube Limited Member Live ID>`
 * `https://live.aatomu.work/?twitch=<Twitch Channel ID>`
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>&twitch=<Twitch Channel ID>&limit=10`
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>&youtube=<Twitch Channel ID>&limit=10?cleanup=120`
@@ -13,6 +14,7 @@ Example URL:
 | Key | Value | Description |
 | :- | :- | :- |
 | youtube | YoutubeのChannelID(@ProjectCBW) | 読み込むYoutube配信のチャンネル |
+| youtube | YoutubeのURL `watch?v=` | 読み込むYoutube限定配信の動画ID |
 | twitch | TwitchのChannelID(projectcbw) | 読み込むTwitch配信のチャンネル |
 | limit | number | 同時に表示するメッセージの最大数 |
 | clenup | number | n秒後に徐々に消え始める |
