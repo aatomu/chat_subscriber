@@ -26,7 +26,7 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
   })
   console.log(TOKEN)
   if (TOKEN.continuation == "") {
-    addMessage(0,"","ERROR","This channelID live not found",channelID,"youtube")
+    addMessage(0, "", "ERROR", "This channelID live not found", channelID, "youtube")
     return
   }
 
@@ -43,7 +43,7 @@ SEARCH_PARAMS.getAll("watch").forEach(async (channelID,) => {
   })
   console.log(TOKEN)
   if (TOKEN.continuation == "") {
-    addMessage(0,"","ERROR","This channelID live not found",channelID,"youtube")
+    addMessage(0, "", "ERROR", "This channelID live not found", channelID, "youtube")
     return
   }
 
@@ -111,15 +111,26 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
             message = sliceMessage.join("")
           }
 
-          console.log(`WebSocket Message(${chat.params[0]}):\n`, chat)
-          let authorName = "Unknown"
-          if (chat.prefix.nick) {
-            authorName = chat.prefix.nick
-          }
           if (chat.tags.bits) {
             message += `<span class="money" style="background-color: var(--twitch);">${chat.tags.bits}Bits</span> `
           }
 
+          let authorName = ""
+          switch (true) {
+            case (chat.tags["display-name"] != ""):
+              authorName = chat.tags["display-name"]
+              break
+            case (chat.prefix.nick != null):
+              authorName = chat.prefix.nick
+              break
+            case (chat.prefix.user != null):
+              authorName = chat.prefix.user
+              break
+            default:
+              authorName = "Unknown"
+          }
+
+          console.log(`WebSocket Message(${chat.params[0]}):\n`, chat)
           addMessage(new Date().getTime(), "", authorName, message, chat.params[0], "twitch")
           break
         case "PING":
@@ -129,9 +140,6 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
     })
   })
 })
-
-
-
 
 function youtubeSubscribe(token,) {
   setInterval(async function () {
