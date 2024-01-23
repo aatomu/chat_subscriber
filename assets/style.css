@@ -109,10 +109,15 @@ body {
   word-break: break-all;
 }
 
-.message>img {
+.message>.emoji {
   height: 24px;
   aspect-ratio: 1/1;
   vertical-align: middle;
+}
+.message>.sticker {
+  height: 42px;
+  aspect-ratio: 1/1;
+  vertical-align: top;
 }
 
 .message-root {

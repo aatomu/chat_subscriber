@@ -106,7 +106,7 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
 
             for (let index = 0; index < emoteReplaceList.length; index++) {
               const EMOTE = emoteReplaceList[index]
-              sliceMessage.splice(EMOTE.start, EMOTE.end - EMOTE.start + 1, `<img src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">`)
+              sliceMessage.splice(EMOTE.start, EMOTE.end - EMOTE.start + 1, `<img class="emoji" src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">`)
             }
             message = sliceMessage.join("")
           }
@@ -162,15 +162,24 @@ function youtubeSubscribe(token,) {
         setTimeout(function () {
           let message = ""
           if (chat.superchat) {
-            message = `<span class="money" style="color:${chat.superchat.textColor} ; background-color: ${chat.superchat.backgroundColor};">${chat.superchat.amount}</span> `
+            message += `<span class="money" style="color:${chat.superchat.textColor} ; background-color: ${chat.superchat.backgroundColor};">${chat.superchat.amount}</span> `
+            if (chat.superchat.sticker) {
+              const IMAGE = chat.superchat.sticker.image.pop()
+              if (IMAGE) {
+                message += ` <img class="emoji" src="https:${IMAGE.url}"> `
+              } else {
+                message += ` Sticker!! `
+              }
+            }
           }
+
           if (chat.message) {
             for (let index = 0; index < chat.message.length; index++) {
               const MESSAGE = chat.message[index]
               if (MESSAGE.image) {
                 const IMAGE = MESSAGE.image.pop()
                 if (IMAGE) {
-                message += ` <img src="${IMAGE.url}"> `
+                  message += ` <img class="emoji" src="${IMAGE.url}"> `
                 } else {
                   message += ` ${MESSAGE.text} `
                 }
