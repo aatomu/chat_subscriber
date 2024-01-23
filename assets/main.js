@@ -117,7 +117,7 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
             authorName = chat.prefix.nick
           }
           if (chat.tags.bits) {
-            message += `<span class="money" style="background-color: var(--twitch);">${chat.tags.bits}Bits</span>`
+            message += `<span class="money" style="background-color: var(--twitch);">${chat.tags.bits}Bits</span> `
           }
 
           addMessage(new Date().getTime(), "", authorName, message, chat.params[0], "twitch")
@@ -160,7 +160,7 @@ function youtubeSubscribe(token,) {
             for (let index = 0; index < chat.message.length; index++) {
               const MESSAGE = chat.message[index]
               if (MESSAGE.image) {
-                message += `<img src="${MESSAGE.image.pop().url}">`
+                message += ` <img src="${MESSAGE.image.pop().url}"> `
                 continue
               }
               message += chat.message[index].text
