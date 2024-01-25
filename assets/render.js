@@ -18,14 +18,7 @@ function addMessage(timestamp, iconURL, name, message, channelName, site) {
   // Root
   const CONTENT = document.createElement("div")
   CONTENT.classList.add("content")
-  switch (site) {
-    case "youtube":
-      CONTENT.classList.add("youtube")
-      break
-    case "twitch":
-      CONTENT.classList.add("twitch")
-      break
-  }
+  CONTENT.classList.add(site)
   if (CHAT_CLEANUP_TIME) {
     CONTENT.style.animation = `invisible 1s linear ${CHAT_CLEANUP_TIME}s 1 normal both`
   }
