@@ -3,12 +3,11 @@
 
 export default {
   async fetch(request, env, ctx) {
-    console.log(request.url)
     const REQUEST_PATH = (new URL(request.url)).pathname.split("/")
     const REQUEST_SITE = REQUEST_PATH[1]
     const REQUEST_API = REQUEST_PATH[2]
     const SEARCH_PARAMS = new URLSearchParams(new URL(request.url).search)
-    console.log(`Request Target:"${REQUEST_SITE}" API:"${REQUEST_API}"`)
+    console.log(`Date:${new Date().toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}\n  URL: "${request.url}"\n  Target:"${REQUEST_SITE}"\n  API:"${REQUEST_API}"`)
 
     switch (REQUEST_SITE) {
       case "youtube":
@@ -30,7 +29,7 @@ export default {
               }
             })
           case "get_chat": // https://..../youtube/get_chat?api_key=xxxxx&client_version=xxxxx&continuation=xxxxx
-            return new Response(await youtubeGetLiveChat(SEARCH_PARAMS.get("api_key"),SEARCH_PARAMS.get("client_version"),SEARCH_PARAMS.get("continuation")), {
+            return new Response(await youtubeGetLiveChat(SEARCH_PARAMS.get("api_key"), SEARCH_PARAMS.get("client_version"), SEARCH_PARAMS.get("continuation")), {
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
@@ -38,6 +37,19 @@ export default {
               }
             })
         }
+        break
+      case "niconico":
+        switch (REQUEST_API) {
+          case "channel": // https://..../niconico/channel?id=xxxxx
+            return new Response(await niconicoGetApiKeys(`https://live.nicovideo.jp/watch/user/${SEARCH_PARAMS.get("id")}`), {
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET'
+              }
+            })
+        }
+        break
     }
     return ErrorResponse()
   }
@@ -46,6 +58,7 @@ export default {
 function ErrorResponse() {
   return new Response('Check https://github.com/aatomu/chat_subscriber/blob/main/worker.ts')
 }
+
 
 async function youtubeGetApiKeys(url) {
   const LIVE_INFOMATION = await fetch(url).
@@ -62,7 +75,7 @@ async function youtubeGetApiKeys(url) {
   if (VIDEO_ID_MATCH) {
     video_id = VIDEO_ID_MATCH[1]
   }
-  
+
   let api_key = ""
   const API_KEY_START = LIVE_INFOMATION.indexOf(`"innertubeApiKey":`)
   const API_KEY_MATCH = LIVE_INFOMATION.substring(API_KEY_START).match(/"innertubeApiKey":"(.+?)"/)
@@ -104,7 +117,7 @@ async function youtubeGetApiKeys(url) {
   })
 }
 
-async function youtubeGetLiveChat(api_key,client_version,continuation) {
+async function youtubeGetLiveChat(api_key, client_version, continuation) {
   return await fetch(`https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?key=${api_key}`, {
     method: "POST",
     headers: {
@@ -123,5 +136,30 @@ async function youtubeGetLiveChat(api_key,client_version,continuation) {
     return res.text()
   }).then(text => {
     return text
+  })
+}
+
+async function niconicoGetApiKeys(url) {
+  const RES = await fetch(url).
+    then(res => {
+      return res.text()
+    }).
+    then(text => {
+      return text
+    })
+
+  let watchWebsocketURL = ""
+  let channelName = ""
+  const EMBED_DATA_START = RES.indexOf(`data-props=`)
+  const EMBED_DATA_MATCH = RES.substring(EMBED_DATA_START).match(/"(.+?)"/)
+  if (EMBED_DATA_MATCH) {
+    const EMBED_OBJECT = JSON.parse(EMBED_DATA_MATCH[1].replace(/&quot;/g, `"`))
+    watchWebsocketURL = EMBED_OBJECT.site.relive.webSocketUrl
+    channelName = EMBED_OBJECT.program.supplier.name
+  }
+
+  return JSON.stringify({
+    watch_websocket_url: watchWebsocketURL,
+    channel_name: channelName,
   })
 }

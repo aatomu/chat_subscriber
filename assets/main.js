@@ -59,7 +59,7 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
 
   // Open twitch IRC(Websocket) connection
   WEBSOCKET.addEventListener("open", function (event) {
-    console.log(`WebSocket Open(#${channelID}):\n`, event)
+    console.log(`Twitch Open(#${channelID}):\n`, event)
     WEBSOCKET.send("CAP REQ :twitch.tv/tags twitch.tv/commands")
     WEBSOCKET.send("PASS SCHMOOPIIE")
     const RANDOM_NUMBER = Math.floor(Math.random() * 100000)
@@ -140,6 +140,61 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
     })
   })
 })
+
+// Niconico Channel
+SEARCH_PARAMS.getAll("niconico").forEach(async (channelID) => {
+  // Information
+  console.log("Niconico: ", channelID)
+  const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev/niconico/channel?id=${channelID}`).
+    then(res => {
+      return res.json()
+    }).
+    then(json => {
+      return json
+    })
+
+    console.log(TOKEN)
+  if (TOKEN.watch_websocket_url == "") {
+    addMessage(0, "", "ERROR", "This channelID live not found", channelID, "niconico")
+    return
+  }
+
+  const WATCH_SESSION = new WebSocket(TOKEN.watch_websocket_url)
+  WATCH_SESSION.addEventListener("open", function (event) {
+    console.log(`Niconico Open(#${channelID}):\n`, event)
+    WATCH_SESSION.send(`
+    {
+      "type": "startWatching",
+      "data": {
+        "stream": {
+          "quality": "abr",
+          "protocol": "hls",
+          "latency": "low",
+          "chasePlay": false
+        },
+        "room": {
+          "protocol": "webSocket",
+          "commentable": true
+        }, "reconnect": false
+      }
+    }`)
+    WATCH_SESSION.send(`
+    {
+      "type":"getAkashic",
+      "data":{
+        "chasePlay":false
+      }
+    }`)
+  })
+  WATCH_SESSION.addEventListener("message",function(event) {
+    if (!event.data) {
+      return
+    }
+    const REQUEST = JSON.parse(event.data)
+    console.log(REQUEST)
+  })
+})
+
 
 function youtubeSubscribe(token,) {
   setInterval(async function () {
