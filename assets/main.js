@@ -19,7 +19,7 @@ if (SEARCH_PARAMS.size == 0) {
 // Youtube Channel
 SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
   console.log("Youtube: ", channelID)
-  const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev?youtube=${channelID}`).then(res => {
+  const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev/youtube/channel?id=${channelID}`).then(res => {
     return res.json()
   }).then(json => {
     return json
@@ -36,7 +36,7 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID,) => {
 // Youtube Limited Live
 SEARCH_PARAMS.getAll("watch").forEach(async (channelID,) => {
   console.log("Youtube Limited: ", channelID)
-  const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev?watch=${channelID}`).then(res => {
+  const TOKEN = await fetch(`https://live-chat.aatomu.workers.dev/youtube/watch?id=${channelID}`).then(res => {
     return res.json()
   }).then(json => {
     return json
@@ -143,7 +143,7 @@ SEARCH_PARAMS.getAll("twitch").forEach((channelID) => {
 
 function youtubeSubscribe(token,) {
   setInterval(async function () {
-    const CHAT_RESPONSE = await fetch(`https://live-chat.aatomu.workers.dev?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
+    const CHAT_RESPONSE = await fetch(`https://live-chat.aatomu.workers.dev/youtube/get_chat?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
       return res.json()
     }).then(json => {
       return json
