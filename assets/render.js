@@ -33,18 +33,10 @@ function addMessage(timestamp, iconURL, name, message, channelName, site) {
   // Icon
   const ICON_ROOT = document.createElement("div")
   ICON_ROOT.classList.add("icon")
-  switch (site) {
-    case "youtube":
-      const ICON_YOUTUBE = document.createElement("img")
-      ICON_YOUTUBE.src = iconURL
-      ICON_ROOT.append(ICON_YOUTUBE)
-      break
-    case "twitch":
-      const ICON_TWITCH = document.createElement("img")
-      ICON_TWITCH.src = "https://www.freepnglogos.com/uploads/twitch-logo-symbol-25.png"
-
-      ICON_ROOT.append(ICON_TWITCH)
-      break
+  if (iconURL) {
+    const ICON = document.createElement("img")
+    ICON.src = iconURL
+    ICON_ROOT.append(ICON)
   }
   CONTENT.append(ICON_ROOT)
 
@@ -77,7 +69,9 @@ function addMessage(timestamp, iconURL, name, message, channelName, site) {
   bottomScroll()
 }
 
-
+/**
+ * Scroll to page bottom
+ */
 function bottomScroll() {
   const ELEMENT = document.documentElement;
   const BOTTOM_HEIGHT = ELEMENT.scrollHeight - ELEMENT.clientHeight;

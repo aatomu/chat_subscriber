@@ -1,6 +1,15 @@
 // @ts-check
 
 /**
+ * @typedef YoutubeToken
+ * @type {object}
+ * @property {string} video_id Youtube videoID (watch?v=xxxxx)
+ * @property {string} api_key Youtube live chat api key
+ * @property {string} client_version Youtube live chat api version
+ * @property {string} continuation Youtube live chat cache data
+ * @property {string} channel_name Youtube live streamer name
+ */
+/**
  * @typedef YoutubeAuthor
  * @type {object}
  * @property {string} name Author screen name
@@ -54,6 +63,73 @@
  * @property {boolean} isVerified Author is verified?
  * @property {number} timestampMilliSecond Message send timestamp milli seconds(UTC)
 */
+
+/**
+ * @param {YoutubeToken} token
+ */
+function youtubeSubscribe(token) {
+  setInterval(async function () {
+    const CHAT_RESPONSE = await fetch(`${API_SERVER}/youtube/get_chat?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
+      return res.json()
+    }).then(json => {
+      return json
+    })
+
+    if (!CHAT_RESPONSE.continuationContents) {
+      return
+    }
+    const CHAT_CONTENTS = CHAT_RESPONSE.continuationContents.liveChatContinuation
+
+    // Parse Chat Data
+    if (CHAT_CONTENTS.actions) {
+      const CHAT_LIST = youtubeParseChat(CHAT_CONTENTS.actions)
+      CHAT_LIST.forEach((chat) => {
+        const CHAT_OFFSET_TIME = (chat.timestampMilliSecond + 5000) - (new Date().getTime())
+        setTimeout(function () {
+          let message = ""
+          if (chat.superchat) {
+            message += `<span class="money" style="color:${chat.superchat.textColor} ; background-color: ${chat.superchat.backgroundColor};">${chat.superchat.amount}</span> `
+            if (chat.superchat.sticker) {
+              const IMAGE = chat.superchat.sticker.image.pop()
+              if (IMAGE) {
+                message += ` <img class="emoji" src="https:${IMAGE.url}"> `
+              } else {
+                message += ` Sticker!! `
+              }
+            }
+          }
+
+          if (chat.message) {
+            for (let index = 0; index < chat.message.length; index++) {
+              const MESSAGE = chat.message[index]
+              if (MESSAGE.image) {
+                const IMAGE = MESSAGE.image.pop()
+                if (IMAGE) {
+                  message += ` <img class="emoji" src="${IMAGE.url}"> `
+                } else {
+                  message += ` ${MESSAGE.text} `
+                }
+                continue
+              }
+              message += MESSAGE.text
+            }
+          }
+
+          console.log(`Youtube Message(${token.channel_name}):`, chat)
+          addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, token.channel_name, "youtube")
+        }, CHAT_OFFSET_TIME)
+      })
+    }
+
+    // Move Chat Position
+    const CONTINUATION_DATA = CHAT_CONTENTS.continuations[0]
+    if (CONTINUATION_DATA.invalidationContinuationData) {
+      token.continuation = CONTINUATION_DATA.invalidationContinuationData.continuation
+    } else if (CONTINUATION_DATA.timedContinuationData) {
+      token.continuation = CONTINUATION_DATA.timedContinuationData.continuation
+    }
+  }, 5000)
+}
 
 /**
  * @param {object} actions Youtube live chat actions/messages

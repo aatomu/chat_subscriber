@@ -22,6 +22,96 @@
 */
 
 /**
+ * @param {string} channelID Subscribe Twitch streamerID
+ */
+function twitchSubscribe(channelID) {
+  const WEBSOCKET = new WebSocket(TWITCH_IRC_URI)
+
+  // Open twitch IRC(Websocket) connection
+  WEBSOCKET.addEventListener("open", function (event) {
+    console.log(`Twitch Websocket Open(#${channelID}):`, event)
+    WEBSOCKET.send("CAP REQ :twitch.tv/tags twitch.tv/commands")
+    WEBSOCKET.send("PASS SCHMOOPIIE")
+    const RANDOM_NUMBER = Math.floor(Math.random() * 100000)
+    const USER_NAME = `justinfan${String(RANDOM_NUMBER).padStart(5, "0")}`
+    WEBSOCKET.send(`NICK ${USER_NAME}`)
+    WEBSOCKET.send(`USER ${USER_NAME} 8 * :${USER_NAME}`)
+    WEBSOCKET.send(`JOIN #${channelID}`)
+  })
+
+  // Recive message
+  WEBSOCKET.addEventListener("message", function (event) {
+    const CHAT_LIST = twitchParseMessage(event.data)
+    CHAT_LIST.forEach(chat => {
+      switch (chat.command) {
+        case "PING":
+          WEBSOCKET.send("PONG")
+          break
+        case "PRIVMSG":
+          let message = chat.params[1]
+          if (chat.tags.emotes) {
+            // Parse emotes
+            let emoteReplaceList = []
+            const EMOTE_ID_LIST = Object.keys(chat.tags.emotes)
+            for (let index = 0; index < EMOTE_ID_LIST.length; index++) {
+              const EMOTE_ID = EMOTE_ID_LIST[index]
+              const EMOTE_POSITIONS = chat.tags.emotes[EMOTE_ID]
+              EMOTE_POSITIONS.forEach(emotePosition => {
+                emoteReplaceList.push({
+                  id: EMOTE_ID,
+                  start: emotePosition.start,
+                  end: emotePosition.end,
+                })
+              })
+            }
+            // Sort by end
+            emoteReplaceList.sort((a, b) => {
+              if (a.start > b.start) {
+                return -1
+              } else {
+                return 1
+              }
+            })
+            // Replace emote string => Emote image
+            message = message.replace(/^\x01|\x01$/g, "") // Delete special character set
+            message = message.replace(/^ACTION /, "")// Delete action
+            let sliceMessage = [...message]
+
+            for (let index = 0; index < emoteReplaceList.length; index++) {
+              const EMOTE = emoteReplaceList[index]
+              sliceMessage.splice(EMOTE.start, EMOTE.end - EMOTE.start + 1, `<img class="emoji" src="https://static-cdn.jtvnw.net/emoticons/v2/${EMOTE.id}/default/light/1.0">`)
+            }
+            message = sliceMessage.join("")
+          }
+
+          if (chat.tags.bits) {
+            message += `<span class="money" style="background-color: var(--twitch);">${chat.tags.bits}Bits</span> `
+          }
+
+          let authorName = ""
+          switch (true) {
+            case (chat.tags["display-name"] != ""):
+              authorName = chat.tags["display-name"]
+              break
+            case (chat.prefix.nick != null):
+              authorName = chat.prefix.nick
+              break
+            case (chat.prefix.user != null):
+              authorName = chat.prefix.user
+              break
+            default:
+              authorName = "Unknown"
+          }
+
+          console.log(`Twitch WebSocket Message(${chat.params[0]}):`, chat)
+          addMessage(new Date().getTime(), "", authorName, message, chat.params[0], "twitch")
+          break
+      }
+    })
+  })
+}
+
+/**
  * @see https://dev.twitch.tv/docs/irc/example-parser/
  * @param {string} messages Twitch IRC messages(split string: \r\n)
  * @returns {TwitchMessage[]} Twitch parsed messages

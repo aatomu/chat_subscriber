@@ -49,13 +49,13 @@ export default {
               }
             })
           case "name": // https://..../niconico/name?id=xxxxx
-          return new Response(await niconicoGetUsername(SEARCH_PARAMS.get("id")), {
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'GET'
-            }
-          })
+            return new Response(await niconicoGetUsername(SEARCH_PARAMS.get("id")), {
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET'
+              }
+            })
         }
         break
     }
@@ -189,7 +189,21 @@ async function niconicoGetUsername(id) {
     channelName = CHANNEL_NAME_MATCH[1]
   }
 
+  // Auhotr icon check
+  let idSlice = id.substring(0, id.length - 4)
+  if (!idSlice) {
+    idSlice = "0"
+  }
+  let iconURL = `https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/${idSlice}/${id}.jpg`
+  const IS_AUTHOR_ICON_USEABLE = await fetch(iconURL).then(res => {
+    return res.ok
+  })
+  if (!IS_AUTHOR_ICON_USEABLE) {
+    iconURL = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"
+  }
+
   return JSON.stringify({
     channel_name: channelName,
+    icon_url:iconURL
   })
 }
