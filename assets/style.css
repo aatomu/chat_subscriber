@@ -34,21 +34,23 @@ body {
 
   background-color: rgba(255, 255, 255, 0.75);
   border-radius: 10px;
+  border-width: 3px;
+  border-style: solid;
 
   padding: 4px;
   margin: 4px 0;
 }
 
 .content.youtube {
-  border-width: 3px;
-  border-style: solid;
   border-color: var(--youtube);
 }
 
 .content.twitch {
-  border-width: 3px;
-  border-style: solid;
   border-color: var(--twitch);
+}
+
+.content.niconico {
+  border-color: var(--niconico);
 }
 
 @keyframes invisible {
@@ -152,4 +154,8 @@ body {
 
 .twitch .channel {
   background-color: var(--twitch);
+}
+
+.niconico .channel {
+  background-color: var(--niconico);
 }
