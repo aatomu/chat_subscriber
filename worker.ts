@@ -41,13 +41,21 @@ export default {
       case "niconico":
         switch (REQUEST_API) {
           case "channel": // https://..../niconico/channel?id=xxxxx
-            return new Response(await niconicoGetApiKeys(`https://live.nicovideo.jp/watch/user/${SEARCH_PARAMS.get("id")}`), {
+            return new Response(await niconicoGetApiKeys(SEARCH_PARAMS.get("id")), {
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET'
               }
             })
+          case "name": // https://..../niconico/name?id=xxxxx
+          return new Response(await niconicoGetUsername(SEARCH_PARAMS.get("id")), {
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET'
+            }
+          })
         }
         break
     }
@@ -139,8 +147,8 @@ async function youtubeGetLiveChat(api_key, client_version, continuation) {
   })
 }
 
-async function niconicoGetApiKeys(url) {
-  const RES = await fetch(url).
+async function niconicoGetApiKeys(id) {
+  const RES = await fetch(`https://live.nicovideo.jp/watch/user/${id}`).
     then(res => {
       return res.text()
     }).
@@ -160,6 +168,28 @@ async function niconicoGetApiKeys(url) {
 
   return JSON.stringify({
     watch_websocket_url: watchWebsocketURL,
+    channel_name: channelName,
+  })
+}
+
+async function niconicoGetUsername(id) {
+  const RES = await fetch(`https://www.nicovideo.jp/user/${id}`).
+    then(res => {
+      return res.text()
+    }).
+    then(text => {
+      return text
+    })
+
+
+  let channelName = ""
+  const CHANNEL_NAME_START = RES.indexOf(`"name":"`)
+  const CHANNEL_NAME_MATCH = RES.substring(CHANNEL_NAME_START).match(/"name":"(.+?)"/)
+  if (CHANNEL_NAME_MATCH) {
+    channelName = CHANNEL_NAME_MATCH[1]
+  }
+
+  return JSON.stringify({
     channel_name: channelName,
   })
 }
