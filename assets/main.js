@@ -153,7 +153,7 @@ SEARCH_PARAMS.getAll("niconico").forEach(async (channelID) => {
       return json
     })
 
-    console.log(TOKEN)
+  console.log(TOKEN)
   if (TOKEN.watch_websocket_url == "") {
     addMessage(0, "", "ERROR", "This channelID live not found", channelID, "niconico")
     return
@@ -161,7 +161,7 @@ SEARCH_PARAMS.getAll("niconico").forEach(async (channelID) => {
 
   const WATCH_SESSION = new WebSocket(TOKEN.watch_websocket_url)
   WATCH_SESSION.addEventListener("open", function (event) {
-    console.log(`Niconico Open(#${channelID}):\n`, event)
+    console.log(`Niconico Open Watch(#${channelID}):\n`, event)
     WATCH_SESSION.send(`
     {
       "type": "startWatching",
@@ -186,12 +186,64 @@ SEARCH_PARAMS.getAll("niconico").forEach(async (channelID) => {
       }
     }`)
   })
-  WATCH_SESSION.addEventListener("message",function(event) {
+
+  WATCH_SESSION.addEventListener("message", function (event) {
     if (!event.data) {
       return
     }
     const REQUEST = JSON.parse(event.data)
-    console.log(REQUEST)
+
+    switch (REQUEST.type) {
+      case "ping":
+        WATCH_SESSION.send(`{"type":"pong"}`)
+        WATCH_SESSION.send(`{"type":"keepSeat"}`)
+        break
+      case "room":
+        const CHAT_WEBSOCKET_URL = REQUEST.data.messageServer.uri
+        const JOIN_MESSAGE = JSON.stringify([
+          {
+            "ping":
+            {
+              "content": "rs:0"
+            }
+          }, {
+            "ping": {
+              "content": "ps:0"
+            }
+          }, {
+            "thread": {
+              "thread": REQUEST.data.threadId,
+              "version": "20061206",
+              "user_id": "guest",
+              "res_from": -150,
+              "with_global": 1,
+              "scores": 1,
+              "nicoru": 0
+            }
+          }, {
+            "ping": {
+              "content": "pf:0"
+            }
+          }, {
+            "ping": {
+              "content": "rf:0"
+            }
+          }])
+        const WEBSOCKET = new WebSocket(CHAT_WEBSOCKET_URL, 'niconama')
+        WEBSOCKET.addEventListener("open",function(event) {
+          console.log(`Niconico Open Chat(#${channelID}):\n`, event)
+          WEBSOCKET.send(JOIN_MESSAGE)
+        })
+        WEBSOCKET.addEventListener("message",function(event) {
+          console.log(`Niconico Message(#${channelID}):\n`, event)
+          if (!event.data) {
+            return
+          }
+          const MESSAGE = JSON.parse(event.data)
+          console.log(MESSAGE)
+          WEBSOCKET.send("")
+        })
+    }
   })
 })
 
