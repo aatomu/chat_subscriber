@@ -178,13 +178,13 @@ SEARCH_PARAMS.getAll("niconico").forEach(async (channelID) => {
         }, "reconnect": false
       }
     }`)
-    WATCH_SESSION.send(`
-    {
-      "type":"getAkashic",
-      "data":{
-        "chasePlay":false
-      }
-    }`)
+    // WATCH_SESSION.send(`
+    // {
+    //   "type":"getAkashic",
+    //   "data":{
+    //     "chasePlay":false
+    //   }
+    // }`)
   })
 
   WATCH_SESSION.addEventListener("message", function (event) {
