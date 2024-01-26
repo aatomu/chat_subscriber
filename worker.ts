@@ -13,7 +13,7 @@ export default {
       case "youtube":
         switch (REQUEST_API) {
           case "channel": // https://..../youtube/channel?id=xxxxx
-            return new Response(await youtubeGetApiKeys(`https://www.youtube.com/${SEARCH_PARAMS.get("id")}/live`), {
+            return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/${SEARCH_PARAMS.get("id")}/live`)), {
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
@@ -21,7 +21,7 @@ export default {
               }
             })
           case "watch": // https://..../youtube/watch?id=xxxxx
-            return new Response(await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${SEARCH_PARAMS.get("id")}`), {
+            return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${SEARCH_PARAMS.get("id")}`)), {
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
@@ -41,7 +41,7 @@ export default {
       case "niconico":
         switch (REQUEST_API) {
           case "channel": // https://..../niconico/channel?id=xxxxx
-            return new Response(await niconicoGetApiKeys(SEARCH_PARAMS.get("id")), {
+            return new Response(JSON.stringify(await niconicoGetApiKeys(SEARCH_PARAMS.get("id"))), {
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
@@ -49,7 +49,7 @@ export default {
               }
             })
           case "name": // https://..../niconico/name?id=xxxxx
-            return new Response(await niconicoGetUsername(SEARCH_PARAMS.get("id")), {
+            return new Response(JSON.stringify(await niconicoGetUsername(SEARCH_PARAMS.get("id"))), {
               headers: {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
@@ -63,11 +63,28 @@ export default {
   }
 };
 
+/**
+ * @returns {Response} Error message
+ */
 function ErrorResponse() {
   return new Response('Check https://github.com/aatomu/chat_subscriber/blob/main/worker.ts')
 }
 
 
+/**
+ * @typedef YoutubeToken
+ * @type {object}
+ * @property {string} video_id Youtube videoID (watch?v=xxxxx)
+ * @property {string} api_key Youtube live chat api key
+ * @property {string} client_version Youtube live chat api version
+ * @property {string} continuation Youtube live chat cache data
+ * @property {string} channel_name Youtube live streamer name
+ */
+
+/**
+ * @param {string} url Get api key from youtube url
+ * @returns {YoutubeToken} Youtube api tokens
+ */
 async function youtubeGetApiKeys(url) {
   const LIVE_INFOMATION = await fetch(url).
     then(res => {
@@ -116,17 +133,23 @@ async function youtubeGetApiKeys(url) {
     }
   }
 
-  return JSON.stringify({
+  return {
     video_id: video_id,
     api_key: api_key,
     client_version: client_version,
     continuation: continuation,
     channel_name: channelName,
-  })
+  }
 }
 
+/**
+ * @param {string} api_key Youtube live chat api key
+ * @param {string} client_version Youtube live chat api version
+ * @param {string} continuation Youtube live chat cache data
+ * @returns {object} Youtube live chat event
+ */
 async function youtubeGetLiveChat(api_key, client_version, continuation) {
-  return await fetch(`https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?key=${api_key}`, {
+  const LIVE_CHATS = await fetch(`https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?key=${api_key}`, {
     method: "POST",
     headers: {
       'Content-Type': "application/json",
@@ -145,8 +168,20 @@ async function youtubeGetLiveChat(api_key, client_version, continuation) {
   }).then(text => {
     return text
   })
+  return LIVE_CHATS
 }
 
+/**
+ * @typedef NiconicoToken
+ * @type {object}
+ * @property {string} watch_websocket_url Niconico watch websocket url
+ * @property {string} channel_name Niconico live streamer name
+ */
+
+/**
+ * @param {string} id Niconico user id
+ * @returns {NiconicoToken} Niconico api tokens
+ */
 async function niconicoGetApiKeys(id) {
   const RES = await fetch(`https://live.nicovideo.jp/watch/user/${id}`).
     then(res => {
@@ -166,12 +201,23 @@ async function niconicoGetApiKeys(id) {
     channelName = EMBED_OBJECT.program.supplier.name
   }
 
-  return JSON.stringify({
+  return {
     watch_websocket_url: watchWebsocketURL,
     channel_name: channelName,
-  })
+  }
 }
 
+/**
+ * @typedef NiconicoUser
+ * @type {object}
+ * @property {string} channel_name Niconico username
+ * @property {string} icon_url Niconico user icon url, set default image if missing icon
+ */
+
+/**
+ * @param {string} id Niconico user id
+ * @return {NiconicoUser} Niconico user information
+ */
 async function niconicoGetUsername(id) {
   const RES = await fetch(`https://www.nicovideo.jp/user/${id}`).
     then(res => {
@@ -202,8 +248,8 @@ async function niconicoGetUsername(id) {
     iconURL = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"
   }
 
-  return JSON.stringify({
+  return {
     channel_name: channelName,
-    icon_url:iconURL
-  })
+    icon_url: iconURL
+  }
 }
