@@ -6,16 +6,18 @@ Open URL in Browser or Open Browser in OBS
 
 Example URL:  
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>`
-* `https://live.aatomu.work/?watch=<Youtube Limited Member Live ID>`
+* `https://live.aatomu.work/?watch=<Youtube Video ID>`
 * `https://live.aatomu.work/?twitch=<Twitch Channel ID>`
+* `https://live.aatomu.work/?niconico=<Niconico User ID>`
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>&twitch=<Twitch Channel ID>&limit=10`
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>&youtube=<Twitch Channel ID>&limit=10?cleanup=120`
 
 | Key | Value | Description |
 | :- | :- | :- |
 | youtube | YoutubeのChannelID(@ProjectCBW) | 読み込むYoutube配信のチャンネル |
-| youtube | YoutubeのURL `watch?v=` | 読み込むYoutube限定配信の動画ID |
+| watch | YoutubeのURL `watch?v=` | 読み込むYoutube動画のID |
 | twitch | TwitchのChannelID(projectcbw) | 読み込むTwitch配信のチャンネル |
+| niconico | NiconicoのUserID | 読み込むニコ生配信のチャンネル |
 | limit | number | 同時に表示するメッセージの最大数 |
 | clenup | number | n秒後に徐々に消え始める |
 
@@ -79,13 +81,30 @@ body {
 </div>
 ```
 
+* Niconico Bits Chat
+```html
+<div class="contents">
+  <div class="content niconico">
+    <span class="time">00:00:00</span>
+    <div class="icon">
+      <img src="...">
+    </div>
+    <span class="name">...</span>
+    <div class="message-root">
+      <span class="message"><span class="money" style="background-color: var(--twitch);">$0.00</span>...</span>
+      <span class="channel">...</span>
+    </div>
+  </div>
+</div>
+```
+
 ## Credit
 License: `Apache License`
 ※ できたら URLを張っていただけると幸いです
 * Code
-  * [aatomu(@aatomu)](https://x.com/aatomu21263): HTML&JavaScript and CSS
+  * [aatomu(@aatomu)](https://x.com/aatomu21263): Front:HTML,JavaScript,CSS Background: Typescript
 * Design
   * [椛野りあ(@KuoN_aLia)](https://x.com/KuoN_aLia): Default CSS
 * Special Thanks
-  * [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW): Live test
-  * Others: Text test and Design test
+  * [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW): Youtube/Niconico live test
+  * Project CBW Listeners: Message view test, Design layout check
