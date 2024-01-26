@@ -106,5 +106,5 @@ License: `Apache License`
 * Design
   * [椛野りあ(@KuoN_aLia)](https://x.com/KuoN_aLia): Default CSS
 * Special Thanks
-  * [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW): Youtube/Niconico live test
+  * [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW): Youtube/Twitch live test
   * Project CBW Listeners: Message view test, Design layout check
