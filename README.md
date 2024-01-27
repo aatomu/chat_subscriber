@@ -29,6 +29,15 @@ body {
 }
 ```
 
+## Supported Message,Event List
+| Site     | Message            | Emoji/Emote        | Tip                  |
+| :-:      | :-:                | :-:                | :-:                  |
+| Youtube  | :white_check_mark: | :white_check_mark: | :white_check_mark:   |
+| Twitch   | :white_check_mark: | :white_check_mark: | :small_red_triangle: |
+| Niconico | :white_check_mark: | :x:                | :x:                  |
+| Twicas   | :x:                | :x:                | :x:                  |
+| OpenREC  | :x:                | :x:                | :x:                  |
+
 ## Contents HTML Tree
 * Youtube Normal Chat
 ```html
