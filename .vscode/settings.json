@@ -2,8 +2,8 @@
 	"[typescript]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
-  "cSpell.words": [
-      "innertube",
-      "niconico"
-  ]
+	"cSpell.words": [
+		"innertube",
+		"niconico"
+	]
 }
