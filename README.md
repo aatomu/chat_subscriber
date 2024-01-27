@@ -108,7 +108,7 @@ body {
 ```
 
 ## Screen Shot
-[!Youtube Twitch Cross Chat](./example-youtube-twitch.png)
+![Youtube Twitch Cross Chat](./example-youtube-twitch.png)
 
 ## Credit
 License: `Apache License`
