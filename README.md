@@ -4,7 +4,7 @@
 ## How To Use
 Open URL in Browser or Open Browser in OBS
 
-Example URL:  
+Example URL:
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>`
 * `https://live.aatomu.work/?watch=<Youtube Video ID>`
 * `https://live.aatomu.work/?twitch=<Twitch Channel ID>`
@@ -21,7 +21,7 @@ Example URL:
 | limit | number | 同時に表示するメッセージの最大数 |
 | clenup | number | n秒後に徐々に消え始める |
 
-OBS Custom CSS:  
+OBS Custom CSS:
 ```css
 body {
     background-color: rgba(0,0,0,0);
@@ -116,6 +116,7 @@ License: `Apache License`
 ※ できたら URLを張っていただけると幸いです
 * Code
   * [aatomu(@aatomu)](https://x.com/aatomu21263): Front:HTML,JavaScript,CSS Background: Typescript
+  * [らる(@rarula)](https://twitter.com/rarula_): Background: Typescript review
 * Design
   * [椛野りあ(@KuoN_aLia)](https://x.com/KuoN_aLia): Default CSS
 * Special Thanks
