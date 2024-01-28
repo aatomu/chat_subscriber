@@ -93,6 +93,23 @@ export default {
 					}
 				}
 				break;
+			case 'twicas':
+				switch (REQUEST_API) {
+					case 'channel': {
+						// https://..../twicas/channel?id=xxxxx
+						const ID = SEARCH_PARAMS.get('id');
+						if (!ID) {
+							break;
+						}
+						return new Response(JSON.stringify(await twicasGetLiveChat(ID)), {
+							headers: {
+								'Content-Type': 'application/json',
+								'Access-Control-Allow-Origin': '*',
+								'Access-Control-Allow-Methods': 'GET',
+							},
+						});
+					}
+				}
 		}
 		return ErrorResponse();
 	},
@@ -241,5 +258,45 @@ async function niconicoGetUsername(id: string) {
 	return {
 		channel_name: channelName,
 		icon_url: iconURL,
+	};
+}
+
+type TwicasSubscribeResponse = {
+	url: string;
+};
+
+async function twicasGetLiveChat(id: string) {
+	const LIVE_INFORMATION = await fetch(`https://twitcasting.tv/${id}`).then((res) => {
+		return res.text();
+	});
+
+	let movieID = '';
+	const MOVIE_ID_START = LIVE_INFORMATION.indexOf('data-movie-id=');
+	const MOVIE_ID_MATCH = LIVE_INFORMATION.substring(MOVIE_ID_START).match(/data-movie-id="(.+?)"/);
+	if (MOVIE_ID_MATCH) {
+		movieID = MOVIE_ID_MATCH[1];
+	}
+
+	let channelName = '';
+	const CHANNEL_NAME_START = LIVE_INFORMATION.indexOf('data-name=');
+	const CHANNEL_NAME_MATCH = LIVE_INFORMATION.substring(CHANNEL_NAME_START).match(/data-name="(.+?)"/);
+	if (CHANNEL_NAME_MATCH) {
+		channelName = CHANNEL_NAME_MATCH[1];
+	}
+
+	let websocketUrl = '';
+	const FORM_BODY = new FormData();
+	FORM_BODY.append('movie_id', movieID);
+	const INFORMATION: TwicasSubscribeResponse = await fetch('https://twitcasting.tv/eventpubsuburl.php', { method: 'POST', body: FORM_BODY }).then((res) => {
+		return res.json();
+	});
+	if (INFORMATION) {
+		websocketUrl = INFORMATION.url;
+	}
+
+	return {
+		movie_id: movieID,
+		channel_name: channelName,
+		websocket_url: websocketUrl,
 	};
 }
