@@ -86,21 +86,6 @@ body {
   border-radius: 50%;
 }
 
-.twitch-icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  border-color: black;
-  border-style: solid;
-  border-width: 2px;
-
-
-  font-weight: bold;
-  color: white;
-  background-color: var(--twitch);
-}
-
 .name {
   font-size: 120%;
   color: gray;
