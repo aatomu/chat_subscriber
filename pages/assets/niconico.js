@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="index.js"/>
 
 /**
  * @typedef NiconicoToken
@@ -27,7 +28,7 @@
  */
 
 /**
- * @param {NiconicoToken} token 
+ * @param {NiconicoToken} token
  */
 function niconicoSubscribe(token) {
   // Connect niconico watch websocket

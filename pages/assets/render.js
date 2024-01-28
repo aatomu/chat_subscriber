@@ -1,4 +1,5 @@
 // @ts-check
+/// <reference path="index.js"/>
 
 const CONTENTS = document.getElementById("contents")
 

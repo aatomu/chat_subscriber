@@ -1,4 +1,6 @@
 // @ts-check
+/// <reference path="index.js"/>
+
 const API_SERVER= "https://live-chat.aatomu.workers.dev"
 
 // constant values
