@@ -1,18 +1,7 @@
-// @ts-check
-/// <reference path="index.js"/>
-
 const CONTENTS = document.getElementById("contents")
 
-/**
- * Append #contents child
- * @param {number} timestamp Message timestamp(UTC milliseconds)
- * @param {string} iconURL Author icon url
- * @param {string} name Author name
- * @param {string} message Message content(supported HTML)
- * @param {string} channelName Sent channel name
- * @param {string} site Sent channel site(youtube/twitch)
- */
-function addMessage(timestamp, iconURL, name, message, channelName, site) {
+// Append #contents child
+export function addMessage(timestamp:number, iconURL:string, name:string, message:string, channelName:string, site:string): void {
   if (!CONTENTS) {
     return
   }
@@ -70,9 +59,7 @@ function addMessage(timestamp, iconURL, name, message, channelName, site) {
   bottomScroll()
 }
 
-/**
- * Scroll to page bottom
- */
+// Scroll to page bottom
 function bottomScroll() {
   const ELEMENT = document.documentElement;
   const BOTTOM_HEIGHT = ELEMENT.scrollHeight - ELEMENT.clientHeight;

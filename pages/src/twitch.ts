@@ -1,6 +1,3 @@
-// @ts-check
-/// <reference path="index.js"/>
-
 /**
  * @typedef TwitchTag
  * @type {Object.<string,any>}
@@ -25,7 +22,7 @@
 /**
  * @param {string} channelID Subscribe Twitch streamerID
  */
-function twitchSubscribe(channelID) {
+export function twitchSubscribe(channelID) {
   const WEBSOCKET = new WebSocket(TWITCH_IRC_URI)
 
   // Open twitch IRC(Websocket) connection

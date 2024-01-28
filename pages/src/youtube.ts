@@ -1,6 +1,3 @@
-// @ts-check
-/// <reference path="index.js"/>
-
 /**
  * @typedef YoutubeToken
  * @type {object}
@@ -68,7 +65,7 @@
 /**
  * @param {YoutubeToken} token
  */
-function youtubeSubscribe(token) {
+export function youtubeSubscribe(token) {
   setInterval(async function () {
     const CHAT_RESPONSE = await fetch(`${API_SERVER}/youtube/get_chat?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
       return res.json()

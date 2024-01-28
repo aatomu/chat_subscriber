@@ -1,7 +1,4 @@
-// @ts-check
-/// <reference path="index.js"/>
-
-function twicasSubscribe(token) {
+export function twicasSubscribe(token) {
 	const WEBSOCKET = new WebSocket(token.websocket_url)
 
 	// Open twitch IRC(Websocket) connection
