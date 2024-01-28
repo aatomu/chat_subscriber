@@ -32,12 +32,12 @@
  * @property {YoutubeImage[]?} image Emoji image list
  */
 /**
- * @typedef YoutubeSuperchat
+ * @typedef YoutubeSuperChat
  * @type {object}
- * @property {string} amount Superchat amount
- * @property {string} textColor Superchat text color
- * @property {string} backgroundColor Superchat background color
- * @property {YoutubeSticker?} sticker Superchat sticker information
+ * @property {string} amount Super chat amount
+ * @property {string} textColor Super chat text color
+ * @property {string} backgroundColor Super chat background color
+ * @property {YoutubeSticker?} sticker Super chat sticker information
  */
 /**
  * @typedef YoutubeSticker
@@ -56,13 +56,13 @@
  * @typedef YoutubeMessage
  * @type {object}
  * @property {YoutubeAuthor} author Author information
- * @property {YoutubeMessageData[]?} message Message informations
- * @property {YoutubeSuperchat?} superchat Superchat information
+ * @property {YoutubeMessageData[]?} message Message information list
+ * @property {YoutubeSuperChat?} superchat Super chat information
  * @property {boolean} isMembership Author joined membership?
  * @property {boolean} isOwner Author is owner(is liver)?
  * @property {boolean} isModerator Author is moderator(have wrench)?
  * @property {boolean} isVerified Author is verified?
- * @property {number} timestampMilliSecond Message send timestamp milli seconds(UTC)
+ * @property {number} timestampMilliSecond Message send timestamp milliseconds(UTC)
 */
 
 /**

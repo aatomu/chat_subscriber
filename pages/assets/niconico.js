@@ -19,12 +19,12 @@
  * @property {string} content Chat message
  * @property {number} date Send message timestamp seconds
  * @property {number} date_usec Send message timestamp micro second
- * @property {string?} mail If anonymity, "184" inputed
+ * @property {string?} mail "184" Has been set for anonymous
  * @property {number} no Message number
  * @property {number} premium Author flag 1:premium 3:owner
- * @property {string} thread Unknown Paramator
+ * @property {string} thread Unknown Parameter
  * @property {string} user_id Author id
- * @property {number} vpos Unknown Paramator
+ * @property {number} vpos Unknown Parameter
  */
 
 /**
@@ -52,13 +52,6 @@ function niconicoSubscribe(token) {
         }, "reconnect": false
       }
     }`)
-    // WATCH_SESSION.send(`
-    // {
-    //   "type":"getAkashic",
-    //   "data":{
-    //     "chasePlay":false
-    //   }
-    // }`)
   })
 
   WATCH_SESSION.addEventListener("message", function (event) {
@@ -73,7 +66,7 @@ function niconicoSubscribe(token) {
         WATCH_SESSION.send(`{"type":"pong"}`)
         WATCH_SESSION.send(`{"type":"keepSeat"}`)
         break
-      case "room": // Recive chat websoket information
+      case "room": // Receive chat websocket information
         const CHAT_WEBSOCKET_URL = REQUEST.data.messageServer.uri
         const JOIN_MESSAGE = JSON.stringify([
           {

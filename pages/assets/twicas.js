@@ -9,7 +9,7 @@ function twicasSubscribe(token) {
 		console.log(`Twicas Websocket Open(${token.channel_name}):`, event)
 	})
 
-	// Recive message
+	// Receive message
 	WEBSOCKET.addEventListener("message", function (event) {
 		if (!event.data) {
 			return

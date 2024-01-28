@@ -5,7 +5,7 @@ const CONTENTS = document.getElementById("contents")
 
 /**
  * Append #contents child
- * @param {number} timestamp Message timestamp(UTC milli seconds)
+ * @param {number} timestamp Message timestamp(UTC milliseconds)
  * @param {string} iconURL Author icon url
  * @param {string} name Author name
  * @param {string} message Message content(supported HTML)

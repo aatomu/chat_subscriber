@@ -40,7 +40,7 @@ function twitchSubscribe(channelID) {
     WEBSOCKET.send(`JOIN #${channelID}`)
   })
 
-  // Recive message
+  // Receive message
   WEBSOCKET.addEventListener("message", function (event) {
     const CHAT_LIST = twitchParseMessage(event.data)
     CHAT_LIST.forEach(chat => {
