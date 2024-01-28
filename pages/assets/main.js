@@ -103,5 +103,5 @@ SEARCH_PARAMS.getAll("twicas").forEach(async (channelID) => {
     return
   }
 
-  // niconicoSubscribe(TOKEN)
+  twicasSubscribe(TOKEN)
 })

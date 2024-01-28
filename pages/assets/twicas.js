@@ -2,7 +2,7 @@
 /// <reference path="index.js"/>
 
 function twicasSubscribe(token) {
-	const WEBSOCKET = token.websocket_url
+	const WEBSOCKET = new WebSocket(token.websocket_url)
 
 	// Open twitch IRC(Websocket) connection
 	WEBSOCKET.addEventListener("open", function (event) {
@@ -11,6 +11,12 @@ function twicasSubscribe(token) {
 
 	// Recive message
 	WEBSOCKET.addEventListener("message", function (event) {
-		console.log(event)
+		if (!event.data) {
+			return
+		}
+		const CHAT_LIST = JSON.parse(event.data)
+		CHAT_LIST.forEach(chat => {
+			addMessage(chat.createdAt,chat.author.profileImage,chat.author.name,chat.message,token.channel_name,"twicas")
+		})
 	})
 }
