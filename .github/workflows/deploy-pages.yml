@@ -20,9 +20,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./pages
 
       - name: Build
         run: tsc
+        working-directory: ./pages
 
       - name: Push Cloudflare pages Branch
         run: |
@@ -31,4 +33,3 @@ jobs:
           git add .
           git commit -m "Update"
           git push origin pages
-
