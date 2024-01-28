@@ -1,146 +1,159 @@
 :root {
-  --youtube-default: #C4302B;
-  --youtube: #FF3F38;
-  --twitch-default: #6441A5;
-  --twitch: #9A63FF;
-  --niconico-default: #252525;
-  --niconico: #303030;
+	--youtube-default: #C4302B;
+	--youtube: #FF3F38;
+	--twitch-default: #6441A5;
+	--twitch: #9A63FF;
+	--niconico-default: #252525;
+	--niconico: #303030;
+	--twicas-default: #0472FC;
+	--twicas: #3080FF;
+	--openrec-default: #ff8300;
+	--openrec: #FFB050;
 }
 
 html {
-  height: 100%;
+	height: 100%;
 }
 
 body {
-  height: 100%;
-  background-color: lightgreen;
-  margin: 0px auto;
+	height: 100%;
+	background-color: lightgreen;
+	margin: 0px auto;
 }
 
 .contents {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
 
-  height: 100%;
+	height: 100%;
 
-  line-height: 32px;
+	line-height: 32px;
 }
 
 .content {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
 
-  background-color: rgba(255, 255, 255, 0.75);
-  border-radius: 10px;
-  border-width: 3px;
-  border-style: solid;
+	background-color: rgba(255, 255, 255, 0.75);
+	border-radius: 10px;
+	border-width: 3px;
+	border-style: solid;
 
-  padding: 4px;
-  margin: 4px 0;
+	padding: 4px;
+	margin: 4px 0;
 }
 
 .content.youtube {
-  border-color: var(--youtube);
+	border-color: var(--youtube);
 }
 
 .content.twitch {
-  border-color: var(--twitch);
+	border-color: var(--twitch);
 }
 
 .content.niconico {
-  border-color: var(--niconico);
+	border-color: var(--niconico);
+}
+
+.content.twicas {
+	border-color: var(--twicas);
 }
 
 @keyframes invisible {
-  100% {
-    opacity: 0;
-  }
+	100% {
+		opacity: 0;
+	}
 }
 
 .content>* {
-  margin-left: 4px;
-  margin-right: 4px;
+	margin-left: 4px;
+	margin-right: 4px;
 }
 
 .time {
-  margin: 0px 8px;
+	margin: 0px 8px;
 
-  font-size: 70%;
-  color: gray;
-  white-space: pre;
+	font-size: 70%;
+	color: gray;
+	white-space: pre;
 }
 
 .icon {
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 
-  height: 32px;
+	height: 32px;
 }
 
 .icon>* {
-  height: 90%;
-  aspect-ratio: 1/1;
-  box-sizing: border-box;
-  border-radius: 50%;
+	height: 90%;
+	aspect-ratio: 1/1;
+	box-sizing: border-box;
+	border-radius: 50%;
 }
 
 .name {
-  font-size: 120%;
-  color: gray;
-  white-space: pre;
+	font-size: 120%;
+	color: gray;
+	white-space: pre;
 }
 
 .message {
-  font-size: 120%;
-  font-weight: bold;
-  word-break: break-all;
+	font-size: 120%;
+	font-weight: bold;
+	word-break: break-all;
 }
 
 .message .emoji {
-  height: 24px;
-  aspect-ratio: 1/1;
-  vertical-align: middle;
+	height: 24px;
+	aspect-ratio: 1/1;
+	vertical-align: middle;
 }
+
 .message .sticker {
-  height: 42px;
-  aspect-ratio: 1/1;
-  vertical-align: top;
+	height: 42px;
+	aspect-ratio: 1/1;
+	vertical-align: top;
 }
 
 .message-root {
-  width: 100%;
+	width: 100%;
 }
 
 .money {
-  border-radius: 8px;
-  padding: 0 10px;
+	border-radius: 8px;
+	padding: 0 10px;
 }
 
 .channel {
-  float: right;
-  opacity: 0.75;
+	float: right;
+	opacity: 0.75;
 
-  border-radius: 16px;
+	border-radius: 16px;
 
-  padding: 0 8px;
-  margin-top: 1px;
+	padding: 0 8px;
+	margin-top: 1px;
 
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: bold;
-  white-space: pre;
+	color: #ffffff;
+	font-size: 18px;
+	font-weight: bold;
+	white-space: pre;
 }
 
 .youtube .channel {
-  background-color: var(--youtube);
+	background-color: var(--youtube);
 }
 
 .twitch .channel {
-  background-color: var(--twitch);
+	background-color: var(--twitch);
 }
 
 .niconico .channel {
-  background-color: var(--niconico);
+	background-color: var(--niconico);
+}
+
+.niconico .channel {
+	background-color: var(--twicas);
 }
