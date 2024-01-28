@@ -19,7 +19,7 @@ Example URL:
 | twitch | TwitchのChannelID(projectcbw) | 読み込むTwitch配信のチャンネル |
 | niconico | NiconicoのUserID | 読み込むニコ生配信のチャンネル |
 | limit | number | 同時に表示するメッセージの最大数 |
-| clenup | number | n秒後に徐々に消え始める |
+| cleanup | number | n秒後に徐々に消え始める |
 
 OBS Custom CSS:
 ```css
@@ -34,8 +34,8 @@ body {
 | :-:      | :-:                | :-:                | :-:                  |
 | Youtube  | :white_check_mark: | :white_check_mark: | :white_check_mark:   |
 | Twitch   | :white_check_mark: | :white_check_mark: | :small_red_triangle: |
-| Niconico | :white_check_mark: | :x:                | :x:                  |
-| Twicas   | :x:                | :x:                | :x:                  |
+| Niconico | :white_check_mark: | None               | :x:                  |
+| Twicas   | :white_check_mark: | None               | :x:                  |
 | OpenREC  | :x:                | :x:                | :x:                  |
 
 ## Contents HTML Tree
