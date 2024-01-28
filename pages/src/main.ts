@@ -1,3 +1,4 @@
+import { addMessage } from "./render"
 const API_SERVER= "https://chat-subscriber.aatomu.workers.dev"
 
 // constant values
