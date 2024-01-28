@@ -23,3 +23,12 @@ jobs:
 
       - name: Build
         run: tsc
+
+      - name: Push Cloudflare pages Branch
+        run: |
+          git config --local user.email "github.action@action"
+          git config --local user.name "github-action"
+          git add .
+          git commit -m "Update"
+          git push origin pages
+
