@@ -61,6 +61,10 @@ body {
 	border-color: var(--twicas);
 }
 
+.content.openrec {
+	border-color: var(--openrec);
+}
+
 @keyframes invisible {
 	100% {
 		opacity: 0;
@@ -154,6 +158,10 @@ body {
 	background-color: var(--niconico);
 }
 
-.niconico .channel {
+.twicas .channel {
 	background-color: var(--twicas);
+}
+
+.openrec .channel {
+	background-color: var(--openrec);
 }
