@@ -84,3 +84,24 @@ SEARCH_PARAMS.getAll("niconico").forEach(async (channelID) => {
 
   niconicoSubscribe(TOKEN)
 })
+
+// Twicas Channel
+SEARCH_PARAMS.getAll("twicas").forEach(async (channelID) => {
+  // Information
+  console.log("Twicas Channel: ", channelID)
+  const TOKEN = await fetch(`${API_SERVER}/twicas/channel?id=${channelID}`).
+    then(res => {
+      return res.json()
+    }).
+    then(json => {
+      return json
+    })
+
+  console.log(`Twicas(#${channelID}):`,TOKEN)
+  if (TOKEN.websocket_url == "") {
+    addMessage(0, "", "ERROR", "This channelID live not found", channelID, "twicas")
+    return
+  }
+
+  // niconicoSubscribe(TOKEN)
+})
