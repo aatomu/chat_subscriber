@@ -110,6 +110,24 @@ export default {
 						});
 					}
 				}
+				break;
+			case 'openrec':
+				switch (REQUEST_API) {
+					case 'channel': {
+						// https://..../openrec/channel?id=xxxx
+						const ID = SEARCH_PARAMS.get('id');
+						if (!ID) {
+							break;
+						}
+						return new Response(JSON.stringify(await openrecGetLiveChat(ID)), {
+							headers: {
+								'Content-Type': 'application/json',
+								'Access-Control-Allow-Origin': '*',
+								'Access-Control-Allow-Methods': 'GET',
+							},
+						});
+					}
+				}
 		}
 		return ErrorResponse();
 	},
@@ -298,5 +316,25 @@ async function twicasGetLiveChat(id: string) {
 		movie_id: movieID,
 		channel_name: channelName,
 		websocket_url: websocketUrl,
+	};
+}
+
+type OpenrecResponse = {
+	movie_id: number;
+	channel: OpenrecChannel;
+};
+
+type OpenrecChannel = {
+	nickname: string;
+};
+
+async function openrecGetLiveChat(id: string) {
+	const LIVE_INFORMATION: OpenrecResponse = await fetch(`https://www.openrec.tv/live/${id}`).then((res) => {
+		return res.json();
+	});
+
+	return {
+		movie_id: LIVE_INFORMATION.movie_id,
+		channel_name: LIVE_INFORMATION.channel,
 	};
 }
