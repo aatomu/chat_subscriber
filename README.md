@@ -36,7 +36,7 @@ body {
 | Twitch   | :white_check_mark: | :white_check_mark: | :small_red_triangle: |
 | Niconico | :white_check_mark: | None               | :x:                  |
 | Twicas   | :white_check_mark: | None               | :x:                  |
-| OpenREC  | :x:                | :x:                | :x:                  |
+| OpenREC  | :white_check_mark: | :x:                | :x:                  |
 
 ## Contents HTML Tree
 * Youtube Normal Chat
