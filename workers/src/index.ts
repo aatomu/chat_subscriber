@@ -335,6 +335,6 @@ async function openrecGetLiveChat(id: string) {
 
 	return {
 		movie_id: LIVE_INFORMATION.movie_id,
-		channel_name: LIVE_INFORMATION.channel,
+		channel_name: LIVE_INFORMATION.channel.nickname,
 	};
 }
