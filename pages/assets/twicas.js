@@ -16,6 +16,7 @@ function twicasSubscribe(token) {
 		}
 		const CHAT_LIST = JSON.parse(event.data)
 		CHAT_LIST.forEach(chat => {
+			console.log(`Twicas WebSocket Message(@${token.channel_name}):`, chat)
 			addMessage(chat.createdAt,chat.author.profileImage,chat.author.name,chat.message,token.channel_name,"twicas")
 		})
 	})
