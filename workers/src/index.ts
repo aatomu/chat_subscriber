@@ -329,7 +329,7 @@ type OpenrecChannel = {
 };
 
 async function openrecGetLiveChat(id: string) {
-	const LIVE_INFORMATION: OpenrecResponse = await fetch(`https://www.openrec.tv/live/${id}`).then((res) => {
+	const LIVE_INFORMATION: OpenrecResponse = await fetch(`https://public.openrec.tv/external/api/v5/movies/${id}`).then((res) => {
 		return res.json();
 	});
 
