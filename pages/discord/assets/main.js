@@ -2,6 +2,7 @@
 
 let localUserID = ""
 let currentVoiceChannel = ""
+// Constant values
 const DISCORD_CONNECTOR = "ws://127.0.0.1:16463/websocket"
 const DISCORD_ACCESS_TOKEN = "T0cJ3PN21itSa7jltuHDeVhLkVPIgz"
 const nonce = new class Nonce {
