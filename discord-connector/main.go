@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"fyne.io/systray"
 	"golang.org/x/net/websocket"
@@ -15,9 +14,18 @@ const (
 	DiscordRpcRange    = 10
 	DiscordRpcOrigin   = "https://streamkit.discord.com"
 	DiscordRpcClientID = "207646673902501888"
+	// Icon               = []byte{0, 0}
 )
 
 func main() {
+	// icon, _ := os.ReadFile("./icon.ico")
+	// for i, v := range icon {
+	// 	if i%32 == 0 {
+	// 		fmt.Printf("\n")
+	// 	}
+	// 	fmt.Printf("0x%02x,", v)
+	// }
+	// return
 	systray.Run(onReady, onExit)
 }
 
@@ -26,8 +34,6 @@ func onExit() {
 }
 
 func onReady() {
-	// Icon
-	icon, _ := os.ReadFile("./icon.ico")
 	systray.SetIcon(icon)
 	// Soft Name
 	name := "Discord Connector"
