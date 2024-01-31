@@ -1,4 +1,4 @@
-module example.com/example
+module github.com/aatomu/chat_subscriber/discord-connector
 
 go 1.20
 
