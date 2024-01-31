@@ -1,0 +1,4 @@
+
+.user:not(.speaking) {
+	opacity: 0.5;
+}
