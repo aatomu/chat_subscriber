@@ -68,6 +68,12 @@ function parseSpeechConfig(config) {
 	}
 }
 
+function voiceCheck() {
+	if (TIP_READ_CONFIG != null || MESSAGE_READ_CONFIG != null) {
+		addMessage(0, "", "Voice-Check", `<button onclick="voicePreview()">Click to Preview/Enable</button>`, "Voice", "niconico")
+	}
+}
+
 function voicePreview() {
 	if (TIP_READ_CONFIG != null) {
 		const CONFIG = parseSpeechConfig(TIP_READ_CONFIG)
@@ -84,7 +90,7 @@ function voicePreview() {
 		console.log(VOICE_LIST)
 		VOICE_LIST.forEach((voice, index) => {
 			setTimeout(function () {
-				addMessage(0, "", `Index:${index}`, `Lang:${voice.lang} Name:${voice.name}`, "Voice-List", "youtube")
+				addMessage(0, "", `Index:${index}`, `Lang:${voice.lang} Name:${voice.name}`, "Voice", "youtube")
 				speechText(index, 1, 1, voice.name)
 			}, index * 4000)
 		})

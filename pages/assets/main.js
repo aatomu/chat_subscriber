@@ -109,4 +109,4 @@ SEARCH_PARAMS.getAll("openrec").forEach(async (channelID) => {
 	openrecSubscribe(TOKEN)
 })
 
-addMessage(0,"","Voice-Check",`<button onclick="voicePreview()">Click to check</button>`,"Voice-List","_")
+voiceCheck()
