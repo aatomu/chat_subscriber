@@ -1,16 +1,16 @@
 # chat_subscriber
 複数のLive配信のチャットを接続する
+おまけ: Discord Channel Tracer
 
 ## How To Use
-Open URL in Browser or Open Browser in OBS
+* User like     : `Open URL` in Browser
+* Streamer like : `Browser Source` in OBS (Recommended CSS is written below)
 
 Example URL:
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>`
-* `https://live.aatomu.work/?watch=<Youtube Video ID>`
 * `https://live.aatomu.work/?twitch=<Twitch Channel ID>`
-* `https://live.aatomu.work/?niconico=<Niconico User ID>`
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>&twitch=<Twitch Channel ID>&limit=10`
-* `https://live.aatomu.work/?youtube=<Youtube Channel ID>&youtube=<Twitch Channel ID>&limit=10?cleanup=120`
+* `https://live.aatomu.work/?youtube=<Youtube Channel ID>&limit=10?cleanup=120`
 
 ### Supported Live Chat
 | Key | Value Type | Description | Example |
@@ -19,6 +19,8 @@ Example URL:
 | watch | string | Youtube Video ID | `watch=xxxxxxx` |
 | twitch | string | Twitch Live Channel | `twitch=ProjectCBW` |
 | niconico | string | Niconico Live Channel | `niconico=xxxxx` |
+| twicas | string | Twicas Live Channel | `twicas=xxxxx` |
+| openrec | string | OpenRec Live Channel | `openrec=xxxxx` |
 
 ### Supported Options
 | Key | Value Type | Description | Example | Default |
@@ -73,7 +75,10 @@ body {
     </div>
     <span class="name">...</span>
     <div class="message-root">
-      <span class="message"><span class="money" style="color: #000000;background-color: #000000;">$0.00</span>...</span>
+      <span class="message">
+        <span class="money" style="color: #000000;background-color: #000000;">$0.00</span>
+        ...
+      </span>
       <span class="channel">...</span>
     </div>
   </div>
