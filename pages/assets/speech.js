@@ -2,6 +2,7 @@
 /// <reference path="index.js"/>
 
 const SYNTHESIS = window.speechSynthesis;
+SYNTHESIS.cancel()
 const speechQueueLimit = 10
 let speechQueueCurrent = 0
 
@@ -56,7 +57,7 @@ function parseSpeechConfig(config) {
 	if (isNaN(rate)) {
 		rate = 1
 	}
-	let volume = parseInt(CONFIG_LIST[2])
+	let volume = parseFloat(CONFIG_LIST[2])
 	if (isNaN(volume)) {
 		volume = 1
 	}
@@ -68,8 +69,17 @@ function parseSpeechConfig(config) {
 }
 
 function voicePreview() {
-	if (TIP_READ_CONFIG == "" || MESSAGE_READ_CONFIG == "") {
+	if (TIP_READ_CONFIG != null) {
+		const CONFIG = parseSpeechConfig(TIP_READ_CONFIG)
+		console.log(CONFIG)
+		speechText(CONFIG.index, CONFIG.rate, CONFIG.volume, "Tip Message Read Config")
+	}
+	if (MESSAGE_READ_CONFIG != null) {
+		const CONFIG = parseSpeechConfig(MESSAGE_READ_CONFIG)
+		speechText(CONFIG.index, CONFIG.rate, CONFIG.volume, "Normal Message Read Config")
+	}
 
+	if (TIP_READ_CONFIG == "" || MESSAGE_READ_CONFIG == "") {
 		const VOICE_LIST = SYNTHESIS.getVoices()
 		console.log(VOICE_LIST)
 		VOICE_LIST.forEach((voice, index) => {
