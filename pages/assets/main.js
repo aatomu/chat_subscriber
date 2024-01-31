@@ -5,18 +5,21 @@ const API_SERVER = "https://chat-subscriber.aatomu.workers.dev"
 
 // constant values
 const SEARCH_PARAMS = new URLSearchParams(window.location.search)
+/// chat limit
 let charCountLimitString = SEARCH_PARAMS.get("limit")
 if (charCountLimitString == null) {
 	charCountLimitString = "20"
 }
 const CHAT_COUNT_LIMIT = parseInt(charCountLimitString)
+/// chat cleanup
 const CHAT_CLEANUP_TIME = SEARCH_PARAMS.get("cleanup")
+/// tip read config
+const TIP_READ_CONFIG = SEARCH_PARAMS.get("tip")
+const MESSAGE_READ_CONFIG = SEARCH_PARAMS.get("message")
 
 // develop message
 if (SEARCH_PARAMS.size == 0) {
-	addMessage(0, "https://pbs.twimg.com/profile_images/1480130282099740684/uNSmGF1F_400x400.jpg", "aatomu", `How To Use:
-  /?youtube=@ChannelID&twitch=ChannelID&limit=ChatLimit&cleanup=CleanupDelay
-  More Information: <a href="https://github.com/aatomu/chat_subscriber">Github</a>`, "#develop-message", "youtube")
+	addMessage(0, "https://pbs.twimg.com/profile_images/1480130282099740684/uNSmGF1F_400x400.jpg", "aatomu", `Check This! <a href="https://github.com/aatomu/chat_subscriber">Github</a>`, "#develop-message", "youtube")
 }
 
 // Youtube Channel
@@ -105,3 +108,5 @@ SEARCH_PARAMS.getAll("openrec").forEach(async (channelID) => {
 
 	openrecSubscribe(TOKEN)
 })
+
+addMessage(0,"","Voice-Check",`<button onclick="voicePreview()">Click to check</button>`,"Voice-List","_")
