@@ -12,14 +12,21 @@ Example URL:
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>&twitch=<Twitch Channel ID>&limit=10`
 * `https://live.aatomu.work/?youtube=<Youtube Channel ID>&youtube=<Twitch Channel ID>&limit=10?cleanup=120`
 
-| Key | Value | Description |
-| :- | :- | :- |
-| youtube | YoutubeのChannelID(@ProjectCBW) | 読み込むYoutube配信のチャンネル |
-| watch | YoutubeのURL `watch?v=` | 読み込むYoutube動画のID |
-| twitch | TwitchのChannelID(projectcbw) | 読み込むTwitch配信のチャンネル |
-| niconico | NiconicoのUserID | 読み込むニコ生配信のチャンネル |
-| limit | number | 同時に表示するメッセージの最大数 |
-| cleanup | number | n秒後に徐々に消え始める |
+### Supported Live Chat
+| Key | Value Type | Description | Example |
+| :-: | :-: | :-: | :- |
+| youtube | string | Youtube Live Channel | `youtube=@ProjectCBW` |
+| watch | string | Youtube Video ID | `watch=xxxxxxx` |
+| twitch | string | Twitch Live Channel | `twitch=ProjectCBW` |
+| niconico | string | Niconico Live Channel | `niconico=xxxxx` |
+
+### Supported Options
+| Key | Value Type | Description | Example | Default |
+| :-: | :-: | :-: | :- | :-: |
+| limit | number | Display Limit | `limit=10` | 20 |
+| cleanup | number | Cleanup Delay(Second) | `cleanup=10` |  |
+| tip | number,number,number | Tip Message Read Config<br>`index,rate,volume`<br>*Required enable button click  | `tip=0,1,1` |  |
+| message | number,number,number | Normal Message Read Config<br>`index,rate,volume`<br>*Required enable button click  | `message=0,1,1` |  |
 
 OBS Custom CSS:
 ```css
@@ -34,15 +41,15 @@ body {
 | :-:      | :-:                | :-:                | :-:                  |
 | Youtube  | :white_check_mark: | :white_check_mark: | :white_check_mark:   |
 | Twitch   | :white_check_mark: | :white_check_mark: | :small_red_triangle: |
-| Niconico | :white_check_mark: | None               | :x:                  |
-| Twicas   | :white_check_mark: | None               | :x:                  |
+| Niconico | :white_check_mark: |                    | :x:                  |
+| Twicas   | :white_check_mark: |                    | :x:                  |
 | OpenREC  | :white_check_mark: | :x:                | :x:                  |
 
 ## Contents HTML Tree
-* Youtube Normal Chat
+* Normal Chat
 ```html
 <div class="contents">
-  <div class="content youtube">
+  <div class="content {Site}">
     <span class="time">00:00:00</span>
     <div class="icon">
       <img src="...">
@@ -56,10 +63,10 @@ body {
 </div>
 ```
 
-* Youtube Super Chat
+* Tip Chat
 ```html
 <div class="contents">
-  <div class="content youtube">
+  <div class="content {Site}">
     <span class="time">00:00:00</span>
     <div class="icon">
       <img src="...">
@@ -67,40 +74,6 @@ body {
     <span class="name">...</span>
     <div class="message-root">
       <span class="message"><span class="money" style="color: #000000;background-color: #000000;">$0.00</span>...</span>
-      <span class="channel">...</span>
-    </div>
-  </div>
-</div>
-```
-
-* Twitch Normal Chat
-```html
-<div class="contents">
-  <div class="content twitch">
-    <span class="time">00:00:00</span>
-    <div class="icon">
-      <img src="...">
-    </div>
-    <span class="name">...</span>
-    <div class="message-root">
-      <span class="message">...</span>
-      <span class="channel">...</span>
-    </div>
-  </div>
-</div>
-```
-
-* Niconico Bits Chat
-```html
-<div class="contents">
-  <div class="content niconico">
-    <span class="time">00:00:00</span>
-    <div class="icon">
-      <img src="...">
-    </div>
-    <span class="name">...</span>
-    <div class="message-root">
-      <span class="message"><span class="money" style="background-color: var(--twitch);">$0.00</span>...</span>
       <span class="channel">...</span>
     </div>
   </div>
