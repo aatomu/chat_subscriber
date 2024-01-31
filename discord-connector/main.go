@@ -14,7 +14,6 @@ const (
 	DiscordRpcRange    = 10
 	DiscordRpcOrigin   = "https://streamkit.discord.com"
 	DiscordRpcClientID = "207646673902501888"
-	// Icon               = []byte{0, 0}
 )
 
 func main() {
@@ -26,6 +25,7 @@ func main() {
 	// 	fmt.Printf("0x%02x,", v)
 	// }
 	// return
+	log.Println("func main()")
 	systray.Run(onReady, onExit)
 }
 
@@ -34,17 +34,23 @@ func onExit() {
 }
 
 func onReady() {
+	log.Println("func onReady()")
+	// Soft Icon
 	systray.SetIcon(icon)
+	log.Println("Icon set")
 	// Soft Name
 	name := "Discord Connector"
 	systray.SetTitle(name)
 	systray.SetTooltip(name)
+	log.Println("Tips set")
 	// Exit Item
-	exitItem()
+	go exitItem()
 
 	// Start Proxy
 	http.Handle("/websocket", websocket.Handler(DialDiscordRPC))
+	log.Println("Handle set")
 
+	log.Println("Http Server Boot")
 	err := http.ListenAndServe(":16463", nil)
 	if err != nil {
 		log.Println("Listen failed:", err)
@@ -70,7 +76,9 @@ func DialDiscordRPC(ws *websocket.Conn) {
 	}()
 
 	for tries := 0; ; tries++ {
-		conn, err := websocket.Dial(fmt.Sprintf("ws://127.0.0.1:%d/v=1", DiscordRpcPort+(tries%DiscordRpcRange)), "", DiscordRpcOrigin)
+		URI := fmt.Sprintf("ws://127.0.0.1:%d/?v=1&client_id=%s", DiscordRpcPort+(tries%DiscordRpcRange), DiscordRpcClientID)
+		log.Println("Dial", URI)
+		conn, err := websocket.Dial(URI, "", "https://streamkit.discord.com")
 		if err != nil {
 			log.Println(err)
 			continue
@@ -94,6 +102,7 @@ func messageCopy(from, to *websocket.Conn, destroy chan<- struct{}) {
 			destroy <- struct{}{}
 			return
 		}
+		log.Println(message)
 		err = websocket.Message.Send(to, message)
 		if err != nil {
 			destroy <- struct{}{}
