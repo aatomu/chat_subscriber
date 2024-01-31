@@ -98,4 +98,4 @@ License: `Apache License`
 * Special Thanks
   * [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW): Youtube/Twitch live test
   * Project CBW Listeners: Message view test, Design layout check
-	* [しぐりむん(@shiglimnn)](https://twitter.com/shiglimnn): Multi Twitch live test
+  * [しぐりむん(@shiglimnn)](https://twitter.com/shiglimnn): Multi Twitch live test
