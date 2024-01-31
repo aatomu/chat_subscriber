@@ -110,6 +110,9 @@ body {
 ## Screen Shot
 * Youtube * Twitch cross chat
 ![Youtube*twitch cross chat screen shot](./example-youtube-twitch.png)
+* Twitch multi chat
+![Twitch multi chat screen shot](./example-multi-twitch.png)
+
 
 ## Credit
 License: `Apache License`
@@ -122,3 +125,4 @@ License: `Apache License`
 * Special Thanks
   * [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW): Youtube/Twitch live test
   * Project CBW Listeners: Message view test, Design layout check
+	* [しぐりむん(@shiglimnn)](https://twitter.com/shiglimnn): Multi Twitch live test
