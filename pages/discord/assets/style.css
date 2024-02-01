@@ -2,12 +2,12 @@
   padding: 10px;
   width: fit-content;
 
-  background-color: lightgray;
-  border-radius: 8px;
+  background-color: rgba(230, 230, 230, 0.9);
+  border-radius: 32px;
 }
 
 .channel {
-  background-color: gray;
+  background-color: #AAA;
   border-radius: 8px;
   margin: 10px;
   padding: 0 10px;
@@ -34,6 +34,7 @@
 
 .user:not(.speaking) {
   opacity: 0.1;
+  transition: 0.5s;
 }
 
 .icon {
