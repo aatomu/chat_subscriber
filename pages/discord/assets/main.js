@@ -39,11 +39,13 @@ WEBSOCKET.addEventListener("message", function (event) {
       case "VOICE_STATE_CREATE": {
         const STATE = RPC.data
         userAdd(STATE.user)
+        userSort()
         return
       }
       case "VOICE_STATE_UPDATE": {
         const STATE = RPC.data
         userUpdate(STATE.nick, STATE.user, STATE.voice_state)
+        userSort()
         return
       }
       case "VOICE_STATE_DELETE": {
@@ -132,6 +134,7 @@ WEBSOCKET.addEventListener("message", function (event) {
       userAdd(state.user)
       userUpdate(state.nick, state.user, state.voice_state)
     });
+    userSort()
   }
 })
 
@@ -263,4 +266,29 @@ function userUpdate(nick, user, voice_state) {
   if (voice_state.self_mute) { USER.classList.add("self_mute") }
   USER.classList.remove("suppress")
   if (voice_state.suppress) { USER.classList.add("suppress") }
+}
+
+function userSort() {
+  const USERS = document.getElementById("users")
+  if (!USERS) {
+    return
+  }
+
+  let userArray = Array.prototype.slice.call(USERS.children)
+  userArray.sort(function (a, b) {
+    const A_NICK = a.querySelector(".nick").innerText.toLowerCase()
+    const B_NICK = b.querySelector(".nick").innerText.toLowerCase()
+    if (A_NICK > B_NICK) {
+      return 1
+    } else if (A_NICK < B_NICK) {
+      return -1
+    }
+    return 0
+  })
+
+  for (let index=0;index<userArray.length;index++) {
+    const USER = USERS.removeChild(userArray[index])
+    USERS.appendChild(USER)
+  }
+  console.log(userArray)
 }
