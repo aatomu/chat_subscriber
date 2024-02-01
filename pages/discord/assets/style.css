@@ -1,4 +1,50 @@
+.users {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+.user {
+  position: relative;
+  height: fit-content;
+  width: fit-content;
+  margin: 8px;
+}
 
 .user:not(.speaking) {
-	opacity: 0.5;
+  opacity: 0.5;
+}
+
+.icon {
+  height: 128px;
+  aspect-ratio: 1/1;
+
+  border-radius: 32px;
+}
+
+.decoration {
+  position: absolute;
+
+  height: 128px;
+  aspect-ratio: 1/1;
+}
+
+.nick {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  padding: 0 10px;
+
+  background-color: rgba(192,192,192,0.7);
+  border-radius: 8px;
+  white-space: pre;
+  font-weight: bold;
+}
+
+.name {
+  display: none;
+
+  white-space: pre;
+  font-weight: bold;
 }
