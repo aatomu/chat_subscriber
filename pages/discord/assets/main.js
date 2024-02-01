@@ -186,6 +186,9 @@ function userAdd(user) {
   const USER = document.createElement("div")
   USER.classList.add("user")
   USER.id = user.id.toString()
+  if (USER.id == localUserID) {
+    USER.classList.add("me")
+  }
 
   const ICON = document.createElement("img")
   ICON.classList.add("icon")
