@@ -2,6 +2,7 @@
 
 let localUserID = ""
 let currentVoiceChannel = ""
+let currentCoolDown = 10
 // Constant values
 const DISCORD_CONNECTOR = "ws://127.0.0.1:16463/websocket"
 const DISCORD_ACCESS_TOKEN = "T0cJ3PN21itSa7jltuHDeVhLkVPIgz"
@@ -14,7 +15,7 @@ const nonce = new class Nonce {
     return this.num.toString(16).padStart(4, "0")
   }
 }
-
+const SEARCH_COOL_DOWN = 10
 
 const WEBSOCKET = new WebSocket(DISCORD_CONNECTOR)
 
@@ -90,12 +91,17 @@ WEBSOCKET.addEventListener("message", function (event) {
   // Auth result
   if (RPC.cmd == "AUTHENTICATE") {
     setInterval(function () {
-      console.log("Should Check New Channel?")
       if (currentVoiceChannel == "") {
+        console.log("Should Check New Channel?")
+        if (currentCoolDown > 0) {
+          currentCoolDown--
+          return
+        }
         console.log("Check New Channel!")
         Send(WEBSOCKET, "GET_SELECTED_VOICE_CHANNEL", "", {}) // Get current channel
+        currentCoolDown = SEARCH_COOL_DOWN
       }
-    }, 5000)
+    }, 100)
     localUserID = RPC.data.user.id
   }
   // Parse user voice chat
@@ -187,7 +193,7 @@ function userAdd(nick, user, voice_state) {
     DECO.src = `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}`
     DECO.classList.add("decoration")
     USER.append(DECO)
-    }
+  }
   const NICK = document.createElement("span")
   NICK.innerText = nick
   NICK.classList.add("nick")
