@@ -38,12 +38,12 @@ WEBSOCKET.addEventListener("message", function (event) {
       }
       case "VOICE_STATE_CREATE": {
         const STATE = RPC.data
-        userAdd(STATE.nick, STATE.user, STATE.voice_state)
+        userAdd(STATE.user)
         return
       }
       case "VOICE_STATE_UPDATE": {
         const STATE = RPC.data
-        updateVoiceState(STATE.user.id, STATE.voice_state)
+        userUpdate(STATE.nick, STATE.user, STATE.voice_state)
         return
       }
       case "VOICE_STATE_DELETE": {
@@ -65,6 +65,10 @@ WEBSOCKET.addEventListener("message", function (event) {
             while (USERS.firstChild) {
               USERS.removeChild(USERS.firstChild);
             }
+          }
+          const CHANNEL_NAME = document.getElementById("channel")
+          if (CHANNEL_NAME) {
+            CHANNEL_NAME.innerText = ""
           }
           currentVoiceChannel = ""
         }
@@ -110,6 +114,11 @@ WEBSOCKET.addEventListener("message", function (event) {
     if (!RPC.data) {
       return
     }
+    // Channel Name
+    const CHANNEL_NAME = document.getElementById("channel")
+    if (CHANNEL_NAME) {
+      CHANNEL_NAME.innerText = RPC.data.name
+    }
     // SUBSCRIBE
     const VOICE_CHANNEL_ID = RPC.data.id.toString()
     Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: VOICE_CHANNEL_ID }) // Connect
@@ -120,7 +129,8 @@ WEBSOCKET.addEventListener("message", function (event) {
     currentVoiceChannel = VOICE_CHANNEL_ID
     // Add users
     RPC.data.voice_states.forEach((state) => {
-      userAdd(state.nick, state.user, state.voice_state)
+      userAdd(state.user)
+      userUpdate(state.nick, state.user, state.voice_state)
     });
   }
 })
@@ -170,57 +180,76 @@ function Send(ws, command, event, argumentsObject) {
  */
 
 /**
- * @param {string} nick
  * @param {User} user
- * @param {VoiceState} voice_state
  */
-function userAdd(nick, user, voice_state) {
+function userAdd(user) {
   const USER = document.createElement("div")
   USER.classList.add("user")
   USER.id = user.id.toString()
 
   const ICON = document.createElement("img")
-  if (user.avatar) {
-    ICON.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`
-  } else {
-    const INDEX = (user.id >> 22) % 6
-    ICON.src = `https://cdn.discordapp.com/embed/avatars/${INDEX}.png`
-  }
   ICON.classList.add("icon")
   USER.append(ICON)
   if (user.avatar_decoration_data) {
     const DECO = document.createElement("img")
-    DECO.src = `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}`
     DECO.classList.add("decoration")
     USER.append(DECO)
   }
   const NICK = document.createElement("span")
-  NICK.innerText = nick
   NICK.classList.add("nick")
   USER.append(NICK)
   const NAME = document.createElement("span")
-  NAME.innerText = user.username
   NAME.classList.add("name")
   USER.append(NAME)
 
   const USERS = document.getElementById("users")
   if (USERS) {
     USERS.append(USER)
-    updateVoiceState(user.id, voice_state)
   }
 }
 
 /**
- * @param {number} id
+ * @param {string} nick
+ * @param {User} user
  * @param {VoiceState} voice_state
  * @returns
  */
-function updateVoiceState(id, voice_state) {
-  const USER = document.getElementById(id.toString())
+function userUpdate(nick, user, voice_state) {
+  const USER = document.getElementById(user.id.toString())
   if (!USER) {
     return
   }
 
+  // User
+  /** @type {HTMLImageElement?} */
+  const ICON = USER.querySelector(".icon")
+  if (ICON) {
+    if (user.avatar) {
+      ICON.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`
+    } else {
+      const INDEX = (user.id >> 22) % 6
+      ICON.src = `https://cdn.discordapp.com/embed/avatars/${INDEX}.png`
+    }
+  }
+  if (user.avatar_decoration_data) {
+    /** @type {HTMLImageElement?} */
+    const DECO = USER.querySelector("decoration")
+    if (DECO) {
+      DECO.src = `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}`
+    }
+  }
+  /** @type {HTMLSpanElement?} */
+  const NICK = USER.querySelector(".nick")
+  if (NICK) {
+    NICK.innerText = nick
+  }
+  /** @type {HTMLSpanElement?} */
+  const NAME = USER.querySelector(".name")
+  if (NAME) {
+    NAME.innerText = user.username
+  }
+
+  // Voice
   USER.classList.remove("deaf")
   if (voice_state.deaf) { USER.classList.add("deaf") }
   USER.classList.remove("self_deaf")
@@ -231,5 +260,4 @@ function updateVoiceState(id, voice_state) {
   if (voice_state.self_mute) { USER.classList.add("self_mute") }
   USER.classList.remove("suppress")
   if (voice_state.suppress) { USER.classList.add("suppress") }
-
 }
