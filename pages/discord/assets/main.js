@@ -148,7 +148,7 @@ function Send(ws, command, event, argumentsObject) {
  * @property {string} username
  * @property {string} global_name
  * @property {string} avatar
- * @property {string} avatar_decoration_data
+ * @property {object} avatar_decoration_data
  * @property {string} bot
  * @property {number} flags
  * @property {number} premium_type
@@ -182,6 +182,12 @@ function userAdd(nick, user, voice_state) {
   }
   ICON.classList.add("icon")
   USER.append(ICON)
+  if (user.avatar_decoration_data) {
+    const DECO = document.createElement("img")
+    DECO.src = `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}`
+    DECO.classList.add("decoration")
+    USER.append(DECO)
+    }
   const NICK = document.createElement("span")
   NICK.innerText = nick
   NICK.classList.add("nick")
