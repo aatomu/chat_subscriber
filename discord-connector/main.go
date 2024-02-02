@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"fyne.io/systray"
 	"golang.org/x/net/websocket"
@@ -17,6 +19,15 @@ const (
 )
 
 func main() {
+	// Logger
+	logger, err := os.OpenFile(fmt.Sprintf("./%s.log", time.Now().Format("20060102-15-04-05")), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
+	defer logger.Close()
+	log.SetOutput(logger)
+
+	// Generate icon
 	// icon, _ := os.ReadFile("./icon.ico")
 	// for i, v := range icon {
 	// 	if i%32 == 0 {
@@ -25,6 +36,8 @@ func main() {
 	// 	fmt.Printf("0x%02x,", v)
 	// }
 	// return
+
+	// Systray start
 	log.Println("func main()")
 	systray.Run(onReady, onExit)
 }
@@ -55,6 +68,7 @@ func onReady() {
 	if err != nil {
 		log.Println("Listen failed:", err)
 	}
+	systray.Quit()
 }
 
 func exitItem() {
