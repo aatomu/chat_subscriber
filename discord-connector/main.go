@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"fyne.io/systray"
 	"golang.org/x/net/websocket"
@@ -19,15 +20,12 @@ const (
 
 func main() {
 	// Logger
-	_, err := os.Stat("connector.log")
-	if err == nil {
-		logger, err := os.OpenFile("connector.log", os.O_APPEND|os.O_WRONLY, 0644)
-		if err != nil {
-			panic(err)
-		}
-		defer logger.Close()
-		log.SetOutput(logger)
+	logger, err := os.Create(fmt.Sprintf("./%s.log", time.Now().Format("20060102-15-04-05")))
+	if err != nil {
+		panic(err)
 	}
+	defer logger.Close()
+	log.SetOutput(logger)
 
 	// Generate icon
 	// icon, _ := os.ReadFile("./icon.ico")
