@@ -10,12 +10,10 @@ import (
 )
 
 const (
-	DiscordRpcPort  = 6463
-	DiscordRpcRange = 10
-	// DiscordRpcOrigin   = "https://streamkit.discord.com"
-	// DiscordRpcClientID = "207646673902501888"
-	DiscordRpcOrigin   = "https://localhost"
-	DiscordRpcClientID = "1201816266344759326"
+	DiscordRpcPort     = 6463
+	DiscordRpcRange    = 10
+	DiscordRpcOrigin   = "https://streamkit.discord.com"
+	DiscordRpcClientID = "207646673902501888"
 )
 
 func main() {
