@@ -44,10 +44,16 @@
   border-radius: 32px;
 }
 
+.user:has(.decoration) .icon {
+  border-radius: 64px;
+}
+
 .decoration {
   position: absolute;
+  top: calc((152px - 128px) / 2 * -1);
+  left: calc((152px - 128px) / 2* -1);
 
-  height: 128px;
+  height: 152px;
   aspect-ratio: 1/1;
 }
 
@@ -60,7 +66,7 @@
   max-width: 100%;
   padding: 0 10px;
 
-  background-color: rgba(192, 192, 192, 0.7);
+  background-color: rgba(192, 192, 192, 0.9);
   border-radius: 8px;
   font-weight: bold;
 
