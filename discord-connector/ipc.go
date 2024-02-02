@@ -28,44 +28,44 @@ type RpcHandshake struct {
 	ClientID string `json:"client_id"`
 }
 
-func NewIPC(clientID string, num int) (ipc *IPC, body []byte, err error) {
+func NewIPC(clientID string, num int) (ipc *IPC, err error) {
 	// Dial
 	conn, err := dialRPC(num)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	// Sent handshake
 	handshake, _ := json.Marshal(RpcHandshake{
 		V:        "1",
 		ClientID: clientID,
 	})
-	body, err = conn.send(HandShake, handshake)
+	err = conn.send(HandShake, handshake)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return conn, body, nil
+	return conn, nil
 }
 
-func (ipc *IPC) send(code OPcode, message []byte) (body []byte, err error) {
+func (ipc *IPC) send(code OPcode, message []byte) (err error) {
 	buf := new(bytes.Buffer)
 
 	err = binary.Write(buf, binary.LittleEndian, code)
 	if err != nil {
-		return nil, err
+		return
 	}
 	err = binary.Write(buf, binary.LittleEndian, int32(len(message)))
 	if err != nil {
-		return nil, err
+		return
 	}
 	buf.Write([]byte(message))
 
 	_, err = ipc.Conn.Write(buf.Bytes())
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return ipc.read()
+	return nil
 }
 
 func (ipc *IPC) read() (body []byte, err error) {

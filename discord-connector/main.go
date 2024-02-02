@@ -90,7 +90,7 @@ func DialDiscordRPC(ws *websocket.Conn) {
 	clientID := ws.Request().URL.Query().Get("id")
 	for tries := 0; tries < 100; tries++ {
 		log.Println("Dial", fmt.Sprintf("discord-ipc-%d", tries%IpcRange))
-		ipc, res, err := NewIPC(clientID, tries%IpcRange)
+		ipc, err := NewIPC(clientID, tries%IpcRange)
 
 		if err != nil {
 			log.Println("Dial error:", err)
@@ -102,33 +102,42 @@ func DialDiscordRPC(ws *websocket.Conn) {
 			ipc.Conn.Close()
 		}()
 
-		err = websocket.Message.Send(ws, string(res))
-		if err != nil {
-			log.Println("Write websocket error:", err)
-			return
-		}
+		var isBreak *bool
+		go func() {
+			var message string
+			for !*isBreak {
+				err := websocket.Message.Receive(ws, &message)
+				if err != nil {
+					log.Println("Read websocket error:", err)
+					*isBreak = true
+					return
+				}
+				log.Println("Read websocket:", message)
 
-		var message string
-		for {
-			err := websocket.Message.Receive(ws, &message)
-			if err != nil {
-				log.Println("Read websocket error:", err)
-				return
+				err = ipc.send(Frame, []byte(message))
+				if err != nil {
+					log.Println("Send IPC error", err)
+					*isBreak = true
+					return
+				}
 			}
-			log.Println("Read websocket:", message)
-
-			body, err := ipc.send(Frame, []byte(message))
+		}()
+		for !*isBreak {
+			body, err := ipc.read()
 			if err != nil {
-				log.Println("IPC error", err)
+				log.Println("Read IPC error:", err)
+				*isBreak = true
 				return
 			}
 
 			err = websocket.Message.Send(ws, string(body))
 			if err != nil {
-				log.Println("Write websocket error:", err)
+				log.Println("Send websocket error:", err)
+				*isBreak = true
 				return
 			}
 		}
+		return
 	}
 }
 
