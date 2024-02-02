@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -12,8 +13,7 @@ import (
 )
 
 const (
-	DiscordRpcPort  = 6463
-	DiscordRpcRange = 10
+	IpcRange = 10
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 		panic(err)
 	}
 	defer logger.Close()
-	log.SetOutput(logger)
+	log.SetOutput(io.MultiWriter(logger, os.Stdout))
 
 	// Generate icon
 	// icon, _ := os.ReadFile("./icon.ico")
@@ -88,40 +88,50 @@ func DialDiscordRPC(ws *websocket.Conn) {
 	}()
 
 	clientID := ws.Request().URL.Query().Get("id")
-	origin := ws.Request().URL.Query().Get("origin")
 	for tries := 0; tries < 100; tries++ {
-		URI := fmt.Sprintf("ws://127.0.0.1:%d/?v=1&client_id=%s", DiscordRpcPort+(tries%DiscordRpcRange), clientID)
-		log.Println("Dial", URI)
-		conn, err := websocket.Dial(URI, "", origin)
+		log.Println("Dial", fmt.Sprintf("discord-ipc-%d", tries%IpcRange))
+		ipc, res, err := NewIPC(clientID, tries%IpcRange)
+
 		if err != nil {
-			log.Println(err)
+			log.Println("Dial error:", err)
 			time.Sleep(1 * time.Second)
 			continue
 		}
 
-		var destroy chan struct{}
-		go messageCopy(conn, ws, destroy)
-		go messageCopy(ws, conn, destroy)
-		<-destroy
-		ws.Close()
-		conn.Close()
-		return
+		defer func() {
+			ipc.Conn.Close()
+		}()
+
+		err = websocket.Message.Send(ws, string(res))
+		if err != nil {
+			log.Println("Write websocket error:", err)
+			return
+		}
+
+		var message string
+		for {
+			err := websocket.Message.Receive(ws, &message)
+			if err != nil {
+				log.Println("Read websocket error:", err)
+				return
+			}
+			log.Println("Read websocket:", message)
+
+			body, err := ipc.send(Frame, []byte(message))
+			if err != nil {
+				log.Println("IPC error", err)
+				return
+			}
+
+			err = websocket.Message.Send(ws, string(body))
+			if err != nil {
+				log.Println("Write websocket error:", err)
+				return
+			}
+		}
 	}
 }
 
-func messageCopy(from, to *websocket.Conn, destroy chan<- struct{}) {
-	var message string
-	for {
-		err := websocket.Message.Receive(from, &message)
-		if err != nil {
-			destroy <- struct{}{}
-			return
-		}
-		log.Println(message)
-		err = websocket.Message.Send(to, message)
-		if err != nil {
-			destroy <- struct{}{}
-			return
-		}
-	}
+func Proxy() {
+
 }
