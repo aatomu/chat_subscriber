@@ -1,3 +1,3 @@
-go build -o ./build/DiscordConnector-Win64.exe -ldflags="-s -w" -trimpath *.go
+go build -o ./build/DiscordConnector-Win64.exe .
 
 ./build/DiscordConnector-Win64.exe

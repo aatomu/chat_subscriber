@@ -129,6 +129,7 @@ func DialDiscordRPC(ws *websocket.Conn) {
 				isBreak = true
 				return
 			}
+			log.Println("Read IPC:", string(body))
 
 			err = websocket.Message.Send(ws, string(body))
 			if err != nil {
@@ -139,8 +140,4 @@ func DialDiscordRPC(ws *websocket.Conn) {
 		}
 		return
 	}
-}
-
-func Proxy() {
-
 }
