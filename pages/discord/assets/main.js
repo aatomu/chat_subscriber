@@ -5,8 +5,10 @@ let currentVoiceChannel = ""
 let currentCoolDown = 10
 // Constant values
 const DISCORD_CLIENT_ID = "1201816266344759326"
-const DISCORD_ORIGIN = "https://aatomu.work"
-const DISCORD_CONNECTOR = `ws://127.0.0.1:16463/websocket?id=${DISCORD_CLIENT_ID}&origin=${DISCORD_ORIGIN}`
+const DISCORD_SECRET_ID = "jPsVBr73CatXc5AHUbbXrEx8iAcGbinw"
+const DISCORD_REDIRECT_URI = "https://live.aatomu.work"
+const DISCORD_CONNECTOR = `ws://127.0.0.1:16463/websocket?id=${DISCORD_CLIENT_ID}`
+const OAUTH_SCOPES = ["rpc"]
 const nonce = new class Nonce {
   num
   constructor() {
@@ -23,7 +25,7 @@ const WEBSOCKET = new WebSocket(DISCORD_CONNECTOR)
 WEBSOCKET.addEventListener("open", function (event) {
   console.log("Open", event)
 })
-WEBSOCKET.addEventListener("message", function (event) {
+WEBSOCKET.addEventListener("message", async function (event) {
   if (!event.data) {
     return
   }
@@ -35,7 +37,7 @@ WEBSOCKET.addEventListener("message", function (event) {
     case "DISPATCH": {
       switch (RPC.evt) {
         case "READY": {
-          Send(WEBSOCKET, "AUTHORIZE", "", { "client_id": DISCORD_CLIENT_ID, "scopes": ["rpc"] })
+          Send("AUTHORIZE", "", { "client_id": DISCORD_CLIENT_ID, "scopes": OAUTH_SCOPES})
           return
         }
         case "VOICE_STATE_CREATE": {
@@ -59,11 +61,11 @@ WEBSOCKET.addEventListener("message", function (event) {
 
           // if me
           if (USER_ID == localUserID) {
-            Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: currentVoiceChannel }) // Connect
-            Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: currentVoiceChannel }) // Change VC state
-            Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: currentVoiceChannel }) // Disconnect
-            Send(WEBSOCKET, "UNSUBSCRIBE", "SPEAKING_START", { channel_id: currentVoiceChannel }) // Speak start
-            Send(WEBSOCKET, "UNSUBSCRIBE", "SPEAKING_STOP", { channel_id: currentVoiceChannel }) // Speak stop
+            Send("UNSUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: currentVoiceChannel }) // Connect
+            Send("UNSUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: currentVoiceChannel }) // Change VC state
+            Send("UNSUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: currentVoiceChannel }) // Disconnect
+            Send("UNSUBSCRIBE", "SPEAKING_START", { channel_id: currentVoiceChannel }) // Speak start
+            Send("UNSUBSCRIBE", "SPEAKING_STOP", { channel_id: currentVoiceChannel }) // Speak stop
             const USERS = document.getElementById("users")
             if (USERS) {
               while (USERS.firstChild) {
@@ -98,13 +100,45 @@ WEBSOCKET.addEventListener("message", function (event) {
       return
     }
     case "AUTHORIZE": {
-      const TOKEN = RPC.data.code
-      console.log(TOKEN)
+      const OAUTH = await fetch("https://discordapp.com/api/oauth2/token", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        },
+        body: new URLSearchParams({
+          client_id: DISCORD_CLIENT_ID,
+          client_secret: DISCORD_SECRET_ID,
+          grant_type: "authorization_code",
+          code: RPC.data.code,
+          redirect_uri: window.location.origin
+        }).toString()
+      }).then(res => {
+        return res.json()
+      })
+      console.log("AUTHORIZE", OAUTH)
+      Send("AUTHENTICATE","",{access_token:OAUTH.access_token})
+      return
+    }
+    case "AUTHENTICATE": {
+      setInterval(function () {
+        if (currentVoiceChannel == "") {
+          console.log("Should Check New Channel?")
+          if (currentCoolDown > 0) {
+            currentCoolDown--
+            return
+          }
+          console.log("Check New Channel!")
+          Send("GET_SELECTED_VOICE_CHANNEL", "", {}) // Get current channel
+          currentCoolDown = SEARCH_COOL_DOWN
+        }
+      }, 100)
+      localUserID = RPC.data.user.id
       return
     }
     case "GET_SELECTED_VOICE_CHANNEL": {
       console.log("GET_SELECTED_VOICE_CHANNEL", RPC.data)
-      if (!RPC.data) {
+      if (!RPC.data || RPC.evt != null) {
         return
       }
       // Channel Name
@@ -114,11 +148,11 @@ WEBSOCKET.addEventListener("message", function (event) {
       }
       // SUBSCRIBE
       const VOICE_CHANNEL_ID = RPC.data.id.toString()
-      Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: VOICE_CHANNEL_ID }) // Connect
-      Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: VOICE_CHANNEL_ID }) // Change VC state
-      Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: VOICE_CHANNEL_ID }) // Disconnect
-      Send(WEBSOCKET, "SUBSCRIBE", "SPEAKING_START", { channel_id: VOICE_CHANNEL_ID }) // Speak start
-      Send(WEBSOCKET, "SUBSCRIBE", "SPEAKING_STOP", { channel_id: VOICE_CHANNEL_ID }) // Speak stop
+      Send("SUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: VOICE_CHANNEL_ID }) // Connect
+      Send("SUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: VOICE_CHANNEL_ID }) // Change VC state
+      Send("SUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: VOICE_CHANNEL_ID }) // Disconnect
+      Send("SUBSCRIBE", "SPEAKING_START", { channel_id: VOICE_CHANNEL_ID }) // Speak start
+      Send("SUBSCRIBE", "SPEAKING_STOP", { channel_id: VOICE_CHANNEL_ID }) // Speak stop
       currentVoiceChannel = VOICE_CHANNEL_ID
       // Add users
       RPC.data.voice_states.forEach((state) => {
@@ -127,22 +161,6 @@ WEBSOCKET.addEventListener("message", function (event) {
       });
       userSort()
     }
-  }
-  // Auth result
-  if (RPC.cmd == "AUTHENTICATE") {
-    setInterval(function () {
-      if (currentVoiceChannel == "") {
-        console.log("Should Check New Channel?")
-        if (currentCoolDown > 0) {
-          currentCoolDown--
-          return
-        }
-        console.log("Check New Channel!")
-        Send(WEBSOCKET, "GET_SELECTED_VOICE_CHANNEL", "", {}) // Get current channel
-        currentCoolDown = SEARCH_COOL_DOWN
-      }
-    }, 100)
-    localUserID = RPC.data.user.id
   }
 })
 
@@ -154,13 +172,12 @@ WEBSOCKET.addEventListener("close", function (event) {
 })
 
 /**
- * @param {WebSocket} ws
  * @param {string} command
  * @param {string} event
  * @param {object} argumentsObject
  */
-function Send(ws, command, event, argumentsObject) {
-  ws.send(JSON.stringify({
+function Send(command, event, argumentsObject) {
+  WEBSOCKET.send(JSON.stringify({
     nonce: nonce.get(),
     cmd: command,
     evt: event,
