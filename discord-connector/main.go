@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"fyne.io/systray"
 	"golang.org/x/net/websocket"
@@ -20,7 +19,7 @@ const (
 
 func main() {
 	// Logger
-	logger, err := os.OpenFile(fmt.Sprintf("./%s.log", time.Now().Format("20060102-15-04-05")), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	logger, err := os.OpenFile("connector.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		panic(err)
 	}
