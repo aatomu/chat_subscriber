@@ -264,7 +264,7 @@ function userUpdate(nick, user, voice_state) {
   }
   if (user.avatar_decoration_data) {
     /** @type {HTMLImageElement?} */
-    const DECO = USER.querySelector("decoration")
+    const DECO = USER.querySelector(".decoration")
     if (DECO) {
       DECO.src = `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}`
     }
