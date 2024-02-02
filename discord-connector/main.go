@@ -19,12 +19,15 @@ const (
 
 func main() {
 	// Logger
-	logger, err := os.OpenFile("connector.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		panic(err)
+	_, err := os.Stat("connector.log")
+	if err == nil {
+		logger, err := os.OpenFile("connector.log", os.O_APPEND|os.O_WRONLY, 0644)
+		if err != nil {
+			panic(err)
+		}
+		defer logger.Close()
+		log.SetOutput(logger)
 	}
-	defer logger.Close()
-	log.SetOutput(logger)
 
 	// Generate icon
 	// icon, _ := os.ReadFile("./icon.ico")
