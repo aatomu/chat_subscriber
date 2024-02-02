@@ -12,10 +12,8 @@ import (
 )
 
 const (
-	DiscordRpcPort     = 6463
-	DiscordRpcRange    = 10
-	DiscordRpcOrigin   = "https://streamkit.discord.com"
-	DiscordRpcClientID = "207646673902501888"
+	DiscordRpcPort  = 6463
+	DiscordRpcRange = 10
 )
 
 func main() {
@@ -89,12 +87,15 @@ func DialDiscordRPC(ws *websocket.Conn) {
 		ws.Close()
 	}()
 
-	for tries := 0; ; tries++ {
-		URI := fmt.Sprintf("ws://127.0.0.1:%d/?v=1&client_id=%s", DiscordRpcPort+(tries%DiscordRpcRange), DiscordRpcClientID)
+	clientID := ws.Request().URL.Query().Get("id")
+	origin := ws.Request().URL.Query().Get("origin")
+	for tries := 0; tries < 100; tries++ {
+		URI := fmt.Sprintf("ws://127.0.0.1:%d/?v=1&client_id=%s", DiscordRpcPort+(tries%DiscordRpcRange), clientID)
 		log.Println("Dial", URI)
-		conn, err := websocket.Dial(URI, "", "https://streamkit.discord.com")
+		conn, err := websocket.Dial(URI, "", origin)
 		if err != nil {
 			log.Println(err)
+			time.Sleep(1 * time.Second)
 			continue
 		}
 
