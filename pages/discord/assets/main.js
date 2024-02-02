@@ -4,8 +4,9 @@ let localUserID = ""
 let currentVoiceChannel = ""
 let currentCoolDown = 10
 // Constant values
-const DISCORD_CONNECTOR = "ws://127.0.0.1:16463/websocket"
-const DISCORD_ACCESS_TOKEN = "T0cJ3PN21itSa7jltuHDeVhLkVPIgz"
+const DISCORD_CLIENT_ID = "1201816266344759326"
+const DISCORD_ORIGIN = "https://aatomu.work"
+const DISCORD_CONNECTOR = `ws://127.0.0.1:16463/websocket?id=${DISCORD_CLIENT_ID}&origin=${DISCORD_ORIGIN}`
 const nonce = new class Nonce {
   num
   constructor() {
@@ -30,68 +31,101 @@ WEBSOCKET.addEventListener("message", function (event) {
   console.log("Message", RPC)
 
   // Receive Event
-  if (RPC.cmd == "DISPATCH") {
-    switch (RPC.evt) {
-      case "READY": {
-        Send(WEBSOCKET, "AUTHENTICATE", "", { access_token: DISCORD_ACCESS_TOKEN })
-        return
-      }
-      case "VOICE_STATE_CREATE": {
-        const STATE = RPC.data
-        userAdd(STATE.user)
-        userSort()
-        return
-      }
-      case "VOICE_STATE_UPDATE": {
-        const STATE = RPC.data
-        userUpdate(STATE.nick, STATE.user, STATE.voice_state)
-        userSort()
-        return
-      }
-      case "VOICE_STATE_DELETE": {
-        const USER_ID = RPC.data.user.id
-        const USER = document.getElementById(USER_ID)
-        if (USER) {
-          USER.remove()
+  switch (RPC.cmd) {
+    case "DISPATCH": {
+      switch (RPC.evt) {
+        case "READY": {
+          Send(WEBSOCKET, "AUTHORIZE", "", { "client_id": DISCORD_CLIENT_ID, "scopes": ["rpc"] })
+          return
         }
+        case "VOICE_STATE_CREATE": {
+          const STATE = RPC.data
+          userAdd(STATE.user)
+          userSort()
+          return
+        }
+        case "VOICE_STATE_UPDATE": {
+          const STATE = RPC.data
+          userUpdate(STATE.nick, STATE.user, STATE.voice_state)
+          userSort()
+          return
+        }
+        case "VOICE_STATE_DELETE": {
+          const USER_ID = RPC.data.user.id
+          const USER = document.getElementById(USER_ID)
+          if (USER) {
+            USER.remove()
+          }
 
-        // if me
-        if (USER_ID == localUserID) {
-          Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: currentVoiceChannel }) // Connect
-          Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: currentVoiceChannel }) // Change VC state
-          Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: currentVoiceChannel }) // Disconnect
-          Send(WEBSOCKET, "UNSUBSCRIBE", "SPEAKING_START", { channel_id: currentVoiceChannel }) // Speak start
-          Send(WEBSOCKET, "UNSUBSCRIBE", "SPEAKING_STOP", { channel_id: currentVoiceChannel }) // Speak stop
-          const USERS = document.getElementById("users")
-          if (USERS) {
-            while (USERS.firstChild) {
-              USERS.removeChild(USERS.firstChild);
+          // if me
+          if (USER_ID == localUserID) {
+            Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: currentVoiceChannel }) // Connect
+            Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: currentVoiceChannel }) // Change VC state
+            Send(WEBSOCKET, "UNSUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: currentVoiceChannel }) // Disconnect
+            Send(WEBSOCKET, "UNSUBSCRIBE", "SPEAKING_START", { channel_id: currentVoiceChannel }) // Speak start
+            Send(WEBSOCKET, "UNSUBSCRIBE", "SPEAKING_STOP", { channel_id: currentVoiceChannel }) // Speak stop
+            const USERS = document.getElementById("users")
+            if (USERS) {
+              while (USERS.firstChild) {
+                USERS.removeChild(USERS.firstChild);
+              }
             }
+            const CHANNEL_NAME = document.getElementById("channel")
+            if (CHANNEL_NAME) {
+              CHANNEL_NAME.innerText = ""
+            }
+            currentVoiceChannel = ""
           }
-          const CHANNEL_NAME = document.getElementById("channel")
-          if (CHANNEL_NAME) {
-            CHANNEL_NAME.innerText = ""
+          return
+        }
+        case "SPEAKING_START": {
+          const USER_ID = RPC.data.user_id
+          const USER = document.getElementById(USER_ID)
+          if (USER) {
+            USER.classList.add("speaking")
           }
-          currentVoiceChannel = ""
+          return
         }
+        case "SPEAKING_STOP": {
+          const USER_ID = RPC.data.user_id
+          const USER = document.getElementById(USER_ID)
+          if (USER) {
+            USER.classList.remove("speaking")
+          }
+          return
+        }
+      }
+      return
+    }
+    case "AUTHORIZE": {
+      const TOKEN = RPC.data.code
+      console.log(TOKEN)
+      return
+    }
+    case "GET_SELECTED_VOICE_CHANNEL": {
+      console.log("GET_SELECTED_VOICE_CHANNEL", RPC.data)
+      if (!RPC.data) {
         return
       }
-      case "SPEAKING_START": {
-        const USER_ID = RPC.data.user_id
-        const USER = document.getElementById(USER_ID)
-        if (USER) {
-          USER.classList.add("speaking")
-        }
-        return
+      // Channel Name
+      const CHANNEL_NAME = document.getElementById("channel")
+      if (CHANNEL_NAME) {
+        CHANNEL_NAME.innerText = RPC.data.name
       }
-      case "SPEAKING_STOP": {
-        const USER_ID = RPC.data.user_id
-        const USER = document.getElementById(USER_ID)
-        if (USER) {
-          USER.classList.remove("speaking")
-        }
-        return
-      }
+      // SUBSCRIBE
+      const VOICE_CHANNEL_ID = RPC.data.id.toString()
+      Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: VOICE_CHANNEL_ID }) // Connect
+      Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: VOICE_CHANNEL_ID }) // Change VC state
+      Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: VOICE_CHANNEL_ID }) // Disconnect
+      Send(WEBSOCKET, "SUBSCRIBE", "SPEAKING_START", { channel_id: VOICE_CHANNEL_ID }) // Speak start
+      Send(WEBSOCKET, "SUBSCRIBE", "SPEAKING_STOP", { channel_id: VOICE_CHANNEL_ID }) // Speak stop
+      currentVoiceChannel = VOICE_CHANNEL_ID
+      // Add users
+      RPC.data.voice_states.forEach((state) => {
+        userAdd(state.user)
+        userUpdate(state.nick, state.user, state.voice_state)
+      });
+      userSort()
     }
   }
   // Auth result
@@ -109,32 +143,6 @@ WEBSOCKET.addEventListener("message", function (event) {
       }
     }, 100)
     localUserID = RPC.data.user.id
-  }
-  // Parse user voice chat
-  if (RPC.cmd == "GET_SELECTED_VOICE_CHANNEL") {
-    console.log("GET_SELECTED_VOICE_CHANNEL", RPC.data)
-    if (!RPC.data) {
-      return
-    }
-    // Channel Name
-    const CHANNEL_NAME = document.getElementById("channel")
-    if (CHANNEL_NAME) {
-      CHANNEL_NAME.innerText = RPC.data.name
-    }
-    // SUBSCRIBE
-    const VOICE_CHANNEL_ID = RPC.data.id.toString()
-    Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: VOICE_CHANNEL_ID }) // Connect
-    Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: VOICE_CHANNEL_ID }) // Change VC state
-    Send(WEBSOCKET, "SUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: VOICE_CHANNEL_ID }) // Disconnect
-    Send(WEBSOCKET, "SUBSCRIBE", "SPEAKING_START", { channel_id: VOICE_CHANNEL_ID }) // Speak start
-    Send(WEBSOCKET, "SUBSCRIBE", "SPEAKING_STOP", { channel_id: VOICE_CHANNEL_ID }) // Speak stop
-    currentVoiceChannel = VOICE_CHANNEL_ID
-    // Add users
-    RPC.data.voice_states.forEach((state) => {
-      userAdd(state.user)
-      userUpdate(state.nick, state.user, state.voice_state)
-    });
-    userSort()
   }
 })
 
@@ -286,7 +294,7 @@ function userSort() {
     return 0
   })
 
-  for (let index=0;index<userArray.length;index++) {
+  for (let index = 0; index < userArray.length; index++) {
     const USER = USERS.removeChild(userArray[index])
     USERS.appendChild(USER)
   }
