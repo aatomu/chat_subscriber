@@ -102,14 +102,14 @@ func DialDiscordRPC(ws *websocket.Conn) {
 			ipc.Conn.Close()
 		}()
 
-		var isBreak *bool
+		var isBreak = false
 		go func() {
 			var message string
-			for !*isBreak {
+			for !isBreak {
 				err := websocket.Message.Receive(ws, &message)
 				if err != nil {
 					log.Println("Read websocket error:", err)
-					*isBreak = true
+					isBreak = true
 					return
 				}
 				log.Println("Read websocket:", message)
@@ -117,23 +117,23 @@ func DialDiscordRPC(ws *websocket.Conn) {
 				err = ipc.send(Frame, []byte(message))
 				if err != nil {
 					log.Println("Send IPC error", err)
-					*isBreak = true
+					isBreak = true
 					return
 				}
 			}
 		}()
-		for !*isBreak {
+		for !isBreak {
 			body, err := ipc.read()
 			if err != nil {
 				log.Println("Read IPC error:", err)
-				*isBreak = true
+				isBreak = true
 				return
 			}
 
 			err = websocket.Message.Send(ws, string(body))
 			if err != nil {
 				log.Println("Send websocket error:", err)
-				*isBreak = true
+				isBreak = true
 				return
 			}
 		}
