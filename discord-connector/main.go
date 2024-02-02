@@ -10,10 +10,12 @@ import (
 )
 
 const (
-	DiscordRpcPort     = 6463
-	DiscordRpcRange    = 10
-	DiscordRpcOrigin   = "https://streamkit.discord.com"
-	DiscordRpcClientID = "207646673902501888"
+	DiscordRpcPort  = 6463
+	DiscordRpcRange = 10
+	// DiscordRpcOrigin   = "https://streamkit.discord.com"
+	// DiscordRpcClientID = "207646673902501888"
+	DiscordRpcOrigin   = "https://localhost"
+	DiscordRpcClientID = "1201816266344759326"
 )
 
 func main() {
@@ -69,7 +71,7 @@ func exitItem() {
 }
 
 func DialDiscordRPC(ws *websocket.Conn) {
-	log.Printf("Dial Information: %s(%s)", ws.LocalAddr().String(), ws.RemoteAddr().String())
+	log.Printf("Dial Information: \"%s\" by \"%s\"", ws.LocalAddr().String(), ws.RemoteAddr().String())
 
 	defer func() {
 		ws.Close()
