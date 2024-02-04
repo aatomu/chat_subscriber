@@ -120,8 +120,10 @@ License: `Apache License`
 2. [Discord Develop Applications](https://discord.com/developers/applications) を開く
 3. `New Applications`をクリックして名前を付ける
 4. `Oauth2`から`ClientID`と`Client Secret`をコピー `Redirects`に`https://live.aatomu.work`を追加しSave
+5. `https://live.aatomu.work/discord/?id=【コピーしたClientID】&secret=【コピーしたClientSecret】`を開く
+6. Discordに出る認証を承諾を押す
 * 以下 プロフィールを書き換える人用
-5. `Rich Presence`を開き`Add Image`で画像を追加,名前を設定しSave
+7. `Rich Presence`を開き`Add Image`で画像を追加,名前を設定しSave
 
 OBS Custom CSS:
 ```css
