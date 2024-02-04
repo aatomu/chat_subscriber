@@ -1,6 +1,10 @@
+# Stream Tools Index
+* Chat Subscriber(複数の配信チャットを表示): [こちら](#chat_subscriber)
+* Discord Connector(Discordのいろいろ): [こちら](#discord_connector)
+
 # chat_subscriber
-複数のLive配信のチャットを接続する
-おまけ: Discord Channel Tracer
+## Description
+YoutubeやTwitchなどの複数を同時に表示 Emoji/Emoteや投げ銭にも対応
 
 ## How To Use
 * User like     : `Open URL` in Browser
@@ -104,3 +108,22 @@ License: `Apache License`
   * [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW): Youtube/Twitch live test
   * Project CBW Listeners: Message view test, Design layout check
   * [しぐりむん(@shiglimnn)](https://twitter.com/shiglimnn): Multi Twitch live test
+
+# discord_connector
+## Description
+* DiscordのVCを移動しても自動で追いかけるように
+* VCの名前を表示する,Discordニトロの装飾を表示
+* Advanced: Discordのプロフィールをカスタマイズする
+
+# How To Use
+1. Discord-ConnectorをDLする [Windows x64]()
+OBS Custom CSS:
+```css
+body {
+    background-color: rgba(0,0,0,0);
+    overflow: hidden;
+}
+.channel {
+    display: none;
+}
+```
