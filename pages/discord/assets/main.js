@@ -4,10 +4,26 @@ let localUserID = ""
 let currentVoiceChannel = ""
 let currentCoolDown = 10
 // Constant values
-const DISCORD_CLIENT_ID = "1201816266344759326"
-const DISCORD_SECRET_ID = "jPsVBr73CatXc5AHUbbXrEx8iAcGbinw"
+const SEARCH_PARAMS = new URLSearchParams(window.location.search)
+const DISCORD_CLIENT_ID = SEARCH_PARAMS.get("id")
+const DISCORD_SECRET_ID = SEARCH_PARAMS.get("secret")
+
+let discordClientID = ""
+if (!DISCORD_CLIENT_ID) {
+  newError("Client IDが見つかりません")
+} else {
+  discordClientID = DISCORD_CLIENT_ID
+}
+let discordSecretID = ""
+if (!DISCORD_SECRET_ID) {
+  newError("Client Secretが見つかりません")
+} else {
+  discordSecretID = DISCORD_SECRET_ID
+}
+
+
 const DISCORD_REDIRECT_URI = "https://live.aatomu.work"
-const DISCORD_CONNECTOR = `ws://127.0.0.1:16463/websocket?id=${DISCORD_CLIENT_ID}`
+const DISCORD_CONNECTOR = `ws://127.0.0.1:16463/websocket?id=${discordClientID}`
 const OAUTH_SCOPES = ["rpc"]
 const nonce = new class Nonce {
   num
@@ -37,7 +53,7 @@ WEBSOCKET.addEventListener("message", async function (event) {
     case "DISPATCH": {
       switch (RPC.evt) {
         case "READY": {
-          Send("AUTHORIZE", "", { "client_id": DISCORD_CLIENT_ID, "scopes": OAUTH_SCOPES})
+          Send("AUTHORIZE", "", { "client_id": discordClientID, "scopes": OAUTH_SCOPES })
           return
         }
         case "VOICE_STATE_CREATE": {
@@ -107,8 +123,8 @@ WEBSOCKET.addEventListener("message", async function (event) {
           'Accept': 'application/json'
         },
         body: new URLSearchParams({
-          client_id: DISCORD_CLIENT_ID,
-          client_secret: DISCORD_SECRET_ID,
+          client_id: discordClientID,
+          client_secret: discordSecretID,
           grant_type: "authorization_code",
           code: RPC.data.code,
           redirect_uri: window.location.origin
@@ -117,7 +133,7 @@ WEBSOCKET.addEventListener("message", async function (event) {
         return res.json()
       })
       console.log("AUTHORIZE", OAUTH)
-      Send("AUTHENTICATE","",{access_token:OAUTH.access_token})
+      Send("AUTHENTICATE", "", { access_token: OAUTH.access_token })
       return
     }
     case "AUTHENTICATE": {
@@ -166,11 +182,22 @@ WEBSOCKET.addEventListener("message", async function (event) {
 
 WEBSOCKET.addEventListener("error", function (event) {
   console.log("Error", event)
+  newError("Discord-Connectorに接続できませんでした")
 })
 WEBSOCKET.addEventListener("close", function (event) {
   console.log("Close", event)
+  newError("Discord-Connectorとの接続が切断されました")
 })
 
+function newError(err) {
+  const MESSAGE = document.createElement("div")
+  MESSAGE.innerHTML=err
+
+  const ERRORS = document.getElementById("errors")
+  if (ERRORS) {
+    ERRORS.append(MESSAGE)
+  }
+}
 /**
  * @param {string} command
  * @param {string} event
