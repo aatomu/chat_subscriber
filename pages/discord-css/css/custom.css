@@ -1,0 +1,64 @@
+/* ＊＊＊＊＊カスタムCSS＊＊＊＊＊ */
+:root {
+  --avator-margin: 8px; /* 画像間のスペース */
+  --avator-bottom: 0px; /* 画像下のスペース */
+  --icon-size: 128px;   /* 画像サイズ */
+  --icon-radius: 32px;   /* アイコンの角丸 */
+  --icon-bright: 75%;   /* アイコンの明度 */
+  --content-padding: 15px; /* ulの余白 */
+  /* --icon-replace: none; /* 画像の差し替えをする場合はこの行をコメントアウトする */
+
+  --name-size: 16px;     /* 名前の文字の大きさ */
+  --name-align: auto 50%;  /* 名前のx位置（左揃え:0%/中央揃え:50%） */
+  --name-position: 2px;  /* 名前のy位置 */
+  --name-view: block;   /* 名前の所をどう表示するか（block/hidden） */
+  --name-flow: ellipsis;   /* ellipsis/clip */
+  --name-posi: absolute; /* visible/hidden */
+  --name-pdhr: 0px;      /* 名前の左右余白 */
+  --name-pdvr: 10px;      /* 名前の上下余白 */
+  --name-left: 0;        /* left position */
+  --name-right: auto;    /* right position */
+  /* none   : 名前を非表示にする
+   * block  : 名前の背景（黒い所）が画像幅と同じになる
+   * inline : 名前の背景（黒い所）が名前の長さによって変わる
+   */
+
+  --name-backcolor: #c0c0c0;  /* 名前背景色 */
+  --name-forecolor: #000000;  /* 名前文字色 */
+  --name-radius: 8px;  /* 名前の角丸 */
+  --border-size: 2px;      /* 枠線の幅 */
+  --border-color: #3ba53b; /* 枠線の色 */
+  --duration-speed: 50ms; /* Speaking */
+  --jump-height: 15px; /* Speaking Animation */
+
+  --me-display: block; /* 自分 */
+  --other-display: block; /* 自分以外 */
+  --sort-me: 0; /* 並び順 */
+}
+
+.user {
+  margin: var(--avator-margin);
+  height: var(--icon-size);
+}
+.icon {
+  border-radius: var(--icon-radius);
+  filter: brightness(var(--icon-bright));
+}
+.nick {
+  position: var(--name-posi);
+  bottom: var(--name-position);
+  font-size: var(--name-size);
+  color: var(--name-forecolor);
+  background-color: var(--name-backcolor);
+  border-radius: var(--name-radius);
+  display: var(--name-view);
+  text-overflow: var(--name-flow);
+  padding: var(--name-pdhr) var(--name-pdvr);
+}
+.me {
+  display: var(--me-display);
+  order: var(--sort-me);
+}
+.user:not(.me) {
+  display: var(--other-display);
+}

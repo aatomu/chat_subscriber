@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Discord StreamKit Overlay CSS Generator</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/png" href="img/favicon.png" sizes="96x96" />
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#5865F2">
+  <meta name="description" content="カスタムCSSを自動生成するよ！">
+  <script type="text/javascript" src="script/speaking.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+  <script type="text/javascript" src="script/slider.js?"></script>
+  <link rel="stylesheet" href="https://live.aatomu.work/discord/assets/style.css">
+  <!-- <link rel="stylesheet" href="css/discord.css"> -->
+  <link rel="stylesheet" href="css/slider.css?">
+  <link rel="stylesheet" href="css/custom.css?">
+</head>
+
+<div class="accordion" id="configure">
+<header>画像関連設定</header>
+<section class="clearfix">
+  <div class="float">
+    <p>画像間のスペース</p>
+    <input type="range" min="0" max="100" value="8" id="slider-img-spac" cstprop="--avator-margin">
+    <p>画像サイズ</p>
+    <input type="range" min="10" max="500" value="128" id="slider-img-size" cstprop="--icon-size">
+  </div>
+  <div class="float">
+    <p>画像の角丸サイズ</p>
+    <input type="range" min="0" max="64" value="32" id="slider-img-radi" cstprop="--icon-radius">
+    <p>画像の明度</p>
+    <input type="range" min="0" max="100" value="75" id="slider-img-bright" cstprop="--icon-bright" csttype="%">
+  </div>
+  <!-- <div class="float">
+    <p>余白<small>（ul-padding）</small></p>
+    <input type="range" min="0" max="150" value="15" id="slider-content-padding" cstprop="--content-padding">
+  </div> -->
+</section>
+
+<header>名前表示設定</header>
+<section class="clearfix">
+  <div class="float">
+    <p>名前の表示</p>
+    <label><input type="radio" name="name-view" value="block" checked>表示</label>
+    <br>
+    <label><input type="radio" name="name-view" value="none">非表示</label>
+  </div>
+  <div class="float">
+    <!-- <p>名前の横位置</p>
+    <label><input type="radio" name="name-align" value="left">左揃え</label>
+    <label><input type="radio" name="name-align" value="center" checked>中央揃え</label>
+    <label><input type="radio" name="name-align" value="right">右揃え</label> -->
+    <p>名前の縦位置</p>
+    <input type="range" min="0" max="200" value="2" id="slider-name-ypos" cstprop="--name-position">
+  </div>
+  <div class="float">
+    <p>長い名前</p>
+    <label><input type="radio" name="name-flow" value="ellipsis" checked>一部だけ表示する</label>
+    <br>
+    <label><input type="radio" name="name-flow" value="clip">可能な限り表示する</label>
+  </div>
+</section>
+
+<header>名前色・サイズ感設定</header>
+<section class="clearfix">
+  <div class="float">
+    <p>背景色</p>
+    <input type="color" value="#c0c0c0" id="name-backcolor"> <span>#c0c0c0</span>
+    <p>名前の文字の大きさ</p>
+    <input type="range" min="10" max="50" value="16" id="slider-name-size" cstprop="--name-size">
+  </div>
+  <div class="float">
+    <p>文字色</p>
+    <input type="color" value="#000000" id="name-forecolor"> <span>#000000</span>
+    <p>角丸の大きさ</p>
+    <input type="range" min="0" max="50" value="8" cstprop="--name-radius">
+  </div>
+</section>
+
+<header>名前詳細設定</header>
+<section class="clearfix">
+  <div class="float">
+    <p>名前の左右余白</p>
+    <input type="range" min="0" max="50" value="0" cstprop="--name-pdhr">
+    <p>名前の上下余白</p>
+    <input type="range" min="0" max="50" value="10" cstprop="--name-pdvr">
+  </div>
+  <div class="float">
+    <p>名前の揃え方</p>
+    <!-- <label><input type="radio" name="name-posi" value="relative">通常</label> -->
+     <!-- <br> -->
+    <label><input type="radio" name="name-posi" value="absolute" checked>絶対位置</label>
+  </div>
+<!--  <div class="float">
+    <p>左：絶対位置</p>
+    <label><input type="radio" name="name-left" value="0" checked>左に付ける</label>
+    <br>
+    <label><input type="radio" name="name-left" value="auto">左に付けない</label>
+    <p>右：絶対位置</p>
+    <label><input type="radio" name="name-right" value="0">右に付ける</label>
+    <br>
+    <label><input type="radio" name="name-right" value="auto" checked>右に付けない</label>
+  </div> -->
+</section>
+
+
+<header>話している状態</header>
+<section class="clearfix">
+  <div class="float">
+    <p>枠線の幅</p>
+    <input type="range" min="0" max="20" value="2" cstprop="--border-size">
+    <p>ぴょこぴょこする速度</p>
+    <input type="range" min="0" max="100" value="50" cstprop="--duration-speed" csttype="ms">
+  </div>
+  <div class="float">
+    <p>枠線の色</p>
+    <input type="color" value="#3ba53b" id="border-color"> <span>#3ba53b</span>
+    <p>ぴょこぴょこする高さ</p>
+    <input type="range" min="0" max="100" value="15" cstprop="--jump-height">
+  </div>
+</section>
+
+<header>その他</header>
+<section class="clearfix">
+  <div class="float">
+    <p>自分自身の表示</p>
+    <label><input type="radio" name="me-display" value="block" checked>表示</label>
+    <label><input type="radio" name="me-display" value="none">非表示</label>
+    <p>自分以外の表示</p>
+    <label><input type="radio" name="other-display" value="block" checked>表示</label>
+    <label><input type="radio" name="other-display" value="none">非表示</label>
+  </div>
+  <div class="float">
+    <p>並び方</p>
+    <label><input type="radio" name="sort-me" value="-1">自分を最初に</label>
+    <label><input type="radio" name="sort-me" value="0" checked>通常</label>
+    <label><input type="radio" name="sort-me" value="1">自分を最後に</label>
+    <!-- <p>特定の人を非表示にする(Discord ID)</p>
+    <input type="text" id="disable-id" placeholder="123456789012345678"> -->
+  </div>
+</section>
+</div>
+<aside id="css">
+  <div id="cssset">CSS生成</div>
+  <input type="text" id="urlquery" readonly style="opacity: 0;">
+  <textarea width="200px">ここにCSSが生成されますので、
+[Ctrl]+[A]を押して全選択してから、
+CSSをコピペして使用ください。</textarea>
+</aside>
+<div class="clearfix"></div>
+
+<div id="root" class="root">
+  <div id="users" class="users">
+    <div class="user" id="000000000000000001">
+      <img class="icon" src="img/000000000000000001.png">
+      <div class="nick">dummy1</div>
+      <div class="name">ダミー1</div>
+    </div>
+    <div class="user" id="000000000000000002">
+      <img class="icon" src="img/000000000000000002.png">
+      <div class="nick">Dummy2あああああいいいうう</div>
+      <div class="name">Dummy2</div>
+    </div>
+    <div class="user me" id="000000000000000003">
+      <img class="icon" src="img/000000000000000003.png">
+      <div class="nick">dummy3</div>
+      <div class="name">ダミー3</div>
+    </div>
+    <div class="user" id="000000000000000004">
+      <img class="icon" src="img/000000000000000004.png">
+      <div class="nick">dummy4</div>
+      <div class="name">ダミー4</div>
+    </div>
+    <div class="user" id="000000000000000005">
+      <img class="icon" src="img/000000000000000005.png">
+      <div class="nick">dummy5</div>
+      <div class="name">ダミー5</div>
+    </div>
+    <div class="user" id="000000000000000006">
+      <img class="icon" src="img/000000000000000006.png">
+      <div class="nick">dummy6</div>
+      <div class="name">ダミー6</div>
+    </div>
+    <div class="user" id="000000000000000007">
+      <img class="icon" src="img/000000000000000007.png">
+      <div class="nick">dummy7</div>
+      <div class="name">ダミー7</div>
+    </div>
+    <div class="user" id="000000000000000008">
+      <img class="icon" src="img/000000000000000008.png">
+      <div class="nick">dummy8</div>
+      <div class="name">ダミー8</div>
+    </div>
+    <div class="user" id="000000000000000009">
+      <img class="icon" src="img/000000000000000009.png">
+      <div class="nick">dummy9</div>
+      <div class="name">ダミー9</div>
+    </div>
+    <div class="user" id="000000000000000010">
+      <img class="icon" src="img/000000000000000010.png">
+      <div class="nick">dummy10</div>
+      <div class="name">ダミー10</div>
+    </div>
+    <div class="user" id="000000000000000011">
+      <img class="icon" src="img/000000000000000011.png">
+      <div class="nick">dummy11</div>
+      <div class="name">ダミー11</div>
+    </div>
+    <div class="user" id="000000000000000012">
+      <img class="icon" src="img/000000000000000012.png">
+      <div class="nick">dummy12</div>
+      <div class="name">ダミー12</div>
+    </div>
+    <div class="user" id="000000000000000013">
+      <img class="icon" src="img/000000000000000013.png">
+      <div class="nick">dummy13</div>
+      <div class="name">ダミー13</div>
+    </div>
+    <div class="user" id="000000000000000014">
+      <img class="icon" src="img/000000000000000014.png">
+      <div class="nick">dummy14</div>
+      <div class="name">ダミー14</div>
+    </div>
+    <div class="user" id="000000000000000015">
+      <img class="icon" src="img/000000000000000015.png">
+      <div class="nick">dummy15</div>
+      <div class="name">ダミー15</div>
+    </div>
+
+  </div>
+</div>
+</body>
+<style id="stylus-1" type="text/css" class="stylus">#onesignal-popover-container {
+    opacity:0;
+    left: 100%;
+}</style>
+</html>

@@ -164,7 +164,7 @@ License: `Apache License`
    PC 起動時に自動的に exe が実行されるため、起動忘れがなくなります！
 
 OBS Custom CSS:
-
+※ さらにカスタムするときはこちら [Discord CSS Generator](https://live.aatomu.work/discord-css)
 ```css
 body {
   background-color: rgba(0, 0, 0, 0);

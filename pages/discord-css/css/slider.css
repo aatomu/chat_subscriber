@@ -1,0 +1,123 @@
+body {
+  overflow-y: scroll !important;
+}
+
+.float {
+  float: left;
+  margin-right: 40px;
+}
+#configure * { position: relative; }
+#configure label {
+  display: inline-block;
+}
+#configure p {font-weight: bold;}
+#configure input[type="number"] {
+  top: -3px;
+  width: 40px;
+}
+
+#css {
+  position: relative;
+  float: left;
+  display: inline-block;
+  margin: 10px 0 0 20px;
+}
+#cssset {
+  position: absolute;
+  top: 0; left: 0;
+  display: inline;
+  padding: 2px 5px;
+  background-color: #212121;
+  color: #ffffff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#cssset:hover {
+  background-color: #616161;
+}
+#urlquery {
+  position: absolute;
+  top: 0; right: 0;
+  width: 250px; height: 22px;
+}
+#css textarea {
+  margin-top: 40px;
+  width: 350px;
+  height: 300px;
+  font-family: 'Consolas';
+}
+
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+/* jQuery AccordionのCSS設定 */
+.accordion {
+  float: left;
+  margin:10px;
+  width: 800px;
+}
+.accordion header {
+  margin: -1px 0 0 0;
+}
+.accordion header span {
+  display: inline-block;
+  width: 30px;
+}
+
+.ui-accordion .ui-accordion-header {
+    position: relative;
+    cursor: pointer;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    line-height: 2;
+    font-weight: bold;
+}
+.ui-accordion.markup .ui-accordion-header {
+    background-color: #fdd;
+    border: 1px solid #efafaf;
+}
+
+.ui-accordion .ui-accordion-header::before {
+    content: "";
+    position: absolute;
+    top: 10px; left: 10px;
+    width: 0; height: 0;
+    border-top: 5px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid #3d3d3d;
+}
+
+.ui-accordion  .ui-accordion-content {
+    margin-top: -1px;
+    padding: 10px 0 14px 15px;
+    border: 1px solid #ccc;
+    color: #3d3d3d;
+    font-weight: normal;
+}
+.accordion strong,
+.accordion2 strong {
+  display: block;
+  border-bottom: 1px solid #ccc;
+  margin: 0 20px 5px 0;
+}
+.accordion pre,
+.accordion2 pre {
+  font-family: sans-serif;
+}
+
+.ui-corner-top {
+    border-radius: 3px 3px 0 0;
+}
+.ui-corner-bottom {
+    border-radius: 0 0 3px 3px;
+}
+.ui-corner-all {
+    border-radius: 3px 3px 3px 3px;
+}
+.ui-state-hover {
+    background-color: #ddd !important;
+}

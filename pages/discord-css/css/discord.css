@@ -1,0 +1,121 @@
+:root {
+  --name-radius: 3px;
+  /* 名前の角丸 */
+  --border-size: 5px;
+  /* 枠線の幅 */
+  --border-color: #3ba53b;
+  /* 枠線の色 */
+  --duration-speed: 50ms;
+  /* Speaking */
+  --jump-height: 15px;
+  /* Speaking Animation */
+}
+
+.root {
+  background-color: transparent;
+  width: fit-content;
+}
+
+.channel {
+  background-color: #AAA;
+  border-radius: 8px;
+  margin: 10px;
+  padding: 0 10px;
+
+  font-weight: bold;
+  font-size: 150%;
+}
+
+.users {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.user {
+  position: relative;
+  height: fit-content;
+  width: fit-content;
+  margin: 8px;
+}
+
+.icon {
+  position: relative;
+  box-sizing: border-box;
+
+  bottom: 0px;
+  /* height: 128px; */
+  height: 100%;
+  aspect-ratio: 1/1;
+
+  filter: brightness(75%);
+  border: var(--border-size) solid transparent;
+  border-radius: 32px;
+}
+
+.speaking .icon {
+  filter: brightness(100%);
+  animation-name: speak-now;
+  animation-duration: calc(1000ms - var(--duration-speed) * 10);
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  border: var(--border-size) solid var(--border-color);
+}
+
+.user:has(.decoration) .icon {
+  border-radius: 64px;
+}
+
+.decoration {
+  position: absolute;
+  top: calc((152px - 128px) / 2 * -1);
+  left: calc((152px - 128px) / 2* -1);
+
+  height: 152px;
+  aspect-ratio: 1/1;
+}
+
+.nick {
+  position: absolute;
+  bottom: 0%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+
+  max-width: 100%;
+  padding: 0 10px;
+
+  background-color: rgba(192, 192, 192, 0.9);
+  border-radius: 8px;
+  font-weight: bold;
+  box-sizing: border-box;
+
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.name {
+  display: none;
+
+  font-weight: bold;
+
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* しゃべってるときのアニメーション設定 */
+@keyframes speak-now {
+  0% {
+    bottom: 0px;
+  }
+
+  50% {
+    bottom: var(--jump-height);
+  }
+
+  100% {
+    bottom: 0px;
+  }
+}
