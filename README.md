@@ -137,7 +137,7 @@ License: `Apache License`
 
 ### 初回設定
 
-1. [Discord-Connector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe) を開く<br>Rawをクリックしダウンロード<br>起動する(この際 ファイアウォールを許可する)
+1. [Discord-Connector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe) を開く<br>Rawの2つ右をクリックしダウンロード<br>起動する(この際 ファイアウォールを許可する)
 2. <a href="https://discord.com/developers/applications" target="_blank">Discord Develop Applications</a> を開く
 3. `New Applications`をクリックする<br>`Name`に`Connector`と入力する<br>利用規約に同意し`Create`する
 4. `https://live.aatomu.work/discord/?id=➀&secret=➁`<br>上記をコピーし メモ帳などに貼り付ける
