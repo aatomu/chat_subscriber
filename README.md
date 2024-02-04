@@ -116,7 +116,13 @@ License: `Apache License`
 * Advanced: Discordのプロフィールをカスタマイズする
 
 # How To Use
-1. Discord-ConnectorをDLする [Windows x64]()
+1. Discord-ConnectorをDLする [Windows x64](https://raw.githubusercontent.com/aatomu/chat_subscriber/main/discord-connector/build/DiscordConnector-Win64.exe)
+2. [Discord Develop Applications](https://discord.com/developers/applications) を開く
+3. `New Applications`をクリックして名前を付ける
+4. `Oauth2`から`ClientID`と`Client Secret`をコピー `Redirects`に`https://live.aatomu.work`を追加しSave
+* 以下 プロフィールを書き換える人用
+5. `Rich Presence`を開き`Add Image`で画像を追加,名前を設定しSave
+
 OBS Custom CSS:
 ```css
 body {
