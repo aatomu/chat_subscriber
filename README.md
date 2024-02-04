@@ -223,3 +223,13 @@ Send("SET_ACTIVITY","",{
 		</div>
 	</div>
 ```
+
+## Credit
+
+License: `Apache License`
+※ できたら URL を張っていただけると幸いです
+
+- Code
+  - [aatomu(@aatomu)](https://x.com/aatomu21263): HTML,JavaScript,CSS Background: Golang
+- Design
+  - [椛野りあ(@KuoN_aLia)](https://x.com/KuoN_aLia): Default CSS
