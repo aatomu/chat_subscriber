@@ -117,7 +117,7 @@ License: `Apache License`
 
 # How To Use
 1. Discord-ConnectorをDLし起動する(この際 ネットワークの許可は許可する) [一覧](https://github.com/aatomu/chat_subscriber/tree/main/discord-connector/build)
-2. <a heref="https://discord.com/developers/applications" target="_blank">Discord Develop Applications</a>
+2. <a href="https://discord.com/developers/applications" target="_blank">Discord Develop Applications</a>
 3. `New Applications`をクリックして`Connector`に`Name`を設定し利用規約に同意し`Create`する
 5. `https://live.aatomu.work/discord/?id=【ClientID】&secret=【ClientSecret】`をメモ帳などに張り付ける
 4. サイドバー`Oauth2`を開く
