@@ -9,6 +9,9 @@
   /* Speaking */
   --jump-height: 15px;
   /* Speaking Animation */
+  --icon-size: 128px;
+  --decoration-size: calc(var(--icon-size) * 1.2);
+  /* User Icon SIze*/
 }
 
 .root {
@@ -35,8 +38,8 @@
 
 .user {
   position: relative;
-  height: fit-content;
-  width: fit-content;
+  height: var(--icon-size);
+  width: var(--icon-size);
   margin: 8px;
 }
 
@@ -45,7 +48,7 @@
   box-sizing: border-box;
 
   bottom: 0px;
-  height: 128px;
+  height: 100%;
   aspect-ratio: 1/1;
 
   filter: brightness(75%);
@@ -68,10 +71,10 @@
 
 .decoration {
   position: absolute;
-  top: calc((152px - 128px) / 2 * -1);
-  left: calc((152px - 128px) / 2* -1);
+  top: calc((var(--decoration-size) - var(--icon-size)) / 2 * -1);
+  left: calc((var(--decoration-size) - var(--icon-size)) / 2* -1);
 
-  height: 152px;
+  height: var(--decoration-size);
   aspect-ratio: 1/1;
 }
 
