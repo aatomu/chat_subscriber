@@ -197,3 +197,29 @@ Send("SET_ACTIVITY","",{
   }
 })
 ```
+
+## Contents HTML Tree
+
+```html
+  <div id="errors" class="error">
+    ...
+  </div>
+	<div id="root" class="root">
+		<div id="channel" class="channel">
+      XXXXXX
+		</div>
+		<div id="users" class="users">
+      <div id="0000000" class="user me">
+        <img class="icon" src="https://cdn.discordapp.com/avatars/....">
+        <span class="nick">....</span>
+        <span class="name">....</span>
+      </div>
+      <div id="111111111" class="user">
+        <img class="icon" src="https://cdn.discordapp.com/avatars/....">
+        <img class="decoration" src="https://cdn.discordapp.com/....">
+        <span class="nick">....</span>
+        <span class="name">....</span>
+      </div>
+		</div>
+	</div>
+```
