@@ -119,11 +119,17 @@ License: `Apache License`
 1. Discord-ConnectorをDLし起動する(この際 ネットワークの許可は許可する) [一覧](https://github.com/aatomu/chat_subscriber/tree/main/discord-connector/build)
 2. <a heref="https://discord.com/developers/applications" target="_blank">Discord Develop Applications</a>
 3. `New Applications`をクリックして`Connector`に`Name`を設定し利用規約に同意し`Create`する
-4. `Oauth2`から`ClientID`と`Client Secret`をコピー `Redirects`に`https://live.aatomu.work`を追加し`Save`する
-5. `https://live.aatomu.work/discord/?id=【コピーしたClientID】&secret=【コピーしたClientSecret】`を開く
-6. Discordに出る認証を承諾を押す
+5. `https://live.aatomu.work/discord/?id=【ClientID】&secret=【ClientSecret】`をメモ帳などに張り付ける
+4. サイドバー`Oauth2`を開く
+5. `Client ID`を`Copy`を押し 先ほど貼り付けたものを書き換える
+6. `Client Secret`のところの`Reset Secret`を押す(※この際2FAが入る場合があります)<br>表示された`Copy`を押し 先ほど貼り付けたものを書き換える
+7. `Redirects`の`Add Redirects`を押し `https://live.aatomu.work`を入力した後`Save Changes`する
+8. 書き換え終わったURLを`OBSのブラウザソース`のURLに設定する
+9. Discordに表示される認証で`認証`を押す
 * 以下 プロフィールを書き換える人用
-7. `Rich Presence`を開き`Add Image`で画像を追加,名前を設定しSave
+10. `Rich Presence`を開き`Add Image`で画像を追加,名前を設定し`Save Changes`する
+11. 書き換え終わったURLを`ブラウザ`で開き ブラウザコンソールを出す
+12. 下にあるコード(Set Activity)を実行する ※随所書き換え
 
 OBS Custom CSS:
 ```css
@@ -134,4 +140,26 @@ body {
 .channel {
     display: none;
 }
+```
+
+Set Activity:
+```javascript
+Send("SET_ACTIVITY","",{
+  "pid": 0,
+  "activity": {
+    "details":"【説明】",
+    "state": "【詳細説明】",
+    "timestamps": {
+        "start": new Date().getTime() - (1000 * 60 * 60 * 23.999)
+    },
+    "assets": {
+        "large_image":"【さっき設定した名前】",
+        "large_text":"【画像の説明】",
+    },
+    "party": {
+      "id":"-1",
+      "size":[【現在の人数】,【上限の人数】]
+    }
+  }
+})
 ```
