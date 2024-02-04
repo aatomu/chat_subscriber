@@ -163,7 +163,7 @@ License: `Apache License`
 3. 開いた場所に、ショートカットを移動する。
    PC 起動時に自動的に exe が実行されるため、起動忘れがなくなります！
 
-OBS Custom CSS:
+OBS Custom CSS:<br>
 ※ さらにカスタムするときはこちら [Discord CSS Generator](https://live.aatomu.work/discord-css)
 
 ```css
