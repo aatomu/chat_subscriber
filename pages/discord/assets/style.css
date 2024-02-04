@@ -1,9 +1,19 @@
-.root {
-  padding: 10px;
-  width: fit-content;
+:root {
+  --name-radius: 3px;
+  /* 名前の角丸 */
+  --border-size: 5px;
+  /* 枠線の幅 */
+  --border-color: #3ba53b;
+  /* 枠線の色 */
+  --duration-speed: 50ms;
+  /* Speaking */
+  --jump-height: 15px;
+  /* Speaking Animation */
+}
 
-  background-color: rgba(230, 230, 230, 0.9);
-  border-radius: 32px;
+.root {
+  background-color: transparent;
+  width: fit-content;
 }
 
 .channel {
@@ -18,8 +28,8 @@
 
 .users {
   display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
 }
 
@@ -28,20 +38,28 @@
   height: fit-content;
   width: fit-content;
   margin: 8px;
-
-  transition: 0.25s;
-}
-
-.user:not(.speaking) {
-  opacity: 0.1;
-  transition: 0.5s;
 }
 
 .icon {
+  position: relative;
+  box-sizing: border-box;
+
+  bottom: 0px;
   height: 128px;
   aspect-ratio: 1/1;
 
+  filter: brightness(75%);
+  border: var(--border-size) solid transparent;
   border-radius: 32px;
+}
+
+.speaking .icon {
+  filter: brightness(100%);
+  animation-name: speak-now;
+  animation-duration: calc(1000ms - var(--duration-speed) * 10);
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  border: var(--border-size) solid var(--border-color);
 }
 
 .user:has(.decoration) .icon {
@@ -83,4 +101,19 @@
   white-space: pre;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* しゃべってるときのアニメーション設定 */
+@keyframes speak-now {
+  0% {
+    bottom: 0px;
+  }
+
+  50% {
+    bottom: var(--jump-height);
+  }
+
+  100% {
+    bottom: 0px;
+  }
 }
