@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"fyne.io/systray"
@@ -18,7 +19,7 @@ const (
 
 func main() {
 	// Logger
-	logger, err := os.Create(fmt.Sprintf("./%s.log", time.Now().Format("20060102-15-04-05")))
+	logger, err := os.Create(filepath.Join(os.TempDir(), fmt.Sprintf("Discord-Connector_%s.log", time.Now().Format("20060102-15-04-05"))))
 	if err != nil {
 		panic(err)
 	}
