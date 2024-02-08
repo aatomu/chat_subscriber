@@ -1,0 +1,31 @@
+{
+  "state": "golang Minecraft Apex...",
+  "details": "いろいろやってる",
+  "timestamps": {
+    "start": "$now"
+  },
+  "assets": {
+    "large_image": "main",
+    "large_text": "Twitter Icon",
+    "small_image": "command_block",
+    "small_text": "Commander!"
+  },
+  "party": {
+    "id": "-1",
+    "size": [
+      1,
+      21263
+    ]
+  },
+  "buttons": [
+    {
+      "label": "Twitter",
+      "url": "https://twitter.com/aatomu21263"
+    },
+    {
+      "label": "Github",
+      "url": "https://github.com/aatomu"
+    }
+  ],
+  "instance": false
+}

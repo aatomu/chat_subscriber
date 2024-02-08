@@ -148,8 +148,8 @@ License: `Apache License`
 9. 書き換え終わった URL を`OBSのブラウザソース`の URL に設定する
 10. Discord に表示される認証で`認証`を押す
 11. ※以下 プロフィールを書き換える人用<br>`Rich Presence`を開き`Add Image`で画像を追加,名前を設定し`Save Changes`する
-12. 書き換え終わった URL を`ブラウザ`で開き ブラウザコンソールを出す
-13. 下にあるコード(Set Activity)を実行する ※随所書き換え
+12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json) をDLしexeと同じところに置く
+13. ブラウザーでリンクを開きなおす
 
 ### 二回目以降の起動方法
 
@@ -159,7 +159,7 @@ License: `Apache License`
 ### 上記手順を自動化する方法
 
 1. Discord-Connector の exe へのショートカットを作成する。
-2. Ctrl+R を押し、出てきた画面に shell:startup と入力する
+2. `Windows`+`R` を押し、出てきた画面に shell:startup と入力する
 3. 開いた場所に、ショートカットを移動する。
    PC 起動時に自動的に exe が実行されるため、起動忘れがなくなります！
 
@@ -174,29 +174,6 @@ body {
 .channel {
   display: none;
 }
-```
-
-Set Activity:
-
-```javascript
-Send("SET_ACTIVITY","",{
-  "pid": 0,
-  "activity": {
-    "details":"【説明】",
-    "state": "【詳細説明】",
-    "timestamps": {
-        "start": new Date().getTime() - (1000 * 60 * 60 * 23.999)
-    },
-    "assets": {
-        "large_image":"【さっき設定した名前】",
-        "large_text":"【画像の説明】",
-    },
-    "party": {
-      "id":"-1",
-      "size":[【現在の人数】,【上限の人数】]
-    }
-  }
-})
 ```
 
 ## Contents HTML Tree

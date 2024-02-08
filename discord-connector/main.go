@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"fyne.io/systray"
@@ -25,6 +26,7 @@ func main() {
 	}
 	defer logger.Close()
 	log.SetOutput(io.MultiWriter(logger, os.Stdout))
+	log.Println("func main()")
 
 	// Generate icon
 	// icon, _ := os.ReadFile("./icon.ico")
@@ -36,8 +38,10 @@ func main() {
 	// }
 	// return
 
+	work, _ := os.Executable()
+	os.Chdir(filepath.Dir(work))
+	log.Println("move to", filepath.Dir(work))
 	// Systray start
-	log.Println("func main()")
 	systray.Run(onReady, onExit)
 }
 
@@ -132,6 +136,19 @@ func DialDiscordRPC(ws *websocket.Conn) {
 			}
 			log.Println("Read IPC:", string(body))
 
+			if strings.Contains(string(body), "AUTHENTICATE") {
+				// Set activity
+				activity := ReadActivity()
+				if len(activity) > 0 {
+					log.Println(fmt.Sprintf(`{"nonce": "AUTO_SEND_COMMAND","cmd": "SET_ACTIVITY","evt": "","args":{"pid":1,"activity":%s}}`, activity))
+					err = ipc.send(Frame, []byte(fmt.Sprintf(`{"nonce": "AUTO_SEND_COMMAND","cmd": "SET_ACTIVITY","evt": "","args":{"pid":1,"activity":%s}}`, activity)))
+					if err != nil {
+						log.Println("Send IPC error", err)
+						return
+					}
+				}
+			}
+
 			err = websocket.Message.Send(ws, string(body))
 			if err != nil {
 				log.Println("Send websocket error:", err)
@@ -141,4 +158,18 @@ func DialDiscordRPC(ws *websocket.Conn) {
 		}
 		return
 	}
+}
+
+func ReadActivity() (activity string) {
+	_, err := os.Stat("activity.json")
+	log.Println(err)
+	if os.IsNotExist(err) {
+		return
+	}
+
+	b, _ := os.ReadFile("activity.json")
+	activity = string(b)
+	activity = strings.Replace(activity, `"$now"`, fmt.Sprintf("%d", time.Now().Unix()), 1)
+
+	return
 }
