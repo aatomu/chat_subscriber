@@ -148,7 +148,7 @@ body {
 
 ### 初回設定
 
-<a target="_blank" rel="noopener noreferrer" href="https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe">DiscordConnector-Win64.exe</a>
+[DiscordConnector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe){:target="_blank" rel="noopener"}
 
 1. [DiscordConnector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe) を開く<br>
    Raw の 2 つ右のアイコン 📥 をクリックしダウンロード(以下`DiscordConnector`)<br>
