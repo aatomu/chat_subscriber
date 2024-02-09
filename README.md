@@ -3,6 +3,8 @@
 - Chat Subscriber(複数の配信チャットを表示): [こちら](#chat_subscriber)
 - Discord Connector(Discord のいろいろ): [こちら](#discord_connector)
 
+※ このソフトは[Discord の Alpha API](https://discord.com/developers/docs/topics/rpc)を利用しています
+
 # chat_subscriber
 
 ## Description
