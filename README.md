@@ -161,8 +161,11 @@ License: `Apache License`
     サイドバーの`Rich Presence`を開き<br>
     `Add Image`で画像を追加,名前を設定し<br>
     `Save Changes`する
-12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json) を DL し exe と同じところに置く
-13. ブラウザーでリンクを開きなおす
+12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json) をダウンロード<br>
+    `.exe` と同じところに置く<br>
+    中身を好きなように書き換える
+13. ブラウザーでリンクを開きなおす<br>
+    ※毎回 開きっぱなしにする必要があります
 
 ### 二回目以降の起動方法
 
