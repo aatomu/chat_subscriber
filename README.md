@@ -137,11 +137,11 @@ License: `Apache License`
 
 ### 初回設定
 
-1. [Discord-Connector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe){:target="_blank"} を開く<br>
+1. [Discord-Connector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe) を開く<br>
    Raw の 2 つ右のアイコン 📥 ををクリックしダウンロード<br>
    デスクトップ等に`.exe`をファイルを移動する<br>
    `.exe`をダブルクリックし起動する(この際 ファイアウォールを許可する)
-2. [Discord Develop Applications](https://discord.com/developers/applications){:target="_blank"} を開く
+2. [Discord Develop Applications](https://discord.com/developers/applications) を開く
 3. `New Applications`をクリックする<br>
    `Name`に`Connector`と入力する<br>
    利用規約に同意し`Create`する
@@ -161,7 +161,7 @@ License: `Apache License`
     サイドバーの`Rich Presence`を開き<br>
     `Add Image`で画像を追加,名前を設定し<br>
     `Save Changes`する
-12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json){:target="_blank"} を DL し exe と同じところに置く
+12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json) を DL し exe と同じところに置く
 13. ブラウザーでリンクを開きなおす
 
 ### 二回目以降の起動方法
