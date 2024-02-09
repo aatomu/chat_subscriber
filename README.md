@@ -109,9 +109,9 @@ body {
 ## Screen Shot
 
 - Youtube * Twitch cross chat<br>
-  <img src="./images/youtube-twitch.png" style="max-width: 50%;" alt="Youtube*twitch cross chat screen shot">
+  <img src="./images/youtube-twitch.png" style="width: 50%;" alt="Youtube*twitch cross chat screen shot">
 - Twitch multi chat<br>
-  <img src="./images/multi-twitch.png" style="max-width: 50%;" alt="Twitch multi chat screen shot">
+  <img src="./images/multi-twitch.png" style="width: 50%;" alt="Twitch multi chat screen shot">
 
 ## Credit
 
@@ -150,19 +150,19 @@ body {
 
 1. [DiscordConnector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe) を開く<br>
    Raw の 2 つ右のアイコン 📥 をクリックしダウンロード(以下`DiscordConnector`)<br>
-   <img src="./images/download-DiscordConnector.png" style="max-width: 70%;" alt="download DiscordConnector"><br>
+   <img src="./images/download-DiscordConnector.png" style="width: 70%;" alt="download DiscordConnector"><br>
    デスクトップ等に`DiscordConnector`をファイルを移動する<br>
    `DiscordConnector`をダブルクリックし起動する(この際 ファイアウォールを許可する)
 2. [Discord Develop Applications](https://discord.com/developers/applications) を開く
 3. `New Applications`をクリックする<br>
-   <img src="./images/create-application.png" style="max-width: 90%;" alt="create discord application"><br>
+   <img src="./images/create-application.png" style="width: 90%;" alt="create discord application"><br>
    `Name`に`Connector`と入力する<br>
    利用規約に同意し`Create`する<br>
-   <img src="./images/set-application-name.png" style="max-width: 35%;" alt="set application name"><br>
+   <img src="./images/set-application-name.png" style="width: 35%;" alt="set application name"><br>
 4. `https://live.aatomu.work/discord/?id=➀&secret=➁`<br>
    上記をコピーし メモ帳などに貼り付ける
 5. サイドバーの`Oauth2`をクリックする<br>
-   <img src="./images/application-oauth2.png" style="max-width: 90%;" alt="select OAuth2"><br>
+   <img src="./images/application-oauth2.png" style="width: 90%;" alt="select OAuth2"><br>
 6. `Client ID`を`Copy`を押し ➀ を書き換える
 7. `Client Secret`のところの`Reset Secret`を押し<br>
    **(※この際 2FA が入る場合があります)**<br>
@@ -177,7 +177,7 @@ body {
     サイドバーの`Rich Presence`を開き<br>
     `Add Image(s)`で画像を追加,名前を設定し<br>
     `Save Changes`する<br>
-    <img src="./images/application-assets.png" style="max-width: 70%;" alt="select Rich Presence"><br>
+    <img src="./images/application-assets.png" style="width: 70%;" alt="select Rich Presence"><br>
 12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json) をダウンロード<br>
     `DiscordConnector` と同じところに置く<br>
     中身を好きなように書き換える
