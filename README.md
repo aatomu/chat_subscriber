@@ -5,6 +5,8 @@
 
 ※ このソフトは[Discord の Alpha API](https://discord.com/developers/docs/topics/rpc)を利用しています
 
+---
+
 # chat_subscriber
 
 ## Description
@@ -118,18 +120,20 @@ body {
 例: `Chat Subscriber(https://github.com/aatomu/chat_subscriber/tree/main#chat_subscriber) を利用しています`
 
 ### Developers
-| Name | Products |
-| :-: | :-: |
-| [aatomu(@aatomu)](https://x.com/aatomu21263) | Front: `HTML,Javascript,CSS`<br>Background:`Typescript` |
-| [らる(@rarula)](https://twitter.com/rarula_) | Background: `Typescript(Refactoring)` |
-| [椛野りあ(@KuoN_aLia)](https://x.com/KuoN_aLia) | Front: `CSS(Design)` |
+
+|                      Name                       |                        Products                         |
+| :---------------------------------------------: | :-----------------------------------------------------: |
+|  [aatomu(@aatomu)](https://x.com/aatomu21263)   | Front: `HTML,Javascript,CSS`<br>Background:`Typescript` |
+|  [らる(@rarula)](https://twitter.com/rarula_)   |          Background: `Typescript(Refactoring)`          |
+| [椛野りあ(@KuoN_aLia)](https://x.com/KuoN_aLia) |                  Front: `CSS(Design)`                   |
 
 ### Special Thanks
-| Name | Products |
-| :-: | :-: |
-| [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW) | Youtube/Twitch live test |
-| Project CBW Listeners | Message view test, Design layout check |
-| [しぐりむん(@shiglimnn)](https://twitter.com/shiglimnn) | Multi Twitch live test |
+
+|                          Name                           |                Products                |
+| :-----------------------------------------------------: | :------------------------------------: |
+|   [ProjectCBW(@ProjectCBW)](https://x.com/ProjectCBW)   |        Youtube/Twitch live test        |
+|                  Project CBW Listeners                  | Message view test, Design layout check |
+| [しぐりむん(@shiglimnn)](https://twitter.com/shiglimnn) |         Multi Twitch live test         |
 
 ---
 
@@ -234,12 +238,14 @@ body {
 例: `DiscordConnector(https://github.com/aatomu/chat_subscriber/tree/main#discord_connector) を利用しています`
 
 ### Developers
-| Name | Products |
-| :-: | :-: |
-| [aatomu(@aatomu)](https://x.com/aatomu21263) | Front: `HTML,Javascript,CSS`<br>Background:`Golang` |
-| [椛野りあ(@KuoN_aLia)](https://x.com/KuoN_aLia) | Front: `CSS(Design)` |
+
+|                      Name                       |                      Products                       |
+| :---------------------------------------------: | :-------------------------------------------------: |
+|  [aatomu(@aatomu)](https://x.com/aatomu21263)   | Front: `HTML,Javascript,CSS`<br>Background:`Golang` |
+| [椛野りあ(@KuoN_aLia)](https://x.com/KuoN_aLia) |                Front: `CSS(Design)`                 |
 
 ### Special Thanks
-| Name | Products |
-| :-: | :-: |
+
+|                          Name                          |              Products               |
+| :----------------------------------------------------: | :---------------------------------: |
 | [RinProducts(@RinProducts)](https://x.com/RinProducts) | README review & Screenshot provider |
