@@ -148,8 +148,6 @@ body {
 
 ### 初回設定
 
-[DiscordConnector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe){:target="_blank" rel="noopener"}
-
 1. [DiscordConnector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe) を開く<br>
    Raw の 2 つ右のアイコン 📥 をクリックしダウンロード(以下`DiscordConnector`)<br>
    <img src="./images/download-DiscordConnector.png" style="width: 70%;" alt="download DiscordConnector"><br>
