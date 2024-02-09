@@ -137,31 +137,31 @@ License: `Apache License`
 
 ### 初回設定
 
-1. [Discord-Connector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe){:target="_blank"} を開く<br>
+1. [Discord-Connector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe){:target="\_blank"} を開く<br>
    Raw の 2 つ右のアイコン 📥 ををクリックしダウンロード<br>
    デスクトップ等に`.exe`をファイルを移動する<br>
    `.exe`をダブルクリックし起動する(この際 ファイアウォールを許可する)
-2. [Discord Develop Applications](https://discord.com/developers/applications){:target="_blank"} を開く
+2. [Discord Develop Applications](https://discord.com/developers/applications){:target="\_blank"} を開く
 3. `New Applications`をクリックする<br>
-    `Name`に`Connector`と入力する<br>
-    利用規約に同意し`Create`する
+   `Name`に`Connector`と入力する<br>
+   利用規約に同意し`Create`する
 4. `https://live.aatomu.work/discord/?id=➀&secret=➁`<br>
-    上記をコピーし メモ帳などに貼り付ける
+   上記をコピーし メモ帳などに貼り付ける
 5. サイドバーの`Oauth2`をクリックする
 6. `Client ID`を`Copy`を押し ➀ を書き換える
 7. `Client Secret`のところの`Reset Secret`を押し<br>
-    (※この際 2FA が入る場合があります)<br>
-    表示された`Copy`を押し ➁ を書き換える
+   (※この際 2FA が入る場合があります)<br>
+   表示された`Copy`を押し ➁ を書き換える
 8. `Redirects`の`Add Redirects`を押し<br>
-    `https://live.aatomu.work`を入力した後<br>
-    `Save Changes`する
+   `https://live.aatomu.work`を入力した後<br>
+   `Save Changes`する
 9. 書き換え終わった URL を`OBSのブラウザソース`の URL に設定する
 10. Discord に表示される認証で`認証`を押す
 11. **※以下 プロフィールを書き換える人用**<br>
     サイドバーの`Rich Presence`を開き<br>
     `Add Image`で画像を追加,名前を設定し<br>
     `Save Changes`する
-12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json){:target="_blank"} を DL し exe と同じところに置く
+12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json){:target="\_blank"} を DL し exe と同じところに置く
 13. ブラウザーでリンクを開きなおす
 
 ### 二回目以降の起動方法
