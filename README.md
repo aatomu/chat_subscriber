@@ -140,9 +140,9 @@ License: `Apache License`
 ### 初回設定
 
 1. [Discord-Connector-Win64.exe](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/DiscordConnector-Win64.exe) を開く<br>
-   Raw の 2 つ右のアイコン 📥 ををクリックしダウンロード<br>
-   デスクトップ等に`.exe`をファイルを移動する<br>
-   `.exe`をダブルクリックし起動する(この際 ファイアウォールを許可する)
+   Raw の 2 つ右のアイコン 📥 をクリックしダウンロード(以下`Discord-Connector`)<br>
+   デスクトップ等に`Discord-Connector`をファイルを移動する<br>
+   `Discord-Connector`をダブルクリックし起動する(この際 ファイアウォールを許可する)
 2. [Discord Develop Applications](https://discord.com/developers/applications) を開く
 3. `New Applications`をクリックする<br>
    `Name`に`Connector`と入力する<br>
@@ -164,7 +164,7 @@ License: `Apache License`
     `Add Image`で画像を追加,名前を設定し<br>
     `Save Changes`する
 12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json) をダウンロード<br>
-    `.exe` と同じところに置く<br>
+    `Discord-Connector` と同じところに置く<br>
     中身を好きなように書き換える
 13. ブラウザーでリンクを開きなおす<br>
     ※毎回 開きっぱなしにする必要があります
