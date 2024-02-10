@@ -112,49 +112,43 @@ func DialDiscordRPC(ws *websocket.Conn) {
 			var message string
 			for !isBreak {
 				err := websocket.Message.Receive(ws, &message)
+
 				if err != nil {
-					log.Println("Read websocket error:", err)
+					if err == io.EOF {
+						log.Println("Close Websocket by Client")
+					} else {
+						log.Println("Read websocket error:", err)
+					}
 					isBreak = true
 					return
 				}
 				log.Println("Read websocket:", message)
 
-				err = ipc.send(Frame, []byte(message))
-				if err != nil {
-					log.Println("Send IPC error", err)
-					isBreak = true
-					return
-				}
+				ipc.send(Frame, []byte(message))
 			}
 		}()
 		for !isBreak {
-			body, err := ipc.read()
+			res, err := ipc.read()
 			if err != nil {
-				log.Println("Read IPC error:", err)
+				if err == io.EOF {
+					log.Println("Close IPC by Client")
+				} else {
+					log.Println("Read IPC error:", err)
+				}
 				isBreak = true
 				return
 			}
-			log.Println("Read IPC:", string(body))
+			log.Printf("Read IPC: %+v", res)
 
-			if strings.Contains(string(body), "AUTHENTICATE") {
+			if strings.Contains(res.Message, "AUTHENTICATE") {
 				// Set activity
 				activity := ReadActivity()
 				if len(activity) > 0 {
-					log.Println(fmt.Sprintf(`{"nonce": "AUTO_SEND_COMMAND","cmd": "SET_ACTIVITY","evt": "","args":{"pid":1,"activity":%s}}`, activity))
-					err = ipc.send(Frame, []byte(fmt.Sprintf(`{"nonce": "AUTO_SEND_COMMAND","cmd": "SET_ACTIVITY","evt": "","args":{"pid":1,"activity":%s}}`, activity)))
-					if err != nil {
-						log.Println("Send IPC error", err)
-						return
-					}
+					ipc.send(Frame, []byte(fmt.Sprintf(`{"nonce":"AUTO_SEND_COMMAND","cmd":"SET_ACTIVITY","evt":null,"args":{"pid":1,"activity":%s}}`, activity)))
 				}
 			}
 
-			err = websocket.Message.Send(ws, string(body))
-			if err != nil {
-				log.Println("Send websocket error:", err)
-				isBreak = true
-				return
-			}
+			websocket.Message.Send(ws, res.Message)
 		}
 		return
 	}
@@ -162,7 +156,6 @@ func DialDiscordRPC(ws *websocket.Conn) {
 
 func ReadActivity() (activity string) {
 	_, err := os.Stat("activity.json")
-	log.Println(err)
 	if os.IsNotExist(err) {
 		return
 	}

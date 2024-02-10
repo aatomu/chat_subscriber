@@ -28,6 +28,12 @@ type RpcHandshake struct {
 	ClientID string `json:"client_id"`
 }
 
+type RpcResponse struct {
+	Code    OPcode
+	Length  int
+	Message string
+}
+
 func NewIPC(clientID string, num int) (ipc *IPC, err error) {
 	// Dial
 	conn, err := dialRPC(num)
@@ -68,22 +74,29 @@ func (ipc *IPC) send(code OPcode, message []byte) (err error) {
 	return nil
 }
 
-func (ipc *IPC) read() (body []byte, err error) {
+func (ipc *IPC) read() (res RpcResponse, err error) {
 	opcode := make([]byte, 4) // 32bit
 	_, err = io.ReadFull(ipc.Conn, opcode)
 	if err != nil {
 		return
 	}
+
 	length := make([]byte, 4) // 32bit
 	_, err = io.ReadFull(ipc.Conn, length)
 	if err != nil {
 		return
 	}
-	message := make([]byte, binary.LittleEndian.Uint32(length))
+	messageLength := binary.LittleEndian.Uint32(length)
+
+	message := make([]byte, messageLength)
 	_, err = io.ReadFull(ipc.Conn, message)
 	if err != nil {
 		return
 	}
 
-	return message, nil
+	return RpcResponse{
+		Code:    OPcode(binary.LittleEndian.Uint32(opcode)),
+		Length:  int(messageLength),
+		Message: string(message),
+	}, nil
 }
