@@ -3,6 +3,7 @@
 let localUserID = ""
 let currentVoiceChannel = ""
 let currentCoolDown = 10
+let isError = false
 // Constant values
 const SEARCH_PARAMS = new URLSearchParams(window.location.search)
 const DISCORD_CLIENT_ID = SEARCH_PARAMS.get("id")
@@ -53,6 +54,9 @@ WEBSOCKET.addEventListener("message", async function (event) {
     case "DISPATCH": {
       switch (RPC.evt) {
         case "READY": {
+          if (isError) {
+            return
+          }
           Send("AUTHORIZE", "", { "client_id": discordClientID, "scopes": OAUTH_SCOPES })
           return
         }
@@ -116,6 +120,11 @@ WEBSOCKET.addEventListener("message", async function (event) {
       return
     }
     case "AUTHORIZE": {
+      if (RPC.evt == "ERROR") {
+        newError("Discordでの認証に失敗しました。")
+        return
+      }
+
       const OAUTH = await fetch("https://discordapp.com/api/oauth2/token", {
         method: "POST",
         headers: {
@@ -137,9 +146,14 @@ WEBSOCKET.addEventListener("message", async function (event) {
       return
     }
     case "AUTHENTICATE": {
+      if (RPC.evt == "ERROR") {
+        newError("Discordサーバーとの認証に失敗しました。")
+        return
+      }
+
       setInterval(function () {
         if (currentVoiceChannel == "") {
-          console.log("Should Check New Channel?")
+          console.log(`Should Check New Channel (CoolDown:${currentCoolDown}/${SEARCH_COOL_DOWN}})`)
           if (currentCoolDown > 0) {
             currentCoolDown--
             return
@@ -157,6 +171,8 @@ WEBSOCKET.addEventListener("message", async function (event) {
       if (!RPC.data || RPC.evt != null) {
         return
       }
+      currentCoolDown = 0
+
       // Channel Name
       const CHANNEL_NAME = document.getElementById("channel")
       if (CHANNEL_NAME) {
@@ -190,8 +206,9 @@ WEBSOCKET.addEventListener("close", function (event) {
 })
 
 function newError(err) {
+  isError = true
   const MESSAGE = document.createElement("div")
-  MESSAGE.innerHTML=err
+  MESSAGE.innerHTML = err
 
   const ERRORS = document.getElementById("errors")
   if (ERRORS) {
