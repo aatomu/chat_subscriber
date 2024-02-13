@@ -17,8 +17,13 @@ export default {
 						if (!ID) {
 							break;
 						}
+            let cookie= ""
+            const REQUEST_COOKIE = SEARCH_PARAMS.get("cookie")
+            if (REQUEST_COOKIE) {
+              cookie =  REQUEST_COOKIE
+            }
 
-						return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/${ID}/live`)), {
+            return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/${ID}/live`,cookie)), {
 							headers: {
 								'Content-Type': 'application/json',
 								'Access-Control-Allow-Origin': '*',
@@ -32,8 +37,13 @@ export default {
 						if (!ID) {
 							break;
 						}
+            let cookie= ""
+            const REQUEST_COOKIE = SEARCH_PARAMS.get("cookie")
+            if (REQUEST_COOKIE) {
+              cookie =  REQUEST_COOKIE
+            }
 
-						return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${ID}`)), {
+						return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${ID}`,cookie)), {
 							headers: {
 								'Content-Type': 'application/json',
 								'Access-Control-Allow-Origin': '*',
@@ -137,8 +147,12 @@ function ErrorResponse() {
 	return new Response('Check https://github.com/aatomu/chat_subscriber/blob/main/worker.ts');
 }
 
-async function youtubeGetApiKeys(url: string) {
-	const LIVE_INFORMATION = await fetch(url)
+async function youtubeGetApiKeys(url: string,cookie: string) {
+	const LIVE_INFORMATION = await fetch(url,{
+    headers:{
+      "Cookie":cookie,
+    }
+  })
 		.then((res) => {
 			return res.text();
 		})
