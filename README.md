@@ -116,7 +116,7 @@ body {
 ## Credit
 
 ※ クレジット表記をしていただけると開発者が喜びます。<br>
-例: `Chat Subscriber(https://github.com/aatomu/chat_subscriber/tree/main#chat_subscriber) を利用しています`
+例: `Chat Subscriber(https://github.com/aatomu/chat_subscriber/#chat_subscriber) を利用しています`
 
 ### Developers
 
@@ -234,7 +234,7 @@ body {
 ## Credit
 
 ※ クレジット表記をしていただけると開発者が喜びます。<br>
-例: `DiscordConnector(https://github.com/aatomu/chat_subscriber/tree/main#discord_connector) を利用しています`
+例: `DiscordConnector(https://github.com/aatomu/chat_subscriber/#discord_connector) を利用しています`
 
 ### Developers
 
