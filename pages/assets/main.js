@@ -5,12 +5,6 @@ const API_SERVER = "https://chat-subscriber.aatomu.workers.dev"
 
 // constant values
 const SEARCH_PARAMS = new URLSearchParams(window.location.search)
-/// cookie
-const COOKIE = SEARCH_PARAMS.get("cookie")
-let request_cookie = ""
-if (COOKIE) {
-	request_cookie = COOKIE
-}
 /// chat limit
 let charCountLimitString = SEARCH_PARAMS.get("limit")
 if (charCountLimitString == null) {
@@ -31,11 +25,7 @@ if (SEARCH_PARAMS.size == 0) {
 // Youtube Channel
 SEARCH_PARAMS.getAll("youtube").forEach(async (channelID) => {
 	console.log("Youtube Channel: ", channelID)
-	const TOKEN = await fetch(`${API_SERVER}/youtube/channel?id=${channelID}`,{
-		headers:{
-			Cookie: request_cookie
-		}
-	})
+	const TOKEN = await fetch(`${API_SERVER}/youtube/channel?id=${channelID}&cookie=${SEARCH_PARAMS.get("cookie")}`)
 		.then(res => { return res.json() })
 
 	console.log(`Youtube(#${channelID}):`, TOKEN)
@@ -50,11 +40,7 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID) => {
 // Youtube Limited Live
 SEARCH_PARAMS.getAll("watch").forEach(async (videoID,) => {
 	console.log("Youtube Watch: ", videoID)
-	const TOKEN = await fetch(`${API_SERVER}/youtube/watch?id=${videoID}`,{
-		headers:{
-			Cookie: request_cookie
-		}
-	})
+	const TOKEN = await fetch(`${API_SERVER}/youtube/watch?id=${videoID}&cookie=${SEARCH_PARAMS.get("cookie")}`)
 		.then(res => { return res.json() })
 
 	console.log(`Youtube(${videoID}):`, TOKEN)
