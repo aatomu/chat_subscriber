@@ -153,7 +153,7 @@ WEBSOCKET.addEventListener("message", async function (event) {
 
       setInterval(function () {
         if (currentVoiceChannel == "") {
-          console.log(`Should Check New Channel (CoolDown:${currentCoolDown}/${SEARCH_COOL_DOWN}})`)
+          console.log(`Should Check New Channel (CoolDown:${currentCoolDown}/${SEARCH_COOL_DOWN})`)
           if (currentCoolDown > 0) {
             currentCoolDown--
             return
