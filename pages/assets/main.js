@@ -33,7 +33,7 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID) => {
 	console.log("Youtube Channel: ", channelID)
 	const TOKEN = await fetch(`${API_SERVER}/youtube/channel?id=${channelID}`,{
 		headers:{
-			"Cookie": request_cookie
+			Cookie: request_cookie
 		}
 	})
 		.then(res => { return res.json() })
@@ -52,7 +52,7 @@ SEARCH_PARAMS.getAll("watch").forEach(async (videoID,) => {
 	console.log("Youtube Watch: ", videoID)
 	const TOKEN = await fetch(`${API_SERVER}/youtube/watch?id=${videoID}`,{
 		headers:{
-			"Cookie": request_cookie
+			Cookie: request_cookie
 		}
 	})
 		.then(res => { return res.json() })
