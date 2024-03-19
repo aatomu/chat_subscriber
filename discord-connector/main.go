@@ -149,6 +149,10 @@ func DialDiscordRPC(ws *websocket.Conn) {
 			}
 
 			websocket.Message.Send(ws, res.Message)
+			if res.Code == Ping {
+				log.Println("Send IPC: Pong")
+				ipc.send(Pong, []byte{})
+			}
 		}
 		return
 	}
