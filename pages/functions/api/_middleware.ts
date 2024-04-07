@@ -1,8 +1,7 @@
 interface Env {}
 
 export async function onRequestGet(context): Promise<Response> {
-  console.log(context);
-  console.log(context.request)
+  console.log(JSON.stringify(context));
   return new Response("Hello, from Functions!");
 }
 
