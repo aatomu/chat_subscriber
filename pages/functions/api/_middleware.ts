@@ -9,13 +9,10 @@ export async function onRequestGet(context): Promise<Response> {
   const REQUEST_SITE = REQUEST_PATH[2];
   const REQUEST_API = REQUEST_PATH[3];
   const SEARCH_PARAMS = new URLSearchParams(new URL(request.url).search);
-  console.log(
-    `Date:${new Date().toLocaleString("ja-JP", {
-      timeZone: "Asia/Tokyo",
-    })}\n  URL: "${
-      request.url
-    }"\n  Target:"${REQUEST_SITE}"\n  API:"${REQUEST_API}"`
-  );
+  console.log(`
+    Date:${new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}\n
+    URL: "${request.url}"\n
+    Target:"${REQUEST_SITE}"\n  API:"${REQUEST_API}"`);
 
   switch (REQUEST_SITE) {
     case "youtube":
