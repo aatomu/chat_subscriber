@@ -150,7 +150,7 @@ WEBSOCKET.addEventListener("message", async function (event) {
         }
         // Channel events
         case "MESSAGE_CREATE": {
-
+          addMessage(RPC.data.message)
         }
       }
       return
@@ -189,6 +189,8 @@ WEBSOCKET.addEventListener("message", async function (event) {
         return
       }
 
+      localUserID = RPC.data.user.id
+
       if (channelId) {
         sendMessage("GET_CHANNEL", "", { "channel_id": channelId })
         sendMessage("SUBSCRIBE", "MESSAGE_CREATE", { "channel_id": channelId })
@@ -201,7 +203,6 @@ WEBSOCKET.addEventListener("message", async function (event) {
           sendMessage("GET_SELECTED_VOICE_CHANNEL", "", {}) // Get current channel
         }
       }, 500)
-      localUserID = RPC.data.user.id
 
       return
     }

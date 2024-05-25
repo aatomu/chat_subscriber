@@ -11,7 +11,9 @@
   /* Speaking Animation */
   --icon-size: 128px;
   --decoration-size: calc(var(--icon-size) * 1.2);
-  /* User Icon SIze*/
+  /* User Icon Size*/
+  --message-background: #313338
+    /* メッセージの後ろの色 */
 }
 
 .root {
@@ -35,90 +37,133 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-}
 
-.user {
-  position: relative;
-  height: var(--icon-size);
-  width: var(--icon-size);
-  margin: 8px;
-}
-
-.icon {
-  position: relative;
-  box-sizing: border-box;
-
-  bottom: 0px;
-  height: 100%;
-  aspect-ratio: 1/1;
-
-  filter: brightness(75%);
-  border: var(--border-size) solid transparent;
-  border-radius: 32px;
-}
-
-.speaking .icon {
-  filter: brightness(100%);
-  animation-name: speak-now;
-  animation-duration: calc(1000ms - var(--duration-speed) * 10);
-  animation-fill-mode: forwards;
-  animation-iteration-count: infinite;
-  border: var(--border-size) solid var(--border-color);
-}
-
-.user:has(.decoration) .icon {
-  border-radius: 64px;
-}
-
-.decoration {
-  position: absolute;
-  top: calc((var(--decoration-size) - var(--icon-size)) / 2 * -1);
-  left: calc((var(--decoration-size) - var(--icon-size)) / 2* -1);
-
-  height: var(--decoration-size);
-  aspect-ratio: 1/1;
-}
-
-.nick {
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translate(-50%, 0%);
-  box-sizing: border-box;
-
-  max-width: 100%;
-  padding: 0 10px;
-
-  background-color: rgba(192, 192, 192, 0.9);
-  border-radius: 8px;
-  font-weight: bold;
-
-  white-space: pre;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.name {
-  display: none;
-
-  font-weight: bold;
-
-  white-space: pre;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* しゃべってるときのアニメーション設定 */
-@keyframes speak-now {
-  0% {
-    bottom: 0px;
+  .user {
+    position: relative;
+    height: var(--icon-size);
+    width: var(--icon-size);
+    margin: 8px;
   }
 
-  50% {
-    bottom: var(--jump-height);
+  .icon {
+    position: relative;
+    box-sizing: border-box;
+
+    bottom: 0px;
+    height: 100%;
+    aspect-ratio: 1/1;
+
+    filter: brightness(75%);
+    border: var(--border-size) solid transparent;
+    border-radius: 32px;
   }
 
-  100% {
-    bottom: 0px;
+  .speaking .icon {
+    filter: brightness(100%);
+    animation-name: speak-now;
+    animation-duration: calc(1000ms - var(--duration-speed) * 10);
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    border: var(--border-size) solid var(--border-color);
+  }
+
+  .user:has(.decoration) .icon {
+    border-radius: 64px;
+  }
+
+  .decoration {
+    position: absolute;
+    top: calc((var(--decoration-size) - var(--icon-size)) / 2 * -1);
+    left: calc((var(--decoration-size) - var(--icon-size)) / 2* -1);
+
+    height: var(--decoration-size);
+    aspect-ratio: 1/1;
+  }
+
+  .nick {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    box-sizing: border-box;
+
+    max-width: 100%;
+    padding: 0 10px;
+
+    background-color: rgba(192, 192, 192, 0.9);
+    border-radius: 8px;
+    font-weight: bold;
+
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .name {
+    display: none;
+
+    font-weight: bold;
+
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* しゃべってるときのアニメーション設定 */
+  @keyframes speak-now {
+    0% {
+      bottom: 0px;
+    }
+
+    50% {
+      bottom: var(--jump-height);
+    }
+
+    100% {
+      bottom: 0px;
+    }
+  }
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: white;
+
+  * {
+    vertical-align: middle;
+  }
+
+  .message {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 4px 0;
+
+    background-color: var(--message-background);
+    border-radius: 1ch;
+  }
+
+  .icon {
+    margin: 2px;
+    height: 3ch;
+    width: 3ch;
+
+    border-radius: 1.5ch;
+  }
+
+  .nick {
+    font-weight: bold;
+    margin: 0 0.5ch;
+  }
+
+  .name {
+    display: none;
+  }
+
+  .timestamp {
+    color:gray;
+    font-size: small;
+    margin: 0 1ch;
   }
 }
