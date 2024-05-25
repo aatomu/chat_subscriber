@@ -95,9 +95,7 @@ body {
     <span class="name">...</span>
     <div class="message-root">
       <span class="message">
-        <span class="money" style="color: #000000;background-color: #000000;"
-          >$0.00</span
-        >
+        <span class="money" style="color: #000000;background-color: #000000;">$0.00</span>
         ...
       </span>
       <span class="channel">...</span>
@@ -226,6 +224,15 @@ body {
       <img class="decoration" src="https://cdn.discordapp.com/...." />
       <span class="nick">....</span>
       <span class="name">....</span>
+    </div>
+  </div>
+  <div id="messages" class="messages">
+    <div class="message">
+      <img class="icon" src="https://cdn.discordapp.com/avatars/...." />
+      <span class="nick" style="color: rgb(153, 255, 102);">....</span>
+      <span class="name" style="color: rgb(153, 255, 102);">....</span>
+      <time class="timestamp" datetime="2024-00-00T00:00:00.000Z">00:00</time>
+      <span class="content">....</span>
     </div>
   </div>
 </div>
