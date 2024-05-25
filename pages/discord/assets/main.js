@@ -151,6 +151,7 @@ WEBSOCKET.addEventListener("message", async function (event) {
         // Channel events
         case "MESSAGE_CREATE": {
           addMessage(RPC.data.message)
+          return
         }
       }
       return
@@ -232,6 +233,7 @@ WEBSOCKET.addEventListener("message", async function (event) {
         userUpdate(state.nick, state.user, state.voice_state)
       });
       userSort()
+      return
     }
     // Channel events
     case "GET_CHANNEL": {
