@@ -140,6 +140,7 @@ body {
 
 - Discord の VC を移動しても自動で追いかけるように
 - VC の名前を表示する,Discord ニトロの装飾を表示
+- Advanced: Discord の Text を表示する
 - Advanced: Discord のプロフィールをカスタマイズする
 
 ## How To Use
@@ -171,15 +172,21 @@ body {
 9. 書き換え終わった URL を`OBSのブラウザソース`の URL に設定する<br>
    **(※配信をしない人は飛ばしてください)**
 10. Discord に表示される認証で`認証`を押す
-11. **※以下 プロフィールを書き換える人用(Advanced Settings)**<br>
-    サイドバーの`Rich Presence`を開き<br>
+
+#### Advanced: Text Channel を表示
+
+1. 上記で作成したリンクのあとに`&channel=<ChannelID>`を追加し開くだけ
+
+#### Advanced: プロフィールを書き換える
+
+1.  サイドバーの`Rich Presence`を開き<br>
     `Add Image(s)`で画像を追加,名前を設定し<br>
     `Save Changes`する<br>
     <img src="./images/application-assets.png" style="width: 70%;" alt="select Rich Presence"><br>
-12. [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json) をダウンロード<br>
+2.  [activity.json](https://github.com/aatomu/chat_subscriber/blob/main/discord-connector/build/activity.json) をダウンロード<br>
     `DiscordConnector` と同じところに置く<br>
     中身を好きなように書き換える
-13. ブラウザーでリンクを開きなおす<br>
+3.  ブラウザーでリンクを開きなおす<br>
     **※毎回 開きっぱなしにする必要があります**
 
 ### 二回目以降の起動方法
