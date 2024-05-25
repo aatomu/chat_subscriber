@@ -109,19 +109,20 @@
     text-overflow: ellipsis;
   }
 
-  /* しゃべってるときのアニメーション設定 */
-  @keyframes speak-now {
-    0% {
-      bottom: 0px;
-    }
+}
 
-    50% {
-      bottom: var(--jump-height);
-    }
+/* しゃべってるときのアニメーション設定 */
+@keyframes speak-now {
+  0% {
+    bottom: 0px;
+  }
 
-    100% {
-      bottom: 0px;
-    }
+  50% {
+    bottom: var(--jump-height);
+  }
+
+  100% {
+    bottom: 0px;
   }
 }
 
@@ -162,7 +163,7 @@
   }
 
   .timestamp {
-    color:gray;
+    color: gray;
     font-size: small;
     margin: 0 1ch;
   }
