@@ -2,24 +2,44 @@
 
 let localUserID = ""
 let currentVoiceChannel = ""
-let currentCoolDown = 10
 let isError = false
 // Constant values
 const SEARCH_PARAMS = new URLSearchParams(window.location.search)
 const DISCORD_CLIENT_ID = SEARCH_PARAMS.get("id")
 const DISCORD_SECRET_ID = SEARCH_PARAMS.get("secret")
+const CHANNEL_ID = SEARCH_PARAMS.get("channel")
+
 
 let discordClientID = ""
 if (!DISCORD_CLIENT_ID) {
+  const cachedClientID = getCookie("clientId")
+  if (cachedClientID) {
+    SEARCH_PARAMS.set("id", cachedClientID)
+    window.location.href = window.location.pathname + "?" + SEARCH_PARAMS.toString()
+  }
   newError("Client IDが見つかりません")
 } else {
   discordClientID = DISCORD_CLIENT_ID
+  setCookie(`clientId=${DISCORD_CLIENT_ID}`)
 }
+
 let discordSecretID = ""
 if (!DISCORD_SECRET_ID) {
-  newError("Client Secretが見つかりません")
+  const cachedSecretID = getCookie("secretId")
+  if (cachedSecretID) {
+    SEARCH_PARAMS.set("secret", cachedSecretID)
+    window.location.href = window.location.pathname + "?" + SEARCH_PARAMS.toString()
+  } else {
+    newError("Client Secretが見つかりません")
+  }
 } else {
   discordSecretID = DISCORD_SECRET_ID
+  setCookie(`secretId=${DISCORD_SECRET_ID}`)
+}
+
+let channelId = ""
+if (CHANNEL_ID) {
+  channelId = CHANNEL_ID
 }
 
 
@@ -32,13 +52,13 @@ const nonce = new class Nonce {
     this.num = 0
   }
   get() {
+    this.num++
     return this.num.toString(16).padStart(4, "0")
   }
 }
-const SEARCH_COOL_DOWN = 10
+
 
 const WEBSOCKET = new WebSocket(DISCORD_CONNECTOR)
-
 WEBSOCKET.addEventListener("open", function (event) {
   console.log("Open", event)
 })
@@ -49,17 +69,29 @@ WEBSOCKET.addEventListener("message", async function (event) {
   const RPC = JSON.parse(event.data)
   console.log("Message", RPC)
 
+
   // Receive Event
   switch (RPC.cmd) {
     case "DISPATCH": {
       switch (RPC.evt) {
+        // First call
         case "READY": {
           if (isError) {
             return
           }
-          Send("AUTHORIZE", "", { "client_id": discordClientID, "scopes": OAUTH_SCOPES })
+
+          const access_token = getCookie("token")
+          if (access_token) {
+            console.log("Access token is cached")
+            sendMessage("AUTHENTICATE", "", { access_token: access_token })
+          } else {
+            console.log("access token is not Cached")
+            sendMessage("AUTHORIZE", "", { "client_id": discordClientID, "scopes": OAUTH_SCOPES })
+          }
           return
         }
+
+        // Voice events
         case "VOICE_STATE_CREATE": {
           const STATE = RPC.data
           userAdd(STATE.user)
@@ -81,11 +113,11 @@ WEBSOCKET.addEventListener("message", async function (event) {
 
           // if me
           if (USER_ID == localUserID) {
-            Send("UNSUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: currentVoiceChannel }) // Connect
-            Send("UNSUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: currentVoiceChannel }) // Change VC state
-            Send("UNSUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: currentVoiceChannel }) // Disconnect
-            Send("UNSUBSCRIBE", "SPEAKING_START", { channel_id: currentVoiceChannel }) // Speak start
-            Send("UNSUBSCRIBE", "SPEAKING_STOP", { channel_id: currentVoiceChannel }) // Speak stop
+            sendMessage("UNSUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: currentVoiceChannel }) // Connect
+            sendMessage("UNSUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: currentVoiceChannel }) // Change VC state
+            sendMessage("UNSUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: currentVoiceChannel }) // Disconnect
+            sendMessage("UNSUBSCRIBE", "SPEAKING_START", { channel_id: currentVoiceChannel }) // Speak start
+            sendMessage("UNSUBSCRIBE", "SPEAKING_STOP", { channel_id: currentVoiceChannel }) // Speak stop
             const USERS = document.getElementById("users")
             if (USERS) {
               while (USERS.firstChild) {
@@ -116,12 +148,16 @@ WEBSOCKET.addEventListener("message", async function (event) {
           }
           return
         }
+        // Channel events
+        case "MESSAGE_CREATE": {
+
+        }
       }
       return
     }
     case "AUTHORIZE": {
       if (RPC.evt == "ERROR") {
-        newError("Discordでの認証に失敗しました。")
+        newError("Discord App との認証に失敗しました。")
         return
       }
 
@@ -142,36 +178,39 @@ WEBSOCKET.addEventListener("message", async function (event) {
         return res.json()
       })
       console.log("AUTHORIZE", OAUTH)
-      Send("AUTHENTICATE", "", { access_token: OAUTH.access_token })
+      sendMessage("AUTHENTICATE", "", { access_token: OAUTH.access_token })
+      setCookie(`token=${OAUTH.access_token}`)
       return
     }
     case "AUTHENTICATE": {
       if (RPC.evt == "ERROR") {
-        newError("Discordサーバーとの認証に失敗しました。")
+        newError("Discord Server との認証に失敗しました。")
+        setCookie(`token=reset; max-age=0`)
+        return
+      }
+
+      if (channelId) {
+        sendMessage("GET_CHANNEL", "", { "channel_id": channelId })
+        sendMessage("SUBSCRIBE", "MESSAGE_CREATE", { "channel_id": channelId })
         return
       }
 
       setInterval(function () {
         if (currentVoiceChannel == "") {
-          console.log(`Should Check New Channel (CoolDown:${currentCoolDown}/${SEARCH_COOL_DOWN})`)
-          if (currentCoolDown > 0) {
-            currentCoolDown--
-            return
-          }
           console.log("Check New Channel!")
-          Send("GET_SELECTED_VOICE_CHANNEL", "", {}) // Get current channel
-          currentCoolDown = SEARCH_COOL_DOWN
+          sendMessage("GET_SELECTED_VOICE_CHANNEL", "", {}) // Get current channel
         }
-      }, 100)
+      }, 500)
       localUserID = RPC.data.user.id
+
       return
     }
+    // Voice events
     case "GET_SELECTED_VOICE_CHANNEL": {
       console.log("GET_SELECTED_VOICE_CHANNEL", RPC.data)
       if (!RPC.data || RPC.evt != null) {
         return
       }
-      currentCoolDown = 0
 
       // Channel Name
       const CHANNEL_NAME = document.getElementById("channel")
@@ -180,11 +219,11 @@ WEBSOCKET.addEventListener("message", async function (event) {
       }
       // SUBSCRIBE
       const VOICE_CHANNEL_ID = RPC.data.id.toString()
-      Send("SUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: VOICE_CHANNEL_ID }) // Connect
-      Send("SUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: VOICE_CHANNEL_ID }) // Change VC state
-      Send("SUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: VOICE_CHANNEL_ID }) // Disconnect
-      Send("SUBSCRIBE", "SPEAKING_START", { channel_id: VOICE_CHANNEL_ID }) // Speak start
-      Send("SUBSCRIBE", "SPEAKING_STOP", { channel_id: VOICE_CHANNEL_ID }) // Speak stop
+      sendMessage("SUBSCRIBE", "VOICE_STATE_CREATE", { channel_id: VOICE_CHANNEL_ID }) // Connect
+      sendMessage("SUBSCRIBE", "VOICE_STATE_UPDATE", { channel_id: VOICE_CHANNEL_ID }) // Change VC state
+      sendMessage("SUBSCRIBE", "VOICE_STATE_DELETE", { channel_id: VOICE_CHANNEL_ID }) // Disconnect
+      sendMessage("SUBSCRIBE", "SPEAKING_START", { channel_id: VOICE_CHANNEL_ID }) // Speak start
+      sendMessage("SUBSCRIBE", "SPEAKING_STOP", { channel_id: VOICE_CHANNEL_ID }) // Speak stop
       currentVoiceChannel = VOICE_CHANNEL_ID
       // Add users
       RPC.data.voice_states.forEach((state) => {
@@ -192,6 +231,19 @@ WEBSOCKET.addEventListener("message", async function (event) {
         userUpdate(state.nick, state.user, state.voice_state)
       });
       userSort()
+    }
+    // Channel events
+    case "GET_CHANNEL": {
+      // Channel Name
+      const CHANNEL_NAME = document.getElementById("channel")
+      if (CHANNEL_NAME) {
+        CHANNEL_NAME.innerText = RPC.data.name
+      }
+
+      RPC.data.messages.forEach((message) => {
+        addMessage(message)
+      })
+      return
     }
   }
 })
@@ -220,7 +272,7 @@ function newError(err) {
  * @param {string} event
  * @param {object} argumentsObject
  */
-function Send(command, event, argumentsObject) {
+function sendMessage(command, event, argumentsObject) {
   WEBSOCKET.send(JSON.stringify({
     nonce: nonce.get(),
     cmd: command,
@@ -230,134 +282,27 @@ function Send(command, event, argumentsObject) {
 }
 
 /**
- * @typedef User
- * @type {object}
- * @property {number} id
- * @property {string} username
- * @property {string} global_name
- * @property {string} avatar
- * @property {object} avatar_decoration_data
- * @property {string} bot
- * @property {number} flags
- * @property {number} premium_type
-*/
-/**
- * @typedef VoiceState
- * @type {object}
- * @property {boolean} mute mute by server
- * @property {boolean} deaf deaf by server
- * @property {boolean} self_mute mute by self
- * @property {boolean} self_deaf deaf by self
- * @property {boolean} suppress permission to speak denied
+ * @param {string} key get cookie key
+ * @return {string | null}
  */
-
-/**
- * @param {User} user
- */
-function userAdd(user) {
-  const USER = document.createElement("div")
-  USER.classList.add("user")
-  USER.id = user.id.toString()
-  if (USER.id == localUserID) {
-    USER.classList.add("me")
+function getCookie(key) {
+  const cookies = document.cookie
+  const parts = cookies.split(";")
+  for (let i = 0; i < parts.length; i++) {
+    const cookie = parts[i]
+    const content = cookie.split("=", 2)
+    content[0] = content[0].replace(/^ +/, "")
+    console.log(content)
+    console.log(content[0], content[0] === key)
+    if (content[0] === key) {
+      return content[1]
+    }
   }
-
-  const ICON = document.createElement("img")
-  ICON.classList.add("icon")
-  USER.append(ICON)
-  if (user.avatar_decoration_data) {
-    const DECO = document.createElement("img")
-    DECO.classList.add("decoration")
-    USER.append(DECO)
-  }
-  const NICK = document.createElement("span")
-  NICK.classList.add("nick")
-  USER.append(NICK)
-  const NAME = document.createElement("span")
-  NAME.classList.add("name")
-  USER.append(NAME)
-
-  const USERS = document.getElementById("users")
-  if (USERS) {
-    USERS.append(USER)
-  }
+  return null
 }
-
 /**
- * @param {string} nick
- * @param {User} user
- * @param {VoiceState} voice_state
- * @returns
+ * @param {string} data example: key=value; opts...
  */
-function userUpdate(nick, user, voice_state) {
-  const USER = document.getElementById(user.id.toString())
-  if (!USER) {
-    return
-  }
-
-  // User
-  /** @type {HTMLImageElement?} */
-  const ICON = USER.querySelector(".icon")
-  if (ICON) {
-    if (user.avatar) {
-      ICON.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`
-    } else {
-      const INDEX = (user.id >> 22) % 6
-      ICON.src = `https://cdn.discordapp.com/embed/avatars/${INDEX}.png`
-    }
-  }
-  if (user.avatar_decoration_data) {
-    /** @type {HTMLImageElement?} */
-    const DECO = USER.querySelector(".decoration")
-    if (DECO) {
-      DECO.src = `https://cdn.discordapp.com/avatar-decoration-presets/${user.avatar_decoration_data.asset}`
-    }
-  }
-  /** @type {HTMLSpanElement?} */
-  const NICK = USER.querySelector(".nick")
-  if (NICK) {
-    NICK.innerText = nick
-  }
-  /** @type {HTMLSpanElement?} */
-  const NAME = USER.querySelector(".name")
-  if (NAME) {
-    NAME.innerText = user.username
-  }
-
-  // Voice
-  USER.classList.remove("deaf")
-  if (voice_state.deaf) { USER.classList.add("deaf") }
-  USER.classList.remove("self_deaf")
-  if (voice_state.self_deaf) { USER.classList.add("self_deaf") }
-  USER.classList.remove("mute")
-  if (voice_state.mute) { USER.classList.add("mute") }
-  USER.classList.remove("self_mute")
-  if (voice_state.self_mute) { USER.classList.add("self_mute") }
-  USER.classList.remove("suppress")
-  if (voice_state.suppress) { USER.classList.add("suppress") }
-}
-
-function userSort() {
-  const USERS = document.getElementById("users")
-  if (!USERS) {
-    return
-  }
-
-  let userArray = Array.prototype.slice.call(USERS.children)
-  userArray.sort(function (a, b) {
-    const A_NICK = a.querySelector(".nick").innerText.toLowerCase()
-    const B_NICK = b.querySelector(".nick").innerText.toLowerCase()
-    if (A_NICK > B_NICK) {
-      return 1
-    } else if (A_NICK < B_NICK) {
-      return -1
-    }
-    return 0
-  })
-
-  for (let index = 0; index < userArray.length; index++) {
-    const USER = USERS.removeChild(userArray[index])
-    USERS.appendChild(USER)
-  }
-  console.log(userArray)
+function setCookie(data) {
+  document.cookie = data
 }
