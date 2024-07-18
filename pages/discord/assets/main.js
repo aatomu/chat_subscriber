@@ -45,7 +45,7 @@ if (CHANNEL_ID) {
 
 const DISCORD_REDIRECT_URI = "https://live.aatomu.work"
 const DISCORD_CONNECTOR = `ws://127.0.0.1:16463/websocket?id=${discordClientID}`
-const OAUTH_SCOPES = ["rpc", "identify"]
+const OAUTH_SCOPES = ["rpc", "identify","email"]
 const nonce = new class Nonce {
   num
   constructor() {
