@@ -1,7 +1,6 @@
 interface Env {}
 
-//export async function onRequestGet(context:EventContext): Promise<Response> {
-export async function onRequestGet(context): Promise<Response> {
+export const onRequestGet: PagesFunction<Env> = async (context): Promise<Response> => {
   const request: Request = context.request;
 
   const REQUEST_PATH = new URL(request.url).pathname.split("/");
@@ -29,21 +28,13 @@ export async function onRequestGet(context): Promise<Response> {
             cookie = REQUEST_COOKIE;
           }
 
-          return new Response(
-            JSON.stringify(
-              await youtubeGetApiKeys(
-                `https://www.youtube.com/${ID}/live`,
-                cookie
-              )
-            ),
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET",
-              },
-            }
-          );
+          return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/${ID}/live`, cookie)), {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET",
+            },
+          });
         }
         case "watch": {
           // https://..../youtube/watch?id=xxxxx
@@ -57,21 +48,13 @@ export async function onRequestGet(context): Promise<Response> {
             cookie = REQUEST_COOKIE;
           }
 
-          return new Response(
-            JSON.stringify(
-              await youtubeGetApiKeys(
-                `https://www.youtube.com/watch?v=${ID}`,
-                cookie
-              )
-            ),
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET",
-              },
-            }
-          );
+          return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${ID}`, cookie)), {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET",
+            },
+          });
         }
         case "get_chat": {
           // https://..../youtube/get_chat?api_key=xxxxx&client_version=xxxxx&continuation=xxxxx
@@ -82,16 +65,13 @@ export async function onRequestGet(context): Promise<Response> {
             break;
           }
 
-          return new Response(
-            await youtubeGetLiveChat(API_KEY, CLIENT_VERSION, CONTINUATION),
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET",
-              },
-            }
-          );
+          return new Response(await youtubeGetLiveChat(API_KEY, CLIENT_VERSION, CONTINUATION), {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET",
+            },
+          });
         }
       }
       break;
@@ -165,12 +145,10 @@ export async function onRequestGet(context): Promise<Response> {
       }
   }
   return ErrorResponse();
-}
+};
 
 function ErrorResponse() {
-  return new Response(
-    "Check https://github.com/aatomu/chat_subscriber/blob/main/worker.ts"
-  );
+  return new Response("Check https://github.com/aatomu/chat_subscriber/blob/main/worker.ts");
 }
 
 async function youtubeGetApiKeys(url: string, cookie: string) {
@@ -187,50 +165,37 @@ async function youtubeGetApiKeys(url: string, cookie: string) {
     });
 
   let video_id = "";
-  const VIDEO_ID_START = LIVE_INFORMATION.indexOf(
-    `rel="canonical" href="https://www\.youtube\.com/watch\?v=`
-  );
-  const VIDEO_ID_MATCH = LIVE_INFORMATION.substring(VIDEO_ID_START).match(
-    /watch\?v=([A-Za-z0-9_-].+?)"/
-  );
+  const VIDEO_ID_START = LIVE_INFORMATION.indexOf(`rel="canonical" href="https://www\.youtube\.com/watch\?v=`);
+  const VIDEO_ID_MATCH = LIVE_INFORMATION.substring(VIDEO_ID_START).match(/watch\?v=([A-Za-z0-9_-].+?)"/);
   if (VIDEO_ID_MATCH) {
     video_id = VIDEO_ID_MATCH[1];
   }
 
   let api_key = "";
   const API_KEY_START = LIVE_INFORMATION.indexOf(`"innertubeApiKey":`);
-  const API_KEY_MATCH = LIVE_INFORMATION.substring(API_KEY_START).match(
-    /"innertubeApiKey":"(.+?)"/
-  );
+  const API_KEY_MATCH = LIVE_INFORMATION.substring(API_KEY_START).match(/"innertubeApiKey":"(.+?)"/);
   if (API_KEY_MATCH) {
     api_key = API_KEY_MATCH[1];
   }
 
   let client_version = "";
   const CLIENT_VERSION_START = LIVE_INFORMATION.indexOf(`"clientVersion":`);
-  const CLIENT_VERSION_MATCH = LIVE_INFORMATION.substring(
-    CLIENT_VERSION_START
-  ).match(/"clientVersion":"(.+?)"/);
+  const CLIENT_VERSION_MATCH = LIVE_INFORMATION.substring(CLIENT_VERSION_START).match(/"clientVersion":"(.+?)"/);
   if (CLIENT_VERSION_MATCH) {
     client_version = CLIENT_VERSION_MATCH[1];
   }
 
   let continuation = "";
   const CONTINUATION_START = LIVE_INFORMATION.indexOf(`"continuation":`);
-  const CONTINUATION_MATCH = LIVE_INFORMATION.substring(
-    CONTINUATION_START
-  ).match(/"continuation":"(.+?)"/);
+  const CONTINUATION_MATCH = LIVE_INFORMATION.substring(CONTINUATION_START).match(/"continuation":"(.+?)"/);
   if (CONTINUATION_MATCH) {
     continuation = CONTINUATION_MATCH[1];
   }
 
   let channelName = "";
   if (continuation != "") {
-    const PLAYER_OBJECT_START = LIVE_INFORMATION.indexOf(
-      `var ytInitialPlayerResponse =`
-    );
-    const PLAYER_OBJECT_MATCH =
-      LIVE_INFORMATION.substring(PLAYER_OBJECT_START).match(/({.+?});/);
+    const PLAYER_OBJECT_START = LIVE_INFORMATION.indexOf(`var ytInitialPlayerResponse =`);
+    const PLAYER_OBJECT_MATCH = LIVE_INFORMATION.substring(PLAYER_OBJECT_START).match(/({.+?});/);
     if (PLAYER_OBJECT_MATCH) {
       const PLAYER_OBJECT = JSON.parse(PLAYER_OBJECT_MATCH[1]);
       channelName = PLAYER_OBJECT.videoDetails.author;
@@ -247,29 +212,22 @@ async function youtubeGetApiKeys(url: string, cookie: string) {
   };
 }
 
-async function youtubeGetLiveChat(
-  api_key: string,
-  client_version: string,
-  continuation: string
-) {
-  const LIVE_CHATS = await fetch(
-    `https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?key=${api_key}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        context: {
-          client: {
-            clientName: "WEB",
-            clientVersion: client_version,
-          },
+async function youtubeGetLiveChat(api_key: string, client_version: string, continuation: string) {
+  const LIVE_CHATS = await fetch(`https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?key=${api_key}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      context: {
+        client: {
+          clientName: "WEB",
+          clientVersion: client_version,
         },
-        continuation: continuation,
-      }),
-    }
-  )
+      },
+      continuation: continuation,
+    }),
+  })
     .then((res) => {
       return res.text();
     })
@@ -293,9 +251,7 @@ async function niconicoGetApiKeys(id: string) {
   const EMBED_DATA_START = RES.indexOf(`data-props=`);
   const EMBED_DATA_MATCH = RES.substring(EMBED_DATA_START).match(/"(.+?)"/);
   if (EMBED_DATA_MATCH) {
-    const EMBED_OBJECT = JSON.parse(
-      EMBED_DATA_MATCH[1].replace(/&quot;/g, `"`)
-    );
+    const EMBED_OBJECT = JSON.parse(EMBED_DATA_MATCH[1].replace(/&quot;/g, `"`));
     watchWebsocketURL = EMBED_OBJECT.site.relive.webSocketUrl;
     channelName = EMBED_OBJECT.program.supplier.name;
   }
@@ -317,8 +273,7 @@ async function niconicoGetUsername(id: string) {
 
   let channelName = "";
   const CHANNEL_NAME_START = RES.indexOf(`"name":"`);
-  const CHANNEL_NAME_MATCH =
-    RES.substring(CHANNEL_NAME_START).match(/"name":"(.+?)"/);
+  const CHANNEL_NAME_MATCH = RES.substring(CHANNEL_NAME_START).match(/"name":"(.+?)"/);
   if (CHANNEL_NAME_MATCH) {
     channelName = CHANNEL_NAME_MATCH[1];
   }
@@ -333,8 +288,7 @@ async function niconicoGetUsername(id: string) {
     return res.ok;
   });
   if (!IS_AUTHOR_ICON_USEABLE) {
-    iconURL =
-      "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg";
+    iconURL = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg";
   }
 
   return {
@@ -348,25 +302,20 @@ type TwicasSubscribeResponse = {
 };
 
 async function twicasGetLiveChat(id: string) {
-  const LIVE_INFORMATION = await fetch(`https://twitcasting.tv/${id}`).then(
-    (res) => {
-      return res.text();
-    }
-  );
+  const LIVE_INFORMATION = await fetch(`https://twitcasting.tv/${id}`).then((res) => {
+    return res.text();
+  });
 
   let movieID = "";
   const MOVIE_ID_START = LIVE_INFORMATION.indexOf("data-movie-id=");
-  const MOVIE_ID_MATCH = LIVE_INFORMATION.substring(MOVIE_ID_START).match(
-    /data-movie-id="(.+?)"/
-  );
+  const MOVIE_ID_MATCH = LIVE_INFORMATION.substring(MOVIE_ID_START).match(/data-movie-id="(.+?)"/);
   if (MOVIE_ID_MATCH) {
     movieID = MOVIE_ID_MATCH[1];
   }
 
   let channelName = "";
   const CHANNEL_NAME_START = LIVE_INFORMATION.indexOf("data-name=");
-  const CHANNEL_NAME_MATCH =
-    LIVE_INFORMATION.substring(CHANNEL_NAME_START).match(/data-name="(.+?)"/);
+  const CHANNEL_NAME_MATCH = LIVE_INFORMATION.substring(CHANNEL_NAME_START).match(/data-name="(.+?)"/);
   if (CHANNEL_NAME_MATCH) {
     channelName = CHANNEL_NAME_MATCH[1];
   }
@@ -374,10 +323,7 @@ async function twicasGetLiveChat(id: string) {
   let websocketUrl = "";
   const FORM_BODY = new FormData();
   FORM_BODY.append("movie_id", movieID);
-  const INFORMATION: TwicasSubscribeResponse = await fetch(
-    "https://twitcasting.tv/eventpubsuburl.php",
-    { method: "POST", body: FORM_BODY }
-  ).then((res) => {
+  const INFORMATION: TwicasSubscribeResponse = await fetch("https://twitcasting.tv/eventpubsuburl.php", { method: "POST", body: FORM_BODY }).then((res) => {
     return res.json();
   });
   if (INFORMATION) {
@@ -401,9 +347,7 @@ type OpenrecChannel = {
 };
 
 async function openrecGetLiveChat(id: string) {
-  const LIVE_INFORMATION: OpenrecResponse = await fetch(
-    `https://public.openrec.tv/external/api/v5/movies/${id}`
-  ).then((res) => {
+  const LIVE_INFORMATION: OpenrecResponse = await fetch(`https://public.openrec.tv/external/api/v5/movies/${id}`).then((res) => {
     return res.json();
   });
 
