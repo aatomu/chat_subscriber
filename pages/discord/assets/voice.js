@@ -61,7 +61,7 @@ function userUpdate(nick, user, voice_state) {
     if (user.avatar) {
       ICON.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}`
     } else {
-      const INDEX = (user.id >> 22) % 6
+      const INDEX = (BigInt(user.id) >> 22n) % 6n
       ICON.src = `https://cdn.discordapp.com/embed/avatars/${INDEX}.png`
     }
   }
