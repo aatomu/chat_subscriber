@@ -33,6 +33,7 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
             header.append("Set-Cookie", v);
           });
 
+          console.log(header)
           return new Response(JSON.stringify(info.api), {
             headers: header,
           });
