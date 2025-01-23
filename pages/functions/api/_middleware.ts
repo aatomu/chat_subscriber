@@ -1,5 +1,7 @@
 interface Env {}
 
+const youtube = new Youtube();
+
 export const onRequestGet: PagesFunction<Env> = async (context): Promise<Response> => {
   const request: Request = context.request;
 
@@ -23,18 +25,24 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
             break;
           }
 
-          const info = await youtubeGetApiKeys(`https://www.youtube.com/${ID}/live`, request.headers.get("Cookie"));
-          let header = new Headers({
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET",
-          });
-          info.headers.forEach((v) => {
-            header.append("Set-Cookie", v);
-          });
+          const keys = await (async () => {
+            for (let retried = 0; retried < 10; retried++) {
+              const keys = await youtube.getApiKeys(`https://www.youtube.com/${ID}/live`);
+              if (!keys) {
+                await sleep(5000);
+                continue;
+              }
+              return keys;
+            }
+            return undefined;
+          })();
 
-          return new Response(JSON.stringify(info.api), {
-            headers: header,
+          return new Response(JSON.stringify(keys), {
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET",
+            },
           });
         }
         case "watch": {
@@ -44,9 +52,19 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
             break;
           }
 
-          console.log(request.headers.get("Cookie"))
-          const info = await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${ID}`, request.headers.get("Cookie"));
-          return new Response(JSON.stringify(info.api), {
+          const keys = await (async () => {
+            for (let retried = 0; retried < 10; retried++) {
+              const keys = await youtube.getApiKeys(`https://www.youtube.com/watch?v=${ID}`);
+              if (!keys) {
+                await sleep(5000);
+                continue;
+              }
+              return keys;
+            }
+            return undefined;
+          })();
+
+          return new Response(JSON.stringify(keys), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
@@ -63,7 +81,7 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
             break;
           }
 
-          return new Response(await youtubeGetLiveChat(API_KEY, CLIENT_VERSION, CONTINUATION), {
+          return new Response(await youtube.getLiveChat(API_KEY, CLIENT_VERSION, CONTINUATION), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
@@ -147,91 +165,6 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
 
 function ErrorResponse() {
   return new Response("Check https://github.com/aatomu/chat_subscriber/blob/main/worker.ts");
-}
-
-async function youtubeGetApiKeys(url: string, cookie: string) {
-  const LIVE_RESPONSE = await fetch(url, {
-    headers: {
-      Cookie: cookie,
-    },
-  });
-  const LIVE_INFORMATION = await LIVE_RESPONSE.text();
-
-  let video_id = "";
-  const VIDEO_ID_START = LIVE_INFORMATION.indexOf(`rel="canonical" href="https://www\.youtube\.com/watch\?v=`);
-  const VIDEO_ID_MATCH = LIVE_INFORMATION.substring(VIDEO_ID_START).match(/watch\?v=([A-Za-z0-9_-].+?)"/);
-  if (VIDEO_ID_MATCH) {
-    video_id = VIDEO_ID_MATCH[1];
-  }
-
-  let api_key = "";
-  const API_KEY_START = LIVE_INFORMATION.indexOf(`"innertubeApiKey":`);
-  const API_KEY_MATCH = LIVE_INFORMATION.substring(API_KEY_START).match(/"innertubeApiKey":"(.+?)"/);
-  if (API_KEY_MATCH) {
-    api_key = API_KEY_MATCH[1];
-  }
-
-  let client_version = "";
-  const CLIENT_VERSION_START = LIVE_INFORMATION.indexOf(`"clientVersion":`);
-  const CLIENT_VERSION_MATCH = LIVE_INFORMATION.substring(CLIENT_VERSION_START).match(/"clientVersion":"(.+?)"/);
-  if (CLIENT_VERSION_MATCH) {
-    client_version = CLIENT_VERSION_MATCH[1];
-  }
-
-  let continuation = "";
-  const CONTINUATION_START = LIVE_INFORMATION.indexOf(`"continuation":`);
-  const CONTINUATION_MATCH = LIVE_INFORMATION.substring(CONTINUATION_START).match(/"continuation":"(.+?)"/);
-  if (CONTINUATION_MATCH) {
-    continuation = CONTINUATION_MATCH[1];
-  }
-
-  let channelName = "";
-  if (continuation != "") {
-    const PLAYER_OBJECT_START = LIVE_INFORMATION.indexOf(`var ytInitialPlayerResponse =`);
-    const PLAYER_OBJECT_MATCH = LIVE_INFORMATION.substring(PLAYER_OBJECT_START).match(/({.+?});/);
-    if (PLAYER_OBJECT_MATCH) {
-      const PLAYER_OBJECT = JSON.parse(PLAYER_OBJECT_MATCH[1]);
-      channelName = PLAYER_OBJECT.videoDetails.author;
-    }
-  }
-
-  return {
-    headers: LIVE_RESPONSE.headers.getAll("Set-Cookie").map((v) => {
-      return v.replace(/domain=\.youtube\.com; /i, "");
-    }),
-    api: {
-      video_id: video_id,
-      api_key: api_key,
-      client_version: client_version,
-      continuation: continuation,
-      channel_name: channelName,
-    },
-  };
-}
-
-async function youtubeGetLiveChat(api_key: string, client_version: string, continuation: string) {
-  const LIVE_CHATS = await fetch(`https://www.youtube.com/youtubei/v1/live_chat/get_live_chat?key=${api_key}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      context: {
-        client: {
-          clientName: "WEB",
-          clientVersion: client_version,
-        },
-      },
-      continuation: continuation,
-    }),
-  })
-    .then((res) => {
-      return res.text();
-    })
-    .then((text) => {
-      return text;
-    });
-  return LIVE_CHATS;
 }
 
 async function niconicoGetApiKeys(id: string) {
@@ -352,4 +285,10 @@ async function openrecGetLiveChat(id: string) {
     movie_id: LIVE_INFORMATION.movie_id,
     channel_name: LIVE_INFORMATION.channel.nickname,
   };
+}
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
