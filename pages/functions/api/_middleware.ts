@@ -30,10 +30,11 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
             "Access-Control-Allow-Methods": "GET",
           });
           info.headers.forEach((v) => {
-            header.append("Set-Cookie", v);
+            // header.append("Set-Cookie", v);
+            console.log(v)
           });
+          header.append("set-cookie","example=\"aaaaa\"")
 
-          console.log(header)
           return new Response(JSON.stringify(info.api), {
             headers: header,
           });
