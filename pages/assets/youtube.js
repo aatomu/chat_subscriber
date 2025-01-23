@@ -4,11 +4,11 @@
 /**
  * @typedef YoutubeToken
  * @type {object}
- * @property {string} video_id Youtube videoID (watch?v=xxxxx)
- * @property {string} api_key Youtube live chat api key
- * @property {string} client_version Youtube live chat api version
+ * @property {string} channelName Youtube live streamer name
+ * @property {string} videoId Youtube videoID (watch?v=xxxxx)
+ * @property {string} apiKey Youtube live chat api key
+ * @property {string} clientVersion Youtube live chat api version
  * @property {string} continuation Youtube live chat cache data
- * @property {string} channel_name Youtube live streamer name
  */
 /**
  * @typedef YoutubeAuthor
@@ -70,7 +70,7 @@
  */
 function youtubeSubscribe(token) {
   setInterval(async function () {
-    const CHAT_RESPONSE = await fetch(`${API_SERVER}/youtube/get_chat?api_key=${token.api_key}&client_version=${token.client_version}&continuation=${token.continuation}`).then(res => {
+    const CHAT_RESPONSE = await fetch(`${API_SERVER}/youtube/get_chat?api_key=${token.apiKey}&client_version=${token.clientVersion}&continuation=${token.continuation}`).then(res => {
       return res.json()
     }).then(json => {
       return json
@@ -116,8 +116,8 @@ function youtubeSubscribe(token) {
             }
           }
 
-          console.log(`Youtube Message(${token.channel_name}):`, chat)
-          addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, token.channel_name, "youtube")
+          console.log(`Youtube Message(${token.channelName}):`, chat)
+          addMessage(chat.timestampMilliSecond, chat.author.image[0].url, chat.author.name, message, token.channelName, "youtube")
         }, CHAT_OFFSET_TIME)
       })
     }
