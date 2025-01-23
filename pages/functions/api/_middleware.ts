@@ -1,6 +1,6 @@
 interface Env {}
 
-const youtube = new Youtube();
+import * as youtube from "./youtube";
 
 export const onRequestGet: PagesFunction<Env> = async (context): Promise<Response> => {
   const request: Request = context.request;
