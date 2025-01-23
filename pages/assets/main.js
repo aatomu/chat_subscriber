@@ -1,7 +1,7 @@
 // @ts-check
 /// <reference path="index.js"/>
 
-const API_SERVER = "https://chat-subscriber.pages.dev/api"
+const API_SERVER = `${window.location.origin}/api`
 
 // constant values
 const SEARCH_PARAMS = new URLSearchParams(window.location.search)
