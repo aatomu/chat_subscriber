@@ -69,7 +69,7 @@ SEARCH_PARAMS.getAll("niconico").forEach(async (channelID) => {
 		.then(res => { return res.json() })
 
 	console.log(`Niconico(#${channelID}):`, TOKEN)
-	if (TOKEN.watch_websocket_url == "") {
+	if (TOKEN.websocketUrl == "") {
 		addMessage(0, "", "ERROR", "This channelID live not found", channelID, "niconico")
 		return
 	}

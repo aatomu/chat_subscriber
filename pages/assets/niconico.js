@@ -4,8 +4,8 @@
 /**
  * @typedef NiconicoToken
  * @type {object}
- * @property {string} watch_websocket_url Niconico watch websocket url
- * @property {string} channel_name Niconico live streamer name
+ * @property {string} channelName Niconico live streamer name
+ * @property {string} websocketUrl Niconico watch websocket url
  */
 /**
  * @typedef NiconicoData
@@ -32,10 +32,10 @@
  */
 function niconicoSubscribe(token) {
   // Connect niconico watch websocket
-  const WATCH_SESSION = new WebSocket(token.watch_websocket_url)
+  const WATCH_SESSION = new WebSocket(token.websocketUrl)
 
   WATCH_SESSION.addEventListener("open", function (event) {
-    console.log(`Niconico Websocket Open Watch(@${token.channel_name}):`, event)
+    console.log(`Niconico Websocket Open Watch(@${token.channelName}):`, event)
     WATCH_SESSION.send(`
     {
       "type": "startWatching",
@@ -101,7 +101,7 @@ function niconicoSubscribe(token) {
         // Connect niconico chat websocket
         const WEBSOCKET = new WebSocket(CHAT_WEBSOCKET_URL, 'niconama')
         WEBSOCKET.addEventListener("open", function (event) {
-          console.log(`Niconico Websocket Open(@${token.channel_name}):`, event)
+          console.log(`Niconico Websocket Open(@${token.channelName}):`, event)
           WEBSOCKET.send(JOIN_MESSAGE)
         })
         WEBSOCKET.addEventListener("message", async function (event) {
@@ -133,8 +133,8 @@ function niconicoSubscribe(token) {
               username = AUTHOR.channel_name
             }
 
-            console.log(`Niconico WebSocket Message(@${token.channel_name}):`, CHAT)
-            addMessage(CHAT.date, AUTHOR.icon_url, username, CHAT.content, token.channel_name, "niconico")
+            console.log(`Niconico WebSocket Message(@${token.channelName}):`, CHAT)
+            addMessage(CHAT.date, AUTHOR.icon_url, username, CHAT.content, token.channelName, "niconico")
           }
         })
     }
