@@ -11,7 +11,13 @@ export async function getApiKeys(url: string): Promise<YoutubeApiKeys | undefine
     return res.text();
   });
 
-  let result: YoutubeApiKeys;
+  let result: YoutubeApiKeys = {
+    channelName: "",
+    videoId: "",
+    apiKey: "",
+    clientVersion: "",
+    continuation: "",
+  };
 
   const CHANNEL_NAME_START = LIVE_INFORMATION.indexOf(`http://schema.org/Person`);
   const CHANNEL_NAME_MATCH = LIVE_INFORMATION.substring(CHANNEL_NAME_START).match(/itemprop="name" content="(.+?)">/);
