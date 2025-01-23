@@ -30,10 +30,8 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
             "Access-Control-Allow-Methods": "GET",
           });
           info.headers.forEach((v) => {
-            // header.append("Set-Cookie", v);
-            console.log(v)
+            header.append("Set-Cookie", v);
           });
-          header.append("set-cookie","example=\"aaaaa\"")
 
           return new Response(JSON.stringify(info.api), {
             headers: header,
@@ -198,7 +196,7 @@ async function youtubeGetApiKeys(url: string, cookie: string) {
 
   return {
     headers: LIVE_RESPONSE.headers.getAll("Set-Cookie").map((v) => {
-      return v.replace(/domain=\.youtube\.com;/i, "");
+      return v.replace(/domain=\.youtube\.com; /i, "");
     }),
     api: {
       video_id: video_id,
