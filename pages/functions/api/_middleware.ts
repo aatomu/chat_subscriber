@@ -44,6 +44,7 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
             break;
           }
 
+          console.log(request.headers.get("Cookie"))
           const info = await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${ID}`, request.headers.get("Cookie"));
           return new Response(JSON.stringify(info.api), {
             headers: {
