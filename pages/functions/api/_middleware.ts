@@ -24,13 +24,17 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
           }
 
           const info = await youtubeGetApiKeys(`https://www.youtube.com/${ID}/live`, request.headers.get("Cookie"));
+          let header = new Headers({
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET",
+          });
+          info.headers.forEach((v) => {
+            header.append("Set-Cookie", v);
+          });
+
           return new Response(JSON.stringify(info.api), {
-            headers:
-              {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
-                "Access-Control-Allow-Methods": "GET",
-              } || info.headers,
+            headers: header,
           });
         }
         case "watch": {
@@ -190,13 +194,10 @@ async function youtubeGetApiKeys(url: string, cookie: string) {
     }
   }
 
-  let header = new Headers();
-  LIVE_RESPONSE.headers.getAll("Set-Cookie").forEach((v) => {
-    header.append("Set-Cookie", v.replace(/domain=\.youtube\.com;/i, ""));
-  });
-
   return {
-    headers: header,
+    headers: LIVE_RESPONSE.headers.getAll("Set-Cookie").map((v) => {
+      return v.replace(/domain=\.youtube\.com;/i, "");
+    }),
     api: {
       video_id: video_id,
       api_key: api_key,
