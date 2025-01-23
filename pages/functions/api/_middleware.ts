@@ -28,6 +28,7 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
           const keys = await (async () => {
             for (let retried = 0; retried < 10; retried++) {
               const keys = await youtube.getApiKeys(`https://www.youtube.com/${ID}/live`);
+              console.log(`retried: ${retried}, keys: ${keys}`)
               if (!keys) {
                 await sleep(5000);
                 continue;
