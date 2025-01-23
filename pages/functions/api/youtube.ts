@@ -1,4 +1,4 @@
-interface YoutubeApiKeys {
+interface apiKeys {
   channelName: string;
   videoId: string;
   apiKey: string;
@@ -6,12 +6,12 @@ interface YoutubeApiKeys {
   continuation: string;
 }
 
-export async function getApiKeys(url: string): Promise<YoutubeApiKeys | undefined> {
+export async function getApiKeys(url: string): Promise<apiKeys | undefined> {
   const LIVE_INFORMATION = await fetch(url).then((res) => {
     return res.text();
   });
 
-  let result: YoutubeApiKeys = {
+  let result: apiKeys = {
     channelName: "",
     videoId: "",
     apiKey: "",
