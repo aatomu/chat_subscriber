@@ -1,6 +1,9 @@
 interface Env {}
 
 import * as youtube from "./youtube";
+import * as niconico from "./niconico";
+import * as twicas from "./twicas";
+import * as openrec from "./openrec";
 
 export const onRequestGet: PagesFunction<Env> = async (context): Promise<Response> => {
   const request: Request = context.request;
@@ -98,7 +101,7 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
             break;
           }
 
-          return new Response(JSON.stringify(await niconicoGetApiKeys(ID)), {
+          return new Response(JSON.stringify(await niconico.getApiKeys(ID)), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
@@ -112,7 +115,8 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
           if (!ID) {
             break;
           }
-          return new Response(JSON.stringify(await niconicoGetUsername(ID)), {
+
+          return new Response(JSON.stringify(await niconico.getUsername(ID)), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
@@ -130,7 +134,8 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
           if (!ID) {
             break;
           }
-          return new Response(JSON.stringify(await twicasGetLiveChat(ID)), {
+
+          return new Response(JSON.stringify(await twicas.getLiveChat(ID)), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
@@ -148,7 +153,8 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
           if (!ID) {
             break;
           }
-          return new Response(JSON.stringify(await openrecGetLiveChat(ID)), {
+
+          return new Response(JSON.stringify(await openrec.getLiveChat(ID)), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
@@ -163,126 +169,6 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
 
 function ErrorResponse() {
   return new Response("Check https://github.com/aatomu/chat_subscriber/blob/main/worker.ts");
-}
-
-async function niconicoGetApiKeys(id: string) {
-  const RES = await fetch(`https://live.nicovideo.jp/watch/user/${id}`)
-    .then((res) => {
-      return res.text();
-    })
-    .then((text) => {
-      return text;
-    });
-
-  let watchWebsocketURL = "";
-  let channelName = "";
-  const EMBED_DATA_START = RES.indexOf(`data-props=`);
-  const EMBED_DATA_MATCH = RES.substring(EMBED_DATA_START).match(/"(.+?)"/);
-  if (EMBED_DATA_MATCH) {
-    const EMBED_OBJECT = JSON.parse(EMBED_DATA_MATCH[1].replace(/&quot;/g, `"`));
-    watchWebsocketURL = EMBED_OBJECT.site.relive.webSocketUrl;
-    channelName = EMBED_OBJECT.program.supplier.name;
-  }
-
-  return {
-    watch_websocket_url: watchWebsocketURL,
-    channel_name: channelName,
-  };
-}
-
-async function niconicoGetUsername(id: string) {
-  const RES = await fetch(`https://www.nicovideo.jp/user/${id}`)
-    .then((res) => {
-      return res.text();
-    })
-    .then((text) => {
-      return text;
-    });
-
-  let channelName = "";
-  const CHANNEL_NAME_START = RES.indexOf(`"name":"`);
-  const CHANNEL_NAME_MATCH = RES.substring(CHANNEL_NAME_START).match(/"name":"(.+?)"/);
-  if (CHANNEL_NAME_MATCH) {
-    channelName = CHANNEL_NAME_MATCH[1];
-  }
-
-  // Author icon check
-  let idSlice = id.substring(0, id.length - 4);
-  if (!idSlice) {
-    idSlice = "0";
-  }
-  let iconURL = `https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/${idSlice}/${id}.jpg`;
-  const IS_AUTHOR_ICON_USEABLE = await fetch(iconURL).then((res) => {
-    return res.ok;
-  });
-  if (!IS_AUTHOR_ICON_USEABLE) {
-    iconURL = "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg";
-  }
-
-  return {
-    channel_name: channelName,
-    icon_url: iconURL,
-  };
-}
-
-type TwicasSubscribeResponse = {
-  url: string;
-};
-
-async function twicasGetLiveChat(id: string) {
-  const LIVE_INFORMATION = await fetch(`https://twitcasting.tv/${id}`).then((res) => {
-    return res.text();
-  });
-
-  let movieID = "";
-  const MOVIE_ID_START = LIVE_INFORMATION.indexOf("data-movie-id=");
-  const MOVIE_ID_MATCH = LIVE_INFORMATION.substring(MOVIE_ID_START).match(/data-movie-id="(.+?)"/);
-  if (MOVIE_ID_MATCH) {
-    movieID = MOVIE_ID_MATCH[1];
-  }
-
-  let channelName = "";
-  const CHANNEL_NAME_START = LIVE_INFORMATION.indexOf("data-name=");
-  const CHANNEL_NAME_MATCH = LIVE_INFORMATION.substring(CHANNEL_NAME_START).match(/data-name="(.+?)"/);
-  if (CHANNEL_NAME_MATCH) {
-    channelName = CHANNEL_NAME_MATCH[1];
-  }
-
-  let websocketUrl = "";
-  const FORM_BODY = new FormData();
-  FORM_BODY.append("movie_id", movieID);
-  const INFORMATION: TwicasSubscribeResponse = await fetch("https://twitcasting.tv/eventpubsuburl.php", { method: "POST", body: FORM_BODY }).then((res) => {
-    return res.json();
-  });
-  if (INFORMATION) {
-    websocketUrl = INFORMATION.url;
-  }
-
-  return {
-    movie_id: movieID,
-    channel_name: channelName,
-    websocket_url: websocketUrl,
-  };
-}
-
-type OpenrecResponse = {
-  movie_id: number;
-  channel: OpenrecChannel;
-};
-
-type OpenrecChannel = {
-  nickname: string;
-};
-
-async function openrecGetLiveChat(id: string) {
-  const LIVE_INFORMATION: OpenrecResponse = await fetch(`https://public.openrec.tv/external/api/v5/movies/${id}`).then((res) => {
-    return res.json();
-  });
-
-  return {
-    movie_id: LIVE_INFORMATION.movie_id,
-    channel_name: LIVE_INFORMATION.channel.nickname,
-  };
 }
 
 async function sleep(ms: number): Promise<void> {
