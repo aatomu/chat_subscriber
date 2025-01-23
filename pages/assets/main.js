@@ -85,7 +85,7 @@ SEARCH_PARAMS.getAll("twicas").forEach(async (channelID) => {
 		.then(res => { return res.json() })
 
 	console.log(`Twicas(#${channelID}):`, TOKEN)
-	if (TOKEN.websocket_url == "") {
+	if (TOKEN.websocketUrl == "") {
 		addMessage(0, "", "ERROR", "This channelID live not found", channelID, "twicas")
 		return
 	}
