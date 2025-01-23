@@ -22,13 +22,9 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
           if (!ID) {
             break;
           }
-          let cookie = "";
-          const REQUEST_COOKIE = SEARCH_PARAMS.get("cookie");
-          if (REQUEST_COOKIE) {
-            cookie = REQUEST_COOKIE;
-          }
 
-          return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/${ID}/live`, cookie)), {
+          const info = await youtubeGetApiKeys(`https://www.youtube.com/${ID}/live`, request.headers.get("Cookie"));
+          return new Response(JSON.stringify(info.api), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
@@ -42,13 +38,9 @@ export const onRequestGet: PagesFunction<Env> = async (context): Promise<Respons
           if (!ID) {
             break;
           }
-          let cookie = "";
-          const REQUEST_COOKIE = SEARCH_PARAMS.get("cookie");
-          if (REQUEST_COOKIE) {
-            cookie = REQUEST_COOKIE;
-          }
 
-          return new Response(JSON.stringify(await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${ID}`, cookie)), {
+          const info = await youtubeGetApiKeys(`https://www.youtube.com/watch?v=${ID}`, request.headers.get("Cookie"));
+          return new Response(JSON.stringify(info.api), {
             headers: {
               "Content-Type": "application/json",
               "Access-Control-Allow-Origin": "*",
@@ -152,17 +144,12 @@ function ErrorResponse() {
 }
 
 async function youtubeGetApiKeys(url: string, cookie: string) {
-  const LIVE_INFORMATION = await fetch(url, {
+  const LIVE_RESPONSE = await fetch(url, {
     headers: {
       Cookie: cookie,
     },
-  })
-    .then((res) => {
-      return res.text();
-    })
-    .then((body) => {
-      return body;
-    });
+  });
+  const LIVE_INFORMATION = await LIVE_RESPONSE.text();
 
   let video_id = "";
   const VIDEO_ID_START = LIVE_INFORMATION.indexOf(`rel="canonical" href="https://www\.youtube\.com/watch\?v=`);
@@ -199,16 +186,20 @@ async function youtubeGetApiKeys(url: string, cookie: string) {
     if (PLAYER_OBJECT_MATCH) {
       const PLAYER_OBJECT = JSON.parse(PLAYER_OBJECT_MATCH[1]);
       channelName = PLAYER_OBJECT.videoDetails.author;
-      console.log(PLAYER_OBJECT);
     }
   }
 
+  let setCookie = LIVE_RESPONSE.headers.getAll("Set-Cookie").every((v) => {return {"Set-Cookie":v.replace(/domain=\.youtube\.com;/i,"")}})
+  console.log(setCookie)
   return {
-    video_id: video_id,
-    api_key: api_key,
-    client_version: client_version,
-    continuation: continuation,
-    channel_name: channelName,
+    headers: LIVE_RESPONSE.headers.getAll("Set-Cookie"),
+    api: {
+      video_id: video_id,
+      api_key: api_key,
+      client_version: client_version,
+      continuation: continuation,
+      channel_name: channelName,
+    },
   };
 }
 

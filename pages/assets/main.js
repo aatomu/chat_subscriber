@@ -25,7 +25,7 @@ if (SEARCH_PARAMS.size == 0) {
 // Youtube Channel
 SEARCH_PARAMS.getAll("youtube").forEach(async (channelID) => {
 	console.log("Youtube Channel: ", channelID)
-	const TOKEN = await fetch(`${API_SERVER}/youtube/channel?id=${channelID}&cookie=${SEARCH_PARAMS.get("cookie")}`)
+	const TOKEN = await fetch(`${API_SERVER}/youtube/channel?id=${channelID}`)
 		.then(res => { return res.json() })
 
 	console.log(`Youtube(#${channelID}):`, TOKEN)
@@ -40,7 +40,7 @@ SEARCH_PARAMS.getAll("youtube").forEach(async (channelID) => {
 // Youtube Limited Live
 SEARCH_PARAMS.getAll("watch").forEach(async (videoID,) => {
 	console.log("Youtube Watch: ", videoID)
-	const TOKEN = await fetch(`${API_SERVER}/youtube/watch?id=${videoID}&cookie=${SEARCH_PARAMS.get("cookie")}`)
+	const TOKEN = await fetch(`${API_SERVER}/youtube/watch?id=${videoID}`)
 		.then(res => { return res.json() })
 
 	console.log(`Youtube(${videoID}):`, TOKEN)
