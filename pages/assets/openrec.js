@@ -1,12 +1,22 @@
 // @ts-check
 /// <reference path="index.js"/>
 
+/**
+ * @typedef OpenrecToken
+ * @type {object}
+ * @property {string} channelName Twicas live streamer name
+ * @property {string} movieId Twicas live movie id
+ */
+
+/**
+ * @param {OpenrecToken} token
+ */
 function openrecSubscribe(token) {
-	const WEBSOCKET = new WebSocket(`wss://chat.openrec.tv/socket.io/?movieId=${token.movie_id}&EIO=3&transport=websocket`)
+	const WEBSOCKET = new WebSocket(`wss://chat.openrec.tv/socket.io/?movieId=${token.movieId}&EIO=3&transport=websocket`)
 
 	// Open twitch IRC(Websocket) connection
 	WEBSOCKET.addEventListener("open", function (event) {
-		console.log(`Openrec Websocket Open(${token.channel_name}):`, event)
+		console.log(`Openrec Websocket Open(${token.channelName}):`, event)
 
 		setInterval(function () {
 			WEBSOCKET.send("2")
@@ -26,8 +36,8 @@ function openrecSubscribe(token) {
 			}
 
 			const CHAT = MESSAGE.data
-			console.log(`Openrec WebSocket Message(@${token.channel_name}):`, CHAT)
-			addMessage(new Date(CHAT.message_dt).getTime(), CHAT.user_icon, CHAT.user_name, CHAT.message, token.channel_name, "openrec")
+			console.log(`Openrec WebSocket Message(@${token.channelName}):`, CHAT)
+			addMessage(new Date(CHAT.message_dt).getTime(), CHAT.user_icon, CHAT.user_name, CHAT.message, token.channelName, "openrec")
 		}
 	})
 }

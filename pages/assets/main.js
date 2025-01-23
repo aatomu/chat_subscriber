@@ -93,7 +93,7 @@ SEARCH_PARAMS.getAll("twicas").forEach(async (channelID) => {
 	twicasSubscribe(TOKEN)
 })
 
-// Twicas Channel
+// Openrec Channel
 SEARCH_PARAMS.getAll("openrec").forEach(async (channelID) => {
 	// Information
 	console.log("Openrec Channel: ", channelID)
@@ -101,7 +101,7 @@ SEARCH_PARAMS.getAll("openrec").forEach(async (channelID) => {
 		.then(res => { return res.json() })
 
 	console.log(`Openrec(#${channelID}):`, TOKEN)
-	if (TOKEN.websocket_url == "") {
+	if (TOKEN.movieId == "") {
 		addMessage(0, "", "ERROR", "This channelID live not found", channelID, "twicas")
 		return
 	}
